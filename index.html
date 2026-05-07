@@ -1,0 +1,2273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="漢字道場">
+<meta name="application-name" content="漢字道場">
+<meta name="theme-color" content="#0f0225">
+<meta name="description" content="App de estudio de kanji japonés N4-N2 con mascota virtual">
+<link rel="manifest" href="./manifest.json">
+<!-- Apple touch icons -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%230f0225'/%3E%3Ctext x='50%25' y='58%25' font-size='110' text-anchor='middle' dominant-baseline='middle' font-family='serif' fill='%23c084fc'%3E漢%3C/text%3E%3C/svg%3E">
+<title>漢字道場 · Kanji Dojo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0f0225;--bg2:#1a0533;--bg3:#240a45;--bg4:#2d0d55;
+  --card:#1e0840;--card2:#280f4e;
+  --p:#c084fc;--p2:#a855f7;--p3:#7c3aed;
+  --pink:#f472b6;--pink2:#ec4899;
+  --cyan:#22d3ee;--cyan2:#06b6d4;
+  --gold:#fbbf24;--gold2:#f59e0b;
+  --green:#4ade80;--green2:#22c55e;
+  --red:#f87171;--red2:#ef4444;
+  --orange:#fb923c;--orange2:#f97316;
+  --tx:#f0e6ff;--tx2:#c4a8e8;--tx3:#9168b8;
+  --r:16px;--rs:10px;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{font-family:'Nunito',sans-serif;color:var(--tx);max-width:430px;margin:0 auto;position:relative}
+.jp{font-family:'Zen Kaku Gothic New',sans-serif}
+
+/* STARS BG */
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;border-radius:50%;background:#fff;animation:twinkle 3s infinite alternate}
+@keyframes twinkle{0%{opacity:0.1}100%{opacity:0.7}}
+
+/* SCREENS */
+.screen{position:fixed;inset:0;max-width:430px;margin:0 auto;display:none;flex-direction:column;z-index:10;background:transparent}
+.screen.active{display:flex}
+
+/* TOPBAR */
+.topbar{padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between;background:rgba(15,2,37,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(192,132,252,0.15);flex-shrink:0;padding-top:env(safe-area-inset-top, 12px)}
+
+/* SCROLL AREA */
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:16px;padding-bottom:80px}
+.scroll::-webkit-scrollbar{display:none}
+
+/* NAV */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(15,2,37,0.92);backdrop-filter:blur(16px);border-top:1px solid rgba(192,132,252,0.2);display:flex;padding:8px 0;padding-bottom:max(8px, env(safe-area-inset-bottom));z-index:50}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--tx3);font-size:10px;font-family:'Nunito',sans-serif;font-weight:700;padding:4px 0;transition:color 0.2s}
+.nav-btn.active{color:var(--p)}
+.nav-icon{width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:20px}
+
+/* CARDS */
+.card{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid rgba(192,132,252,0.2);border-radius:var(--r);padding:16px;margin-bottom:14px}
+.card-glow{box-shadow:0 0 20px rgba(192,132,252,0.15)}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;padding:3px 10px;border-radius:99px;letter-spacing:0.03em}
+.badge-n4{background:rgba(34,211,238,0.15);color:var(--cyan);border:1px solid rgba(34,211,238,0.3)}
+.badge-n3{background:rgba(251,191,36,0.15);color:var(--gold);border:1px solid rgba(251,191,36,0.3)}
+.badge-n2{background:rgba(248,113,113,0.15);color:var(--red);border:1px solid rgba(248,113,113,0.3)}
+
+/* XP BAR */
+.xp-wrap{padding:0 16px 10px;background:rgba(15,2,37,0.85);backdrop-filter:blur(12px);flex-shrink:0}
+.xp-row{display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);margin-bottom:4px;font-weight:700}
+.xp-track{background:rgba(255,255,255,0.07);border-radius:99px;height:7px;overflow:hidden}
+.xp-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--p3),var(--p),var(--pink));transition:width 0.5s cubic-bezier(.4,0,.2,1);box-shadow:0 0 8px var(--p)}
+
+/* PET */
+.pet-wrap{text-align:center;padding:20px 16px 14px;background:linear-gradient(180deg,rgba(124,58,237,0.12),transparent);border-radius:var(--r);margin-bottom:14px;border:1px solid rgba(192,132,252,0.15);position:relative;overflow:hidden}
+.pet-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(192,132,252,0.12),transparent 70%);pointer-events:none}
+.pet-svg-wrap{position:relative;display:inline-block}
+.pet-svg{width:130px;height:130px;filter:drop-shadow(0 0 16px rgba(192,132,252,0.5));cursor:pointer;transition:transform 0.2s}
+.pet-svg:active{transform:scale(0.95)}
+.pet-bubble{position:absolute;top:-8px;right:-60px;background:var(--card2);border:1px solid rgba(192,132,252,0.3);border-radius:12px;padding:6px 10px;font-size:11px;font-weight:700;color:var(--p);white-space:nowrap;animation:float 2s ease-in-out infinite}
+.pet-bubble::after{content:'';position:absolute;left:-6px;top:50%;transform:translateY(-50%);border:6px solid transparent;border-right-color:var(--card2)}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.pet-name{font-size:16px;font-weight:900;color:var(--tx);margin-bottom:2px}
+.pet-mood{font-size:12px;color:var(--tx2);margin-bottom:10px}
+.hunger-wrap{max-width:200px;margin:0 auto}
+.hunger-row{display:flex;justify-content:space-between;font-size:11px;font-weight:700;margin-bottom:4px}
+.hunger-row span:first-child{color:var(--tx3)}
+.hunger-row span:last-child{color:var(--red)}
+.hunger-track{background:rgba(255,255,255,0.07);border-radius:99px;height:8px;overflow:hidden}
+.hunger-fill{height:100%;border-radius:99px;transition:width 0.4s,background 0.4s;box-shadow:0 0 6px currentColor}
+
+/* STATS GRID */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stat-card{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid rgba(192,132,252,0.15);border-radius:var(--rs);padding:12px 10px;text-align:center}
+.stat-num{font-size:24px;font-weight:900}
+.stat-lbl{font-size:10px;font-weight:700;color:var(--tx3);margin-top:2px;letter-spacing:0.05em;text-transform:uppercase}
+
+/* SECTION TITLE */
+.sec-title{font-size:11px;font-weight:800;color:var(--tx3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.sec-title::after{content:'';flex:1;height:1px;background:rgba(192,132,252,0.15)}
+
+/* MODE GRID */
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.mode-card{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid rgba(192,132,252,0.15);border-radius:var(--r);padding:18px 12px;cursor:pointer;transition:all 0.2s;text-align:center;position:relative;overflow:hidden}
+.mode-card:active{transform:scale(0.96)}
+.mode-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.2s}
+.mode-card:active::before{opacity:1}
+.mc-purple::before{background:rgba(192,132,252,0.1)}
+.mc-pink::before{background:rgba(244,114,182,0.1)}
+.mc-cyan::before{background:rgba(34,211,238,0.1)}
+.mc-gold::before{background:rgba(251,191,36,0.1)}
+.mode-card .mc-icon{font-size:32px;margin-bottom:8px;display:block}
+.mode-card .mc-title{font-size:13px;font-weight:800;color:var(--tx);display:block;margin-bottom:2px}
+.mode-card .mc-sub{font-size:10px;color:var(--tx3);font-weight:600}
+.mode-card .mc-badge{position:absolute;top:8px;right:8px}
+
+/* LEVEL SELECTOR */
+.level-tabs{display:flex;gap:8px;margin-bottom:16px}
+.level-tab{flex:1;padding:9px;border-radius:var(--rs);border:1px solid rgba(192,132,252,0.2);background:var(--card);font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s;color:var(--tx3)}
+.level-tab.active-n4{background:rgba(34,211,238,0.15);border-color:var(--cyan);color:var(--cyan)}
+.level-tab.active-n3{background:rgba(251,191,36,0.15);border-color:var(--gold);color:var(--gold)}
+.level-tab.active-n2{background:rgba(248,113,113,0.15);border-color:var(--red);color:var(--red)}
+
+/* FLASHCARD */
+.flash-outer{perspective:1000px;margin-bottom:16px}
+.flash-card{background:linear-gradient(145deg,var(--card),var(--bg4));border:1px solid rgba(192,132,252,0.25);border-radius:20px;padding:28px 20px 24px;text-align:center;min-height:240px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;box-shadow:0 8px 32px rgba(0,0,0,0.4),0 0 0 1px rgba(192,132,252,0.1) inset;position:relative;overflow:hidden}
+.flash-card::before{content:'';position:absolute;top:-30%;left:-10%;width:60%;height:60%;background:radial-gradient(ellipse,rgba(192,132,252,0.08),transparent);pointer-events:none}
+.flash-card:active{transform:scale(0.98);box-shadow:0 4px 16px rgba(0,0,0,0.5)}
+.kanji-big{font-size:88px;line-height:1;margin-bottom:6px;font-family:'Zen Kaku Gothic New',sans-serif;background:linear-gradient(135deg,#e879f9,#c084fc,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 12px rgba(192,132,252,0.4))}
+.flash-hint{font-size:13px;color:var(--tx3);font-weight:600}
+.flash-reading{font-size:22px;font-weight:800;color:var(--cyan);margin:10px 0 4px;font-family:'Zen Kaku Gothic New',sans-serif}
+.flash-meaning{font-size:17px;font-weight:700;color:var(--tx)}
+.flash-example{font-size:13px;color:var(--tx2);margin-top:10px;line-height:1.7;font-family:'Zen Kaku Gothic New',sans-serif}
+.flash-example-tr{font-size:12px;color:var(--tx3);margin-top:4px;line-height:1.5}
+.flash-alt-readings{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.flash-alt-reading{background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.25);border-radius:99px;padding:4px 12px;font-size:12px;color:var(--gold);font-weight:700;font-family:'Zen Kaku Gothic New',sans-serif}
+.flash-alt-label{font-size:10px;color:var(--tx3);font-weight:700;letter-spacing:0.05em;margin-top:8px;text-align:center;width:100%}
+.tap-hint-pill{position:absolute;bottom:12px;right:14px;background:rgba(255,255,255,0.06);border-radius:99px;padding:3px 10px;font-size:10px;color:var(--tx3);font-weight:700}
+
+/* ANSWER BTNS */
+.answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.ans-btn{border:none;border-radius:var(--rs);padding:14px 10px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.ans-btn:active{transform:scale(0.96)}
+.ans-wrong{background:linear-gradient(135deg,rgba(239,68,68,0.2),rgba(239,68,68,0.1));border:1px solid rgba(239,68,68,0.4);color:var(--red)}
+.ans-right{background:linear-gradient(135deg,rgba(74,222,128,0.2),rgba(74,222,128,0.1));border:1px solid rgba(74,222,128,0.4);color:var(--green)}
+.ans-btn.full{grid-column:1/-1}
+.btn-next{width:100%;padding:14px;background:linear-gradient(135deg,var(--p3),var(--pink2));border:none;border-radius:var(--rs);color:#fff;font-size:15px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s;box-shadow:0 4px 16px rgba(124,58,237,0.4)}
+.btn-next:active{transform:scale(0.97)}
+
+/* PROGRESS BAR MINI */
+.session-progress{background:rgba(255,255,255,0.06);border-radius:99px;height:4px;margin-bottom:12px;overflow:hidden}
+.session-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--p),var(--pink));transition:width 0.4s}
+.session-meta{display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:8px}
+.session-meta .s-right{color:var(--green)}
+.session-meta .s-wrong{color:var(--red)}
+
+/* READING */
+.reading-card{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid rgba(192,132,252,0.15);border-radius:var(--r);margin-bottom:14px;overflow:hidden}
+.reading-header{padding:14px 16px 10px;border-bottom:1px solid rgba(192,132,252,0.1);display:flex;align-items:center;justify-content:space-between}
+.reading-title-text{font-size:15px;font-weight:800;color:var(--tx);font-family:'Zen Kaku Gothic New',sans-serif}
+.reading-meta{font-size:10px;color:var(--tx3);font-weight:700;margin-top:2px}
+.reading-body{padding:16px}
+.reading-jp{font-size:17px;line-height:2.2;color:var(--tx);font-family:'Zen Kaku Gothic New',sans-serif}
+.reading-jp ruby{color:var(--tx);text-align:center}
+.reading-jp rt{font-size:10px;color:var(--cyan);font-style:normal}
+.reading-controls{display:flex;gap:8px;margin-bottom:14px}
+.rc-btn{flex:1;padding:9px 6px;border-radius:var(--rs);font-size:11px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;border:1px solid;transition:all 0.2s;text-align:center}
+.rc-btn.on{background:rgba(34,211,238,0.15);border-color:var(--cyan);color:var(--cyan)}
+.rc-btn.off{background:transparent;border-color:rgba(192,132,252,0.2);color:var(--tx3)}
+.tr-section{border-top:1px solid rgba(192,132,252,0.1);padding:12px 16px;font-size:13px;color:var(--tx2);line-height:1.7;font-weight:600}
+.vocab-section{border-top:1px solid rgba(192,132,252,0.1);padding:12px 16px}
+.vocab-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(192,132,252,0.07)}
+.vocab-item:last-child{border-bottom:none}
+.vocab-kanji{font-size:22px;font-family:'Zen Kaku Gothic New',sans-serif;color:var(--p);min-width:36px}
+.vocab-reading{font-size:12px;color:var(--cyan);font-weight:700;font-family:'Zen Kaku Gothic New',sans-serif}
+.vocab-meaning{font-size:11px;color:var(--tx2);font-weight:600}
+.btn-read-done{width:100%;margin:4px 0 0;padding:13px;background:linear-gradient(135deg,var(--p3),var(--pink2));border:none;border-radius:var(--rs);color:#fff;font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 14px rgba(124,58,237,0.35)}
+.btn-read-done:active{transform:scale(0.98)}
+
+/* REVIEW LIST */
+.review-item{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid rgba(192,132,252,0.12);border-radius:var(--rs);padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.rv-kanji{font-size:30px;font-family:'Zen Kaku Gothic New',sans-serif;min-width:42px;text-align:center;color:var(--p)}
+.rv-info{flex:1}
+.rv-reading{font-size:13px;color:var(--cyan);font-weight:700;font-family:'Zen Kaku Gothic New',sans-serif}
+.rv-meaning{font-size:11px;color:var(--tx2);font-weight:600}
+.rv-tag{font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px}
+.rv-hard{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.3)}
+.rv-med{background:rgba(251,191,36,0.15);color:var(--gold);border:1px solid rgba(251,191,36,0.3)}
+.rv-good{background:rgba(74,222,128,0.15);color:var(--green);border:1px solid rgba(74,222,128,0.3)}
+
+/* TOAST & ANIM */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(30,8,64,0.95);border:1px solid rgba(192,132,252,0.35);color:var(--tx);padding:10px 20px;border-radius:99px;font-size:13px;font-weight:700;z-index:200;opacity:0;transition:opacity 0.2s;pointer-events:none;white-space:nowrap;backdrop-filter:blur(10px);box-shadow:0 4px 20px rgba(0,0,0,0.5)}
+.toast.show{opacity:1}
+.feed-anim{position:fixed;top:40%;left:50%;transform:translate(-50%,-50%) scale(0);font-size:52px;z-index:300;pointer-events:none;transition:all 0.35s cubic-bezier(.34,1.56,.64,1)}
+.feed-anim.pop{transform:translate(-50%,-80%) scale(1.4)}
+.feed-anim.fade{transform:translate(-50%,-120%) scale(0.8);opacity:0}
+
+/* SESSION DONE */
+.done-wrap{text-align:center;padding:30px 0 10px}
+.done-emoji{font-size:52px;margin-bottom:14px}
+.done-title{font-size:22px;font-weight:900;color:var(--tx);margin-bottom:6px}
+.done-sub{font-size:14px;color:var(--tx2);font-weight:600;margin-bottom:24px}
+.done-stars{font-size:28px;letter-spacing:4px;margin-bottom:20px}
+
+/* BACK BTN */
+.back-btn{width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.2);border-radius:var(--rs);cursor:pointer;color:var(--p);font-size:18px;transition:background 0.2s}
+.back-btn:active{background:rgba(192,132,252,0.2)}
+
+/* HOME TITLE */
+.home-logo{font-size:20px;font-weight:900;background:linear-gradient(135deg,var(--p),var(--pink),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.streak-pill{background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.3);border-radius:99px;padding:4px 10px;font-size:12px;font-weight:800;color:var(--gold)}
+
+/* KANJI LIST */
+.kl-item{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid rgba(192,132,252,.15);border-radius:var(--rs);padding:12px 14px;margin-bottom:9px;cursor:pointer;transition:border-color .18s}
+.kl-item:active{transform:scale(.98)}
+.kl-item.open{border-color:rgba(192,132,252,.4)}
+.kl-top{display:flex;align-items:center;gap:12px}
+.kl-kanji{font-size:34px;font-family:'Zen Kaku Gothic New',sans-serif;min-width:48px;text-align:center;background:linear-gradient(135deg,var(--p),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.kl-meta{flex:1;min-width:0}
+.kl-reading{font-size:12px;color:var(--cyan);font-weight:700;font-family:'Zen Kaku Gothic New',sans-serif;margin-bottom:2px}
+.kl-meaning{font-size:13px;color:var(--tx);font-weight:700}
+.kl-onkun{font-size:10px;color:var(--tx3);font-weight:700;margin-top:2px;font-family:'Zen Kaku Gothic New',sans-serif}
+.kl-arrow{font-size:14px;color:var(--tx3);transition:transform .2s;flex-shrink:0}
+.kl-item.open .kl-arrow{transform:rotate(180deg)}
+.kl-detail{display:none;padding-top:10px;border-top:1px solid rgba(192,132,252,.12);margin-top:10px}
+.kl-item.open .kl-detail{display:block}
+.kl-cpd-label{font-size:10px;font-weight:800;color:var(--gold);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px}
+.kl-cpd-grid{display:flex;flex-direction:column;gap:6px}
+.kl-cpd-row{display:flex;align-items:center;gap:10px;background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.18);border-radius:var(--rs);padding:7px 10px}
+.kl-cpd-word{font-size:18px;font-family:'Zen Kaku Gothic New',sans-serif;color:var(--gold);min-width:60px}
+.kl-cpd-info{flex:1}
+.kl-cpd-r{font-size:11px;color:var(--cyan);font-weight:700;font-family:'Zen Kaku Gothic New',sans-serif}
+.kl-cpd-m{font-size:11px;color:var(--tx2);font-weight:600}
+.kl-count{font-size:10px;font-weight:800;background:rgba(192,132,252,.15);color:var(--p);border-radius:99px;padding:2px 7px;flex-shrink:0}
+
+/* QUIZ */
+.quiz-progress{background:rgba(255,255,255,.06);border-radius:99px;height:4px;margin-bottom:14px;overflow:hidden}
+.quiz-progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold2),var(--orange));transition:width .4s}
+.quiz-meta{display:flex;justify-content:space-between;font-size:11px;font-weight:800;margin-bottom:8px}
+.quiz-card{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid rgba(251,191,36,.2);border-radius:20px;padding:22px 18px 18px;margin-bottom:14px;box-shadow:0 6px 24px rgba(0,0,0,.4),0 0 0 1px rgba(251,191,36,.06) inset;position:relative;overflow:hidden}
+.quiz-card::before{content:'';position:absolute;top:-20%;right:-5%;width:50%;height:50%;background:radial-gradient(ellipse,rgba(251,191,36,.05),transparent);pointer-events:none}
+.quiz-type-tag{display:inline-block;background:rgba(251,191,36,.12);color:var(--gold);border:1px solid rgba(251,191,36,.25);border-radius:99px;padding:3px 10px;font-size:10px;font-weight:800;letter-spacing:.04em;margin-bottom:10px}
+.quiz-question{font-size:14px;font-weight:700;color:var(--tx2);line-height:1.55;margin-bottom:14px}
+.quiz-kanji-big{font-size:72px;line-height:1;font-family:'Zen Kaku Gothic New',sans-serif;text-align:center;display:block;margin:4px 0 14px;background:linear-gradient(135deg,#fbbf24,#f472b6,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 10px rgba(251,191,36,.3))}
+.quiz-sentence{font-size:17px;font-family:'Zen Kaku Gothic New',sans-serif;color:var(--tx);line-height:1.8;margin-bottom:14px;text-align:center}
+.quiz-blank{display:inline-block;background:rgba(251,191,36,.15);border-bottom:2px solid var(--gold);color:var(--gold);padding:0 6px;border-radius:4px;font-weight:800;min-width:40px;text-align:center}
+.quiz-opts{display:flex;flex-direction:column;gap:9px}
+.quiz-opt{background:var(--card);border:1px solid rgba(192,132,252,.18);border-radius:var(--rs);padding:13px 14px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--tx);transition:all .15s;display:flex;align-items:center;gap:10px;text-align:left}
+.quiz-opt:active{transform:scale(.98)}
+.quiz-opt-letter{width:26px;height:26px;border-radius:50%;background:rgba(192,132,252,.12);border:1px solid rgba(192,132,252,.25);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:var(--p);flex-shrink:0;font-family:'Nunito',sans-serif}
+.quiz-opt-jp{font-family:'Zen Kaku Gothic New',sans-serif;font-size:15px;font-weight:700}
+.quiz-opt.correct{background:rgba(74,222,128,.13);border-color:var(--green);color:var(--green)}
+.quiz-opt.correct .quiz-opt-letter{background:rgba(74,222,128,.18);border-color:var(--green);color:var(--green)}
+.quiz-opt.wrong{background:rgba(239,68,68,.13);border-color:var(--red);color:var(--red)}
+.quiz-opt.wrong .quiz-opt-letter{background:rgba(239,68,68,.18);border-color:var(--red);color:var(--red)}
+.quiz-opt.disabled{pointer-events:none;opacity:.45}
+.quiz-explanation{margin-top:12px;padding:11px 13px;background:rgba(192,132,252,.07);border:1px solid rgba(192,132,252,.15);border-radius:var(--rs);font-size:12px;color:var(--tx2);font-weight:600;line-height:1.6}
+.quiz-explanation strong{color:var(--p)}
+.quiz-next-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--gold2),var(--orange));border:none;border-radius:var(--rs);color:#fff;font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 14px rgba(251,191,36,.3);margin-top:10px}
+.quiz-next-btn:active{transform:scale(.97)}
+.quiz-result-card{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid rgba(251,191,36,.25);border-radius:20px;padding:28px 20px;text-align:center;box-shadow:0 8px 28px rgba(0,0,0,.4)}
+.quiz-score-circle{width:110px;height:110px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;flex-direction:column;border:3px solid var(--gold);background:rgba(251,191,36,.08)}
+.quiz-score-num{font-size:32px;font-weight:900;color:var(--gold)}
+.quiz-score-lbl{font-size:11px;font-weight:800;color:var(--tx3)}
+.quiz-result-stars{font-size:30px;letter-spacing:5px;margin-bottom:8px}
+.quiz-result-title{font-size:20px;font-weight:900;color:var(--tx);margin-bottom:6px}
+.quiz-result-sub{font-size:13px;color:var(--tx2);font-weight:600;margin-bottom:20px}
+.quiz-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:20px}
+.quiz-bd-card{background:rgba(255,255,255,.04);border-radius:var(--rs);padding:10px 8px;text-align:center}
+.quiz-bd-num{font-size:20px;font-weight:900}
+.quiz-bd-lbl{font-size:9px;font-weight:800;color:var(--tx3);letter-spacing:.05em;text-transform:uppercase}
+
+/* MISC */
+.empty-msg{text-align:center;padding:30px 0;font-size:14px;color:var(--tx3);font-weight:600}
+.divider{height:1px;background:rgba(192,132,252,0.1);margin:12px 0}
+</style>
+</head>
+<body>
+
+<!-- STARS -->
+<div class="stars" id="stars"></div>
+
+<!-- TOAST & FEED ANIM -->
+<div id="toast" class="toast"></div>
+<div id="feedAnim" class="feed-anim">🥕</div>
+
+<!-- ======== HOME ======== -->
+<div id="screen-home" class="screen active">
+  <div class="topbar">
+    <span class="badge badge-n4" id="lvl-badge-home">N4</span>
+    <span class="home-logo">漢字道場</span>
+    <span class="streak-pill" id="streak-home">0🔥</span>
+  </div>
+  <div class="xp-wrap">
+    <div class="xp-row"><span>Experiencia</span><span id="xp-text">0 / 100 XP</span></div>
+    <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+  </div>
+  <div class="scroll">
+    <!-- PET -->
+    <div class="pet-wrap">
+      <div class="pet-svg-wrap">
+        <svg class="pet-svg" id="petSvg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" onclick="petTap()" role="button" aria-label="Conejo Haru, toca para alimentarle"></svg>
+        <div class="pet-bubble" id="petBubble">¡Hola!</div>
+      </div>
+      <div class="pet-name">Haru 🐰</div>
+      <div class="pet-mood" id="petMood">¡Listo para aprender!</div>
+      <div class="hunger-wrap">
+        <div class="hunger-row"><span>HAMBRE</span><span id="hunger-pct">50%</span></div>
+        <div class="hunger-track"><div class="hunger-fill" id="hunger-fill" style="width:50%;background:var(--orange)"></div></div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num" style="color:var(--p)" id="st-today">0</div><div class="stat-lbl">Hoy</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--cyan)" id="st-acc">0%</div><div class="stat-lbl">Precisión</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--green)" id="st-known">0</div><div class="stat-lbl">Aprendidos</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--gold)" id="st-streak">0</div><div class="stat-lbl">Racha días</div></div>
+    </div>
+
+    <div class="sec-title">Practicar</div>
+    <div class="mode-grid">
+      <div class="mode-card mc-purple" onclick="goScreen('quiz')"><span class="mc-icon">📝</span><span class="mc-title">Examen JLPT</span><span class="mc-sub">Tipo A · B · C · D</span></div>
+      <div class="mode-card mc-purple" onclick="goFlash('random')"><span class="mc-icon">🃏</span><span class="mc-title">Flashcards</span><span class="mc-sub">Sesión aleatoria</span></div>
+    </div>
+    <div class="sec-title">Mis flashcards</div>
+    <div class="mode-grid">
+      <div class="mode-card mc-purple" onclick="goScreen('failed')">
+        <span class="mc-icon">❌</span>
+        <span class="mc-title">Mis fallos</span>
+        <span class="mc-sub" id="home-failed-count">Kanji que no sabía</span>
+      </div>
+      <div class="mode-card mc-purple" onclick="goScreen('seen')">
+        <span class="mc-icon">✅</span>
+        <span class="mc-title">Ya vistos</span>
+        <span class="mc-sub" id="home-seen-count">Kanji ya estudiados</span>
+      </div>
+    </div>
+    <div class="sec-title">Estudio</div>
+    <div class="mode-grid">
+      <div class="mode-card mc-purple" onclick="goScreen('reading-list')"><span class="mc-icon">📖</span><span class="mc-title">Textos</span><span class="mc-sub">N4 · N3 · N2</span></div>
+      <div class="mode-card mc-purple" onclick="goScreen('kanji-list')"><span class="mc-icon">📋</span><span class="mc-title">Lista Kanji</span><span class="mc-sub">Todos por nivel</span></div>
+    </div>
+    <div class="mode-grid">
+      <div class="mode-card mc-purple" style="grid-column:1/-1;display:flex;align-items:center;gap:14px;text-align:left;padding:14px 16px" onclick="goScreen('review')">
+        <span class="mc-icon" style="font-size:28px;margin-bottom:0;flex-shrink:0">📊</span>
+        <div><span class="mc-title" style="font-size:14px">Mi Progreso</span><span class="mc-sub" style="font-size:11px;display:block">Estadísticas y puntos débiles</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nav-btn active" onclick="goScreen('home')"><div class="nav-icon">🏠</div>Inicio</button>
+    <button class="nav-btn" onclick="goFlash('random')"><div class="nav-icon">🃏</div>Flash</button>
+    <button class="nav-btn" onclick="goScreen('quiz')"><div class="nav-icon">📝</div>Examen</button>
+    <button class="nav-btn" onclick="goScreen('reading-list')"><div class="nav-icon">📖</div>Textos</button>
+    <button class="nav-btn" onclick="goScreen('review')"><div class="nav-icon">📊</div>Yo</button>
+  </div>
+</div>
+
+<!-- ======== MIS FALLOS ======== -->
+<div id="screen-failed" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goScreen('home')">←</button>
+    <span style="font-size:15px;font-weight:800">❌ Mis Fallos</span>
+    <span id="failed-count-badge" style="font-size:11px;font-weight:800;color:var(--red);background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.25);border-radius:99px;padding:3px 9px">0</span>
+  </div>
+  <div class="scroll" id="failedScroll"></div>
+</div>
+
+<!-- ======== YA VISTOS ======== -->
+<div id="screen-seen" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goScreen('home')">←</button>
+    <span style="font-size:15px;font-weight:800">✅ Ya Vistos</span>
+    <span id="seen-count-badge" style="font-size:11px;font-weight:800;color:var(--green);background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.25);border-radius:99px;padding:3px 9px">0</span>
+  </div>
+  <div class="scroll" id="seenScroll"></div>
+</div>
+
+<!-- ======== FLASHCARD INDIVIDUAL ======== -->
+<div id="screen-single-card" class="screen">
+  <div class="topbar">
+    <button class="back-btn" id="single-back-btn" onclick="goScreen('home')">←</button>
+    <span id="single-title" style="font-size:14px;font-weight:800">Kanji</span>
+    <div style="width:34px"></div>
+  </div>
+  <div class="scroll">
+    <div class="flash-card" id="singleCard" onclick="revealSingle()" style="margin-bottom:14px">
+      <div id="singleSub" style="margin-bottom:6px;min-height:20px"></div>
+      <div class="kanji-big jp" id="singleKanji"></div>
+      <div class="flash-hint-txt" id="singleHint">Toca para ver</div>
+      <div id="singleReveal" style="display:none">
+        <div class="flash-reading jp" id="singleReading"></div>
+        <div class="flash-meaning" id="singleMeaning"></div>
+        <div class="flash-example jp" id="singleExample"></div>
+        <div class="flash-example-tr" id="singleExampleTr"></div>
+        <div id="singleAltWrap" style="display:none">
+          <div class="compounds-label">⚡ Palabras con este kanji</div>
+          <div class="flash-compounds" id="singleAlt"></div>
+        </div>
+      </div>
+      <span class="tap-pill" id="singleTapPill">toca ↑</span>
+    </div>
+    <div class="ans-grid" id="singleAnsBtns" style="display:none">
+      <button class="ans-btn ans-wrong" onclick="answerSingle(false)">✗ No lo sabía</button>
+      <button class="ans-btn ans-right" onclick="answerSingle(true)">✓ ¡Lo supe!</button>
+    </div>
+    <div id="singleDone" style="display:none;text-align:center;padding:20px 0 10px">
+      <div style="font-size:36px;margin-bottom:10px" id="singleDoneEmoji">⭐</div>
+      <div id="singleDoneMsg" style="font-size:14px;font-weight:700;color:var(--tx2);margin-bottom:16px"></div>
+      <button class="btn-next" id="singleBackBtn" onclick="goScreen('home')" style="width:100%">Volver a la lista</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======== KANJI LIST ======== -->
+<div id="screen-kanji-list" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goScreen('home')">←</button>
+    <span style="font-size:15px;font-weight:800">Lista de Kanji</span>
+    <div style="width:34px"></div>
+  </div>
+  <div style="padding:0 16px 10px;background:rgba(15,2,37,0.85);backdrop-filter:blur(12px);flex-shrink:0">
+    <div class="level-tabs" style="margin-bottom:0">
+      <button class="level-tab active-n4" id="kl-n4" onclick="showKanjiList(4)">N4</button>
+      <button class="level-tab" id="kl-n3" onclick="showKanjiList(3)">N3</button>
+      <button class="level-tab" id="kl-n2" onclick="showKanjiList(2)">N2</button>
+    </div>
+  </div>
+  <div class="scroll" id="kanjiListScroll" style="padding-top:12px"></div>
+</div>
+
+<!-- ======== QUIZ JLPT ======== -->
+<div id="screen-quiz" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goScreen('home')">←</button>
+    <span style="font-size:15px;font-weight:800">📝 Examen JLPT</span>
+    <span id="quiz-counter" style="font-size:12px;font-weight:700;color:var(--tx3)">1/10</span>
+  </div>
+  <div style="padding:0 16px 10px;background:rgba(15,2,37,0.85);backdrop-filter:blur(12px);flex-shrink:0">
+    <div class="level-tabs" style="margin-bottom:0">
+      <button class="level-tab active-n4" id="qt-n4" onclick="startQuiz(4)">N4</button>
+      <button class="level-tab" id="qt-n3" onclick="startQuiz(3)">N3</button>
+      <button class="level-tab" id="qt-n2" onclick="startQuiz(2)">N2</button>
+    </div>
+  </div>
+  <div class="xp-wrap" style="padding-top:6px">
+    <div class="xp-row"><span id="quiz-type-lbl" style="color:var(--gold);font-weight:800">Lectura</span><span id="xp-text-q">0 / 100 XP</span></div>
+    <div class="xp-track"><div class="xp-fill" id="xp-fill-q" style="width:0%"></div></div>
+  </div>
+  <div class="scroll" id="quizScroll">
+    <div id="quizContent"></div>
+  </div>
+</div>
+
+<!-- ======== FLASHCARDS ======== -->
+<div id="screen-flash" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goScreen('home')">←</button>
+    <span id="flash-title" style="font-size:15px;font-weight:800">Lectura de Kanji</span>
+    <span id="flash-counter" style="font-size:13px;font-weight:700;color:var(--tx3)">1/10</span>
+  </div>
+  <div class="xp-wrap">
+    <div class="xp-row"><span id="flash-lvl-lbl" style="color:var(--cyan)">N4</span><span id="xp-text2">0 / 100 XP</span></div>
+    <div class="xp-track"><div class="xp-fill" id="xp-fill2" style="width:0%"></div></div>
+  </div>
+  <div class="scroll">
+    <div class="level-tabs" id="flash-level-tabs">
+      <button class="level-tab active-n4" id="tab-n4" onclick="selectLevel(4)">N4</button>
+      <button class="level-tab" id="tab-n3" onclick="selectLevel(3)">N3</button>
+      <button class="level-tab" id="tab-n2" onclick="selectLevel(2)">N2</button>
+    </div>
+
+    <!-- Botón orden -->
+    <div id="flash-order-wrap" style="display:flex;gap:8px;margin-bottom:12px">
+      <button id="btn-order-random" onclick="setFlashOrder('random')"
+        style="flex:1;padding:8px;border-radius:var(--rs);font-size:12px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;transition:all .18s;border:1px solid rgba(192,132,252,.35);background:rgba(192,132,252,.18);color:var(--p)">
+        🎲 Aleatorio
+      </button>
+      <button id="btn-order-order" onclick="setFlashOrder('order')"
+        style="flex:1;padding:8px;border-radius:var(--rs);font-size:12px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;transition:all .18s;border:1px solid rgba(192,132,252,.15);background:transparent;color:var(--tx3)">
+        📋 En orden
+      </button>
+    </div>
+
+    <div class="session-meta">
+      <span style="color:var(--tx3);font-size:12px;font-weight:700" id="progress-lbl">Sesión en curso</span>
+      <span><span class="s-right" id="score-right">✓ 0</span> &nbsp; <span class="s-wrong" id="score-wrong">✗ 0</span></span>
+    </div>
+    <div class="session-progress"><div class="session-fill" id="session-fill" style="width:0%"></div></div>
+
+    <div class="flash-outer">
+      <div class="flash-card" id="flashCard" onclick="revealCard()">
+        <div id="flashSub" style="margin-bottom:6px;min-height:20px"></div>
+        <div class="kanji-big jp" id="flashKanji">食</div>
+        <div class="flash-hint" id="flashHint">Toca para ver la lectura</div>
+        <div id="flashReveal" style="display:none">
+          <div class="flash-reading jp" id="flashReading"></div>
+          <div class="flash-meaning" id="flashMeaning"></div>
+          <div class="flash-example jp" id="flashExample"></div>
+          <div class="flash-example-tr" id="flashExampleTr"></div>
+          <div id="flashAltWrap" style="display:none">
+            <div class="flash-alt-label">⚡ Otras lecturas en este nivel</div>
+            <div class="flash-alt-readings" id="flashAlt"></div>
+          </div>
+        </div>
+        <span class="tap-hint-pill" id="tapHint">toca ↑</span>
+      </div>
+    </div>
+
+    <div class="answer-grid" id="answerBtns" style="display:none">
+      <button class="ans-btn ans-wrong" onclick="answer(false)">✗ No lo sabía</button>
+      <button class="ans-btn ans-right" onclick="answer(true)">✓ ¡Lo supe!</button>
+    </div>
+    <div id="nextBtnWrap" style="display:none;margin-bottom:12px">
+      <button class="btn-next" onclick="nextCard()">Siguiente →</button>
+    </div>
+    <div id="sessionDone" style="display:none">
+      <div class="done-wrap">
+        <div class="done-emoji" id="doneEmoji">🎉</div>
+        <div class="done-title">¡Sesión completada!</div>
+        <div class="done-stars" id="doneStars">⭐⭐⭐</div>
+        <div class="done-sub" id="doneResult"></div>
+        <button class="btn-next" onclick="goScreen('home')" style="margin-bottom:10px">Volver al inicio</button>
+        <br><br>
+        <button class="btn-next" onclick="startSession()" style="background:linear-gradient(135deg,var(--cyan2),var(--p3))">Otra ronda 🔄</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== READING LIST ======== -->
+<div id="screen-reading-list" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goScreen('home')">←</button>
+    <span style="font-size:15px;font-weight:800">Textos de Lectura</span>
+    <div></div>
+  </div>
+  <div class="scroll" id="readingListScroll">
+    <!-- built by JS -->
+  </div>
+  <div class="nav">
+    <button class="nav-btn" onclick="goScreen('home')"><div class="nav-icon">🏠</div>Inicio</button>
+    <button class="nav-btn" onclick="goFlash('reading')"><div class="nav-icon">🃏</div>Flashcards</button>
+    <button class="nav-btn active"><div class="nav-icon">📖</div>Textos</button>
+    <button class="nav-btn" onclick="goScreen('review')"><div class="nav-icon">📊</div>Progreso</button>
+  </div>
+</div>
+
+<!-- ======== READING DETAIL ======== -->
+<div id="screen-reading-detail" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goScreen('reading-list')">←</button>
+    <span id="rd-title" style="font-size:14px;font-weight:800;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Texto</span>
+    <span class="badge" id="rd-badge">N4</span>
+  </div>
+  <div class="scroll" id="rdScroll">
+    <!-- built by JS -->
+  </div>
+</div>
+
+<!-- ======== REVIEW ======== -->
+<div id="screen-review" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goScreen('home')">←</button>
+    <span style="font-size:15px;font-weight:800">Mi Progreso</span>
+    <div></div>
+  </div>
+  <div class="scroll" id="reviewScroll">
+    <!-- built by JS -->
+  </div>
+  <div class="nav">
+    <button class="nav-btn" onclick="goScreen('home')"><div class="nav-icon">🏠</div>Inicio</button>
+    <button class="nav-btn" onclick="goFlash('reading')"><div class="nav-icon">🃏</div>Flashcards</button>
+    <button class="nav-btn" onclick="goScreen('reading-list')"><div class="nav-icon">📖</div>Textos</button>
+    <button class="nav-btn active"><div class="nav-icon">📊</div>Progreso</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const KANJI = [
+// ===== N4 (167 kanji completos JLPT) =====
+{k:'悪',on:'アク',kun:'わる(い)',r:'わる(い)・アク',m:'malo / malvado',n:4,e:'悪化（あっか）:empeoramiento',alt:['最悪（さいあく）:lo peor','悪口（わるぐち）:insulto','悪意（あくい）:mala intención']},
+{k:'安',on:'アン',kun:'やす(い)',r:'やす(い)・アン',m:'barato / tranquilo',n:4,e:'安全（あんぜん）:seguridad',alt:['安心（あんしん）:tranquilidad','不安（ふあん）:ansiedad','安定（あんてい）:estabilidad']},
+{k:'暗',on:'アン',kun:'くら(い)',r:'くら(い)・アン',m:'oscuro',n:4,e:'暗い（くらい）:oscuro',alt:['暗記（あんき）:memorizar','暗号（あんごう）:código','明暗（めいあん）:luz y sombra']},
+{k:'以',on:'イ',kun:'—',r:'イ',m:'por medio de / desde',n:4,e:'以上（いじょう）:más de',alt:['以下（いか）:menos de','以外（いがい）:excepto','以来（いらい）:desde entonces']},
+{k:'医',on:'イ',kun:'—',r:'イ',m:'medicina / médico',n:4,e:'医者（いしゃ）:médico',alt:['医学（いがく）:medicina','医療（いりょう）:atención médica','歯医者（はいしゃ）:dentista']},
+{k:'意',on:'イ',kun:'—',r:'イ',m:'intención / significado',n:4,e:'意見（いけん）:opinión',alt:['意味（いみ）:significado','注意（ちゅうい）:atención','用意（ようい）:preparación']},
+{k:'育',on:'イク',kun:'そだ(てる)',r:'そだ(てる)・イク',m:'criar / educar',n:4,e:'教育（きょういく）:educación',alt:['育てる（そだてる）:criar','体育（たいいく）:educación física','発育（はついく）:desarrollo']},
+{k:'員',on:'イン',kun:'—',r:'イン',m:'miembro / empleado',n:4,e:'社員（しゃいん）:empleado',alt:['店員（てんいん）:dependiente','会員（かいいん）:socio','全員（ぜんいん）:todos']},
+{k:'院',on:'イン',kun:'—',r:'イン',m:'institución / hospital',n:4,e:'病院（びょういん）:hospital',alt:['美容院（びよういん）:peluquería','大学院（だいがくいん）:posgrado','入院（にゅういん）:hospitalización']},
+{k:'飲',on:'イン',kun:'の(む)',r:'の(む)・イン',m:'beber',n:4,e:'飲み物（のみもの）:bebida',alt:['飲食（いんしょく）:comer y beber','飲料（いんりょう）:bebida/líquido','飲み会（のみかい）:reunión para beber']},
+{k:'運',on:'ウン',kun:'はこ(ぶ)',r:'はこ(ぶ)・ウン',m:'transportar / suerte',n:4,e:'運動（うんどう）:ejercicio',alt:['運転（うんてん）:conducir','運命（うんめい）:destino','幸運（こううん）:buena suerte']},
+{k:'泳',on:'エイ',kun:'およ(ぐ)',r:'およ(ぐ)・エイ',m:'nadar',n:4,e:'水泳（すいえい）:natación',alt:['平泳ぎ（ひらおよぎ）:braza','背泳ぎ（せおよぎ）:espalda','遠泳（えんえい）:natación de larga distancia']},
+{k:'駅',on:'エキ',kun:'—',r:'エキ',m:'estación de tren',n:4,e:'駅前（えきまえ）:frente a la estación',alt:['駅員（えきいん）:empleado de estación','終点駅（しゅうてんえき）:estación final','近くの駅（ちかくのえき）:estación cercana']},
+{k:'屋',on:'オク',kun:'や',r:'や・オク',m:'habitación / tienda',n:4,e:'本屋（ほんや）:librería',alt:['部屋（へや）:habitación','八百屋（やおや）:verdulería','肉屋（にくや）:carnicería']},
+{k:'音',on:'オン',kun:'おと',r:'おと・オン',m:'sonido',n:4,e:'音楽（おんがく）:música',alt:['発音（はつおん）:pronunciación','音声（おんせい）:voz','騒音（そうおん）:ruido']},
+{k:'下',on:'カ',kun:'した',r:'した・カ',m:'abajo / bajar',n:4,e:'地下（ちか）:subterráneo',alt:['以下（いか）:menos de','低下（ていか）:descenso','地下鉄（ちかてつ）:metro']},
+{k:'化',on:'カ',kun:'ば(ける)',r:'ば(ける)・カ',m:'transformarse / cambiar',n:4,e:'文化（ぶんか）:cultura',alt:['変化（へんか）:cambio','近代化（きんだいか）:modernización','化学（かがく）:química']},
+{k:'歌',on:'カ',kun:'うた',r:'うた・カ',m:'canción / cantar',n:4,e:'歌手（かしゅ）:cantante',alt:['歌詞（かし）:letra','国歌（こっか）:himno nacional','歌う（うたう）:cantar']},
+{k:'家',on:'カ',kun:'いえ',r:'いえ・カ',m:'casa / familia',n:4,e:'家族（かぞく）:familia',alt:['家庭（かてい）:hogar','作家（さっか）:escritor','専門家（せんもんか）:especialista']},
+{k:'夏',on:'カ',kun:'なつ',r:'なつ・カ',m:'verano',n:4,e:'夏休み（なつやすみ）:vacaciones de verano',alt:['夏季（かき）:temporada de verano','真夏（まなつ）:pleno verano','初夏（しょか）:principios de verano']},
+{k:'会',on:'カイ',kun:'あ(う)',r:'あ(う)・カイ',m:'reunirse / encontrarse',n:4,e:'会議（かいぎ）:reunión',alt:['社会（しゃかい）:sociedad','機会（きかい）:oportunidad','再会（さいかい）:reencuentro']},
+{k:'回',on:'カイ',kun:'まわ(る)',r:'まわ(る)・カイ',m:'girar / vez',n:4,e:'回転（かいてん）:rotación',alt:['今回（こんかい）:esta vez','毎回（まいかい）:cada vez','回収（かいしゅう）:recolección']},
+{k:'海',on:'カイ',kun:'うみ',r:'うみ・カイ',m:'mar',n:4,e:'海外（かいがい）:extranjero',alt:['海岸（かいがん）:costa','海水（かいすい）:agua de mar','日本海（にほんかい）:Mar de Japón']},
+{k:'開',on:'カイ',kun:'ひら(く)',r:'ひら(く)・カイ',m:'abrir',n:4,e:'開店（かいてん）:apertura de tienda',alt:['開発（かいはつ）:desarrollo','公開（こうかい）:publicación','開始（かいし）:inicio']},
+{k:'界',on:'カイ',kun:'—',r:'カイ',m:'mundo / límite',n:4,e:'世界（せかい）:mundo',alt:['業界（ぎょうかい）:sector','限界（げんかい）:límite','境界（きょうかい）:frontera']},
+{k:'角',on:'カク',kun:'かど',r:'かど・カク',m:'ángulo / esquina',n:4,e:'角（かど）:esquina',alt:['四角（しかく）:cuadrado','三角（さんかく）:triángulo','角度（かくど）:ángulo']},
+{k:'楽',on:'ガク',kun:'たの(しい)',r:'たの(しい)・ガク',m:'alegre / música',n:4,e:'音楽（おんがく）:música',alt:['楽しむ（たのしむ）:disfrutar','気楽（きらく）:sin preocupaciones','娯楽（ごらく）:entretenimiento']},
+{k:'活',on:'カツ',kun:'—',r:'カツ',m:'vivo / actividad',n:4,e:'生活（せいかつ）:vida cotidiana',alt:['活動（かつどう）:actividad','活用（かつよう）:utilización','活躍（かつやく）:papel activo']},
+{k:'間',on:'カン',kun:'あいだ',r:'あいだ・カン',m:'espacio / intervalo',n:4,e:'時間（じかん）:tiempo',alt:['人間（にんげん）:ser humano','間違い（まちがい）:error','空間（くうかん）:espacio']},
+{k:'関',on:'カン',kun:'せき',r:'せき・カン',m:'barrera / relación',n:4,e:'関係（かんけい）:relación',alt:['関心（かんしん）:interés','関連（かんれん）:conexión','玄関（げんかん）:entrada']},
+{k:'館',on:'カン',kun:'—',r:'カン',m:'edificio público',n:4,e:'図書館（としょかん）:biblioteca',alt:['旅館（りょかん）:posada japonesa','体育館（たいいくかん）:gimnasio','映画館（えいがかん）:cine']},
+{k:'顔',on:'ガン',kun:'かお',r:'かお・ガン',m:'cara / rostro',n:4,e:'顔色（かおいろ）:complexión',alt:['似顔絵（にがおえ）:retrato','洗顔（せんがん）:lavarse la cara','笑顔（えがお）:sonrisa']},
+{k:'帰',on:'キ',kun:'かえ(る)',r:'かえ(る)・キ',m:'volver / regresar',n:4,e:'帰宅（きたく）:volver a casa',alt:['帰国（きこく）:regresar al país','帰省（きせい）:visitar la familia','帰り（かえり）:vuelta']},
+{k:'起',on:'キ',kun:'お(きる)',r:'お(きる)・キ',m:'levantarse / suceder',n:4,e:'起床（きしょう）:levantarse',alt:['起動（きどう）:arrancar','起源（きげん）:origen','早起き（はやおき）:madrugar']},
+{k:'記',on:'キ',kun:'しる(す)',r:'しる(す)・キ',m:'anotar / registrar',n:4,e:'日記（にっき）:diario',alt:['記念（きねん）:conmemoración','記録（きろく）:récord','記事（きじ）:artículo']},
+{k:'気',on:'キ',kun:'き',r:'き・キ',m:'espíritu / energía / ánimo',n:4,e:'天気（てんき）:tiempo meteorológico',alt:['元気（げんき）:salud/energía','気持ち（きもち）:sentimiento','人気（にんき）:popularidad']},
+{k:'急',on:'キュウ',kun:'いそ(ぐ)',r:'いそ(ぐ)・キュウ',m:'apresurarse / urgente',n:4,e:'急行（きゅうこう）:tren expreso',alt:['緊急（きんきゅう）:urgencia','急速（きゅうそく）:rápido','特急（とっきゅう）:súper expreso']},
+{k:'牛',on:'ギュウ',kun:'うし',r:'うし・ギュウ',m:'vaca / buey',n:4,e:'牛肉（ぎゅうにく）:carne de vaca',alt:['牛乳（ぎゅうにゅう）:leche','牛丼（ぎゅうどん）:bowl de ternera','水牛（すいぎゅう）:búfalo']},
+{k:'魚',on:'ギョ',kun:'さかな',r:'さかな・ギョ',m:'pez / pescado',n:4,e:'魚屋（さかなや）:pescadería',alt:['金魚（きんぎょ）:pez dorado','熱帯魚（ねったいぎょ）:pez tropical','魚介類（ぎょかいるい）:mariscos']},
+{k:'京',on:'キョウ',kun:'—',r:'キョウ',m:'capital',n:4,e:'東京（とうきょう）:Tokio',alt:['京都（きょうと）:Kioto','上京（じょうきょう）:ir a Tokio','京阪（けいはん）:Kioto-Osaka']},
+{k:'強',on:'キョウ',kun:'つよ(い)',r:'つよ(い)・キョウ',m:'fuerte',n:4,e:'強い（つよい）:fuerte',alt:['勉強（べんきょう）:estudio','強制（きょうせい）:forzar','最強（さいきょう）:el más fuerte']},
+{k:'教',on:'キョウ',kun:'おし(える)',r:'おし(える)・キョウ',m:'enseñar / educación',n:4,e:'教育（きょういく）:educación',alt:['教師（きょうし）:maestro','教科書（きょうかしょ）:libro de texto','宗教（しゅうきょう）:religión']},
+{k:'兄',on:'キョウ',kun:'あに',r:'あに・キョウ',m:'hermano mayor',n:4,e:'兄弟（きょうだい）:hermanos',alt:['お兄さん（おにいさん）:hermano mayor','義兄（ぎけい）:cuñado mayor']},
+{k:'近',on:'キン',kun:'ちか(い)',r:'ちか(い)・キン',m:'cercano',n:4,e:'近所（きんじょ）:vecindario',alt:['最近（さいきん）:últimamente','近代（きんだい）:era moderna','付近（ふきん）:cercanías']},
+{k:'銀',on:'ギン',kun:'—',r:'ギン',m:'plata / banco',n:4,e:'銀行（ぎんこう）:banco',alt:['銀色（ぎんいろ）:color plata','銀メダル（ぎんメダル）:medalla de plata','銀座（ぎんざ）:Ginza']},
+{k:'空',on:'クウ',kun:'そら',r:'そら・クウ',m:'cielo / vacío',n:4,e:'空港（くうこう）:aeropuerto',alt:['空気（くうき）:aire','青空（あおぞら）:cielo azul','空間（くうかん）:espacio']},
+{k:'計',on:'ケイ',kun:'はか(る)',r:'はか(る)・ケイ',m:'medir / calcular',n:4,e:'時計（とけい）:reloj',alt:['計算（けいさん）:cálculo','合計（ごうけい）:total','体温計（たいおんけい）:termómetro']},
+{k:'見',on:'ケン',kun:'み(る)',r:'み(る)・ケン',m:'ver / mirar',n:4,e:'見学（けんがく）:visita educativa',alt:['意見（いけん）:opinión','見本（みほん）:muestra','発見（はっけん）:descubrimiento']},
+{k:'元',on:'ゲン',kun:'もと',r:'もと・ゲン',m:'origen / principal',n:4,e:'元気（げんき）:energía/salud',alt:['元日（がんじつ）:Año Nuevo','地元（じもと）:local','次元（じげん）:dimensión']},
+{k:'言',on:'ゲン',kun:'い(う)',r:'い(う)・ゲン',m:'decir / palabra',n:4,e:'言葉（ことば）:palabra',alt:['言語（げんご）:lenguaje','発言（はつげん）:declaración','名言（めいげん）:cita famosa']},
+{k:'古',on:'コ',kun:'ふる(い)',r:'ふる(い)・コ',m:'antiguo / viejo',n:4,e:'古い（ふるい）:viejo',alt:['古代（こだい）:antigüedad','古典（こてん）:clásico','中古（ちゅうこ）:segunda mano']},
+{k:'午',on:'ゴ',kun:'—',r:'ゴ',m:'mediodía',n:4,e:'午後（ごご）:tarde',alt:['午前（ごぜん）:mañana','正午（しょうご）:mediodía']},
+{k:'後',on:'ゴ',kun:'あと',r:'あと・ゴ',m:'después / detrás',n:4,e:'午後（ごご）:tarde',alt:['最後（さいご）:el último','後輩（こうはい）:júnior','事後（じご）:después del hecho']},
+{k:'語',on:'ゴ',kun:'かた(る)',r:'かた(る)・ゴ',m:'hablar / idioma',n:4,e:'日本語（にほんご）:japonés',alt:['英語（えいご）:inglés','語学（ごがく）:estudio de idiomas','物語（ものがたり）:cuento']},
+{k:'工',on:'コウ',kun:'—',r:'コウ',m:'trabajo / artesanía',n:4,e:'工場（こうじょう）:fábrica',alt:['工事（こうじ）:obra','工夫（くふう）:ingenio','人工（じんこう）:artificial']},
+{k:'公',on:'コウ',kun:'おおやけ',r:'おおやけ・コウ',m:'público / justo',n:4,e:'公園（こうえん）:parque',alt:['公共（こうきょう）:público','公式（こうしき）:oficial','公務員（こうむいん）:funcionario']},
+{k:'広',on:'コウ',kun:'ひろ(い)',r:'ひろ(い)・コウ',m:'amplio / ancho',n:4,e:'広い（ひろい）:amplio',alt:['広告（こうこく）:anuncio','広場（ひろば）:plaza','広大（こうだい）:vasto']},
+{k:'交',on:'コウ',kun:'まじ(わる)',r:'まじ(わる)・コウ',m:'cruzar / intercambiar',n:4,e:'交通（こうつう）:tráfico',alt:['交換（こうかん）:intercambio','交差点（こうさてん）:cruce','外交（がいこう）:diplomacia']},
+{k:'光',on:'コウ',kun:'ひかり',r:'ひかり・コウ',m:'luz / brillar',n:4,e:'観光（かんこう）:turismo',alt:['光線（こうせん）:rayo de luz','日光（にっこう）:luz solar','夜光（やこう）:luminiscencia']},
+{k:'考',on:'コウ',kun:'かんが(える)',r:'かんが(える)・コウ',m:'reflexionar / considerar',n:4,e:'考える（かんがえる）:pensar',alt:['考慮（こうりょ）:consideración','参考（さんこう）:referencia','思考（しこう）:pensamiento']},
+{k:'行',on:'コウ',kun:'い(く)',r:'い(く)・コウ',m:'ir',n:4,e:'旅行（りょこう）:viaje',alt:['銀行（ぎんこう）:banco','行動（こうどう）:conducta','通行（つうこう）:tránsito']},
+{k:'高',on:'コウ',kun:'たか(い)',r:'たか(い)・コウ',m:'alto / caro',n:4,e:'高校（こうこう）:bachillerato',alt:['高い（たかい）:alto/caro','最高（さいこう）:el mejor','高齢（こうれい）:vejez']},
+{k:'合',on:'ゴウ',kun:'あ(う)',r:'あ(う)・ゴウ',m:'combinar / coincidir',n:4,e:'合計（ごうけい）:total',alt:['試合（しあい）:partido','合格（ごうかく）:aprobar','集合（しゅうごう）:reunión']},
+{k:'黒',on:'コク',kun:'くろ',r:'くろ・コク',m:'negro',n:4,e:'黒板（こくばん）:pizarra',alt:['黒い（くろい）:negro','真っ黒（まっくろ）:muy negro','黒字（くろじ）:superávit']},
+{k:'今',on:'コン',kun:'いま',r:'いま・コン',m:'ahora / presente',n:4,e:'今日（きょう）:hoy',alt:['今週（こんしゅう）:esta semana','今年（ことし）:este año','今後（こんご）:de ahora en adelante']},
+{k:'困',on:'コン',kun:'こま(る)',r:'こま(る)・コン',m:'tener problemas / estar en apuros',n:4,e:'困る（こまる）:tener problemas',alt:['困難（こんなん）:dificultad','貧困（ひんこん）:pobreza','困惑（こんわく）:confusión']},
+{k:'作',on:'サク',kun:'つく(る)',r:'つく(る)・サク',m:'hacer / crear',n:4,e:'作品（さくひん）:obra',alt:['作家（さっか）:escritor','工作（こうさく）:manualidades','傑作（けっさく）:obra maestra']},
+{k:'市',on:'シ',kun:'いち',r:'いち・シ',m:'ciudad / mercado',n:4,e:'市場（いちば）:mercado',alt:['市内（しない）:dentro de la ciudad','市民（しみん）:ciudadano','都市（とし）:ciudad']},
+{k:'思',on:'シ',kun:'おも(う)',r:'おも(う)・シ',m:'pensar / creer',n:4,e:'思想（しそう）:pensamiento',alt:['不思議（ふしぎ）:misterioso','思い出（おもいで）:recuerdo','意思（いし）:intención']},
+{k:'止',on:'シ',kun:'と(まる)',r:'と(まる)・シ',m:'parar / detener',n:4,e:'停止（ていし）:detención',alt:['中止（ちゅうし）:cancelación','禁止（きんし）:prohibición','止まる（とまる）:parar']},
+{k:'私',on:'シ',kun:'わたし',r:'わたし・シ',m:'yo / privado',n:4,e:'私立（しりつ）:privado',alt:['私生活（しせいかつ）:vida privada','私物（しぶつ）:pertenencias personales']},
+{k:'使',on:'シ',kun:'つか(う)',r:'つか(う)・シ',m:'usar / emplear',n:4,e:'使用（しよう）:uso',alt:['大使（たいし）:embajador','天使（てんし）:ángel','使い方（つかいかた）:forma de usar']},
+{k:'始',on:'シ',kun:'はじ(める)',r:'はじ(める)・シ',m:'comenzar / empezar',n:4,e:'開始（かいし）:inicio',alt:['始まる（はじまる）:comenzar','始業（しぎょう）:inicio del trabajo','原始（げんし）:primitivo']},
+{k:'姉',on:'シ',kun:'あね',r:'あね・シ',m:'hermana mayor',n:4,e:'姉（あね）:hermana mayor',alt:['お姉さん（おねえさん）:hermana mayor (formal)','姉妹（しまい）:hermanas','姉弟（してい）:hermana y hermano']},
+{k:'試',on:'シ',kun:'こころ(みる)',r:'こころ(みる)・シ',m:'probar / examinar',n:4,e:'試験（しけん）:examen',alt:['試合（しあい）:partido','試み（こころみ）:intento','模試（もし）:examen de prueba']},
+{k:'字',on:'ジ',kun:'—',r:'ジ',m:'letra / carácter',n:4,e:'漢字（かんじ）:kanji',alt:['文字（もじ）:carácter','字幕（じまく）:subtítulos','大文字（おおもじ）:mayúscula']},
+{k:'持',on:'ジ',kun:'も(つ)',r:'も(つ)・ジ',m:'sostener / tener',n:4,e:'気持ち（きもち）:sentimiento',alt:['持続（じぞく）:continuación','支持（しじ）:apoyo','所持（しょじ）:posesión']},
+{k:'時',on:'ジ',kun:'とき',r:'とき・ジ',m:'tiempo / hora',n:4,e:'時間（じかん）:tiempo',alt:['時代（じだい）:era','臨時（りんじ）:temporal','同時（どうじ）:simultáneo']},
+{k:'自',on:'ジ',kun:'みずか(ら)',r:'みずか(ら)・ジ',m:'uno mismo / propio',n:4,e:'自分（じぶん）:uno mismo',alt:['自動（じどう）:automático','自由（じゆう）:libertad','自然（しぜん）:naturaleza']},
+{k:'室',on:'シツ',kun:'—',r:'シツ',m:'habitación / sala',n:4,e:'教室（きょうしつ）:aula',alt:['寝室（しんしつ）:dormitorio','待合室（まちあいしつ）:sala de espera','室内（しつない）:interior']},
+{k:'社',on:'シャ',kun:'やしろ',r:'やしろ・シャ',m:'empresa / santuario',n:4,e:'会社（かいしゃ）:empresa',alt:['社会（しゃかい）:sociedad','神社（じんじゃ）:santuario','社員（しゃいん）:empleado']},
+{k:'弱',on:'ジャク',kun:'よわ(い)',r:'よわ(い)・ジャク',m:'débil',n:4,e:'弱い（よわい）:débil',alt:['弱点（じゃくてん）:punto débil','弱者（じゃくしゃ）:los débiles','虚弱（きょじゃく）:frágil']},
+{k:'首',on:'シュ',kun:'くび',r:'くび・シュ',m:'cuello / jefe',n:4,e:'首都（しゅと）:capital',alt:['首相（しゅしょう）:primer ministro','手首（てくび）:muñeca','首輪（くびわ）:collar']},
+{k:'習',on:'シュウ',kun:'なら(う)',r:'なら(う)・シュウ',m:'aprender / practicar',n:4,e:'練習（れんしゅう）:práctica',alt:['学習（がくしゅう）:aprendizaje','習慣（しゅうかん）:hábito','復習（ふくしゅう）:repasar']},
+{k:'週',on:'シュウ',kun:'—',r:'シュウ',m:'semana',n:4,e:'先週（せんしゅう）:semana pasada',alt:['今週（こんしゅう）:esta semana','来週（らいしゅう）:semana que viene','毎週（まいしゅう）:cada semana']},
+{k:'春',on:'シュン',kun:'はる',r:'はる・シュン',m:'primavera',n:4,e:'春休み（はるやすみ）:vacaciones de primavera',alt:['青春（せいしゅん）:juventud','春分（しゅんぶん）:equinoccio de primavera','立春（りっしゅん）:inicio de primavera']},
+{k:'書',on:'ショ',kun:'か(く)',r:'か(く)・ショ',m:'escribir',n:4,e:'図書館（としょかん）:biblioteca',alt:['辞書（じしょ）:diccionario','書道（しょどう）:caligrafía','教科書（きょうかしょ）:libro de texto']},
+{k:'少',on:'ショウ',kun:'すく(ない)',r:'すく(ない)・ショウ',m:'poco / joven',n:4,e:'少し（すこし）:un poco',alt:['少年（しょうねん）:chico joven','少数（しょうすう）:minoría','減少（げんしょう）:disminución']},
+{k:'場',on:'ジョウ',kun:'ば',r:'ば・ジョウ',m:'lugar / campo',n:4,e:'場所（ばしょ）:lugar',alt:['工場（こうじょう）:fábrica','広場（ひろば）:plaza','入場（にゅうじょう）:entrada']},
+{k:'色',on:'ショク',kun:'いろ',r:'いろ・ショク',m:'color',n:4,e:'顔色（かおいろ）:complexión',alt:['色々（いろいろ）:varios','特色（とくしょく）:característica','黄色（きいろ）:amarillo']},
+{k:'食',on:'ショク',kun:'た(べる)',r:'た(べる)・ショク',m:'comer / comida',n:4,e:'食事（しょくじ）:comida',alt:['食堂（しょくどう）:comedor','朝食（ちょうしょく）:desayuno','食べ物（たべもの）:alimento']},
+{k:'心',on:'シン',kun:'こころ',r:'こころ・シン',m:'corazón / mente',n:4,e:'安心（あんしん）:tranquilidad',alt:['中心（ちゅうしん）:centro','関心（かんしん）:interés','心配（しんぱい）:preocupación']},
+{k:'新',on:'シン',kun:'あたら(しい)',r:'あたら(しい)・シン',m:'nuevo',n:4,e:'新聞（しんぶん）:periódico',alt:['最新（さいしん）:lo más nuevo','新幹線（しんかんせん）:tren bala','革新（かくしん）:innovación']},
+{k:'親',on:'シン',kun:'おや',r:'おや・シン',m:'padre/madre / íntimo',n:4,e:'両親（りょうしん）:padres',alt:['親切（しんせつ）:amabilidad','親友（しんゆう）:mejor amigo','父親（ちちおや）:padre']},
+{k:'図',on:'ズ',kun:'—',r:'ズ',m:'figura / mapa',n:4,e:'図書館（としょかん）:biblioteca',alt:['地図（ちず）:mapa','図形（ずけい）:figura geométrica','意図（いと）:intención']},
+{k:'数',on:'スウ',kun:'かず',r:'かず・スウ',m:'número / contar',n:4,e:'数学（すうがく）:matemáticas',alt:['数字（すうじ）:cifra','多数（たすう）:multitud','少数（しょうすう）:minoría']},
+{k:'星',on:'セイ',kun:'ほし',r:'ほし・セイ',m:'estrella',n:4,e:'星座（せいざ）:constelación',alt:['金星（きんせい）:Venus','火星（かせい）:Marte','流れ星（ながれぼし）:estrella fugaz']},
+{k:'晴',on:'セイ',kun:'は(れる)',r:'は(れる)・セイ',m:'claro / despejado',n:4,e:'晴れ（はれ）:buen tiempo',alt:['晴天（せいてん）:cielo despejado','快晴（かいせい）:despejado','晴れ間（はれま）:momento soleado']},
+{k:'切',on:'セツ',kun:'き(る)',r:'き(る)・セツ',m:'cortar',n:4,e:'親切（しんせつ）:amabilidad',alt:['大切（たいせつ）:importante','切符（きっぷ）:billete','切れる（きれる）:cortarse']},
+{k:'雪',on:'セツ',kun:'ゆき',r:'ゆき・セツ',m:'nieve',n:4,e:'雪山（ゆきやま）:montaña nevada',alt:['大雪（おおゆき）:nevada fuerte','雪国（ゆきぐに）:país de nieve','積雪（せきせつ）:nieve acumulada']},
+{k:'専',on:'セン',kun:'もっぱ(ら)',r:'もっぱ(ら)・セン',m:'especializado / exclusivo',n:4,e:'専門（せんもん）:especialidad',alt:['専攻（せんこう）:especialización','専業（せんぎょう）:trabajo a tiempo completo','専用（せんよう）:uso exclusivo']},
+{k:'洗',on:'セン',kun:'あら(う)',r:'あら(う)・セン',m:'lavar',n:4,e:'洗濯（せんたく）:lavandería',alt:['洗顔（せんがん）:lavarse la cara','洗い物（あらいもの）:ropa por lavar','洗車（せんしゃ）:lavar el coche']},
+{k:'先',on:'セン',kun:'さき',r:'さき・セン',m:'antes / delante',n:4,e:'先生（せんせい）:profesor',alt:['先週（せんしゅう）:semana pasada','先輩（せんぱい）:senior','優先（ゆうせん）:prioridad']},
+{k:'全',on:'ゼン',kun:'すべ(て)',r:'すべ(て)・ゼン',m:'todo / completo',n:4,e:'全員（ぜんいん）:todos',alt:['全部（ぜんぶ）:todo','安全（あんぜん）:seguridad','全国（ぜんこく）:todo el país']},
+{k:'走',on:'ソウ',kun:'はし(る)',r:'はし(る)・ソウ',m:'correr',n:4,e:'走る（はしる）:correr',alt:['完走（かんそう）:completar una carrera','走者（そうしゃ）:corredor','脱走（だっそう）:escapar']},
+{k:'送',on:'ソウ',kun:'おく(る)',r:'おく(る)・ソウ',m:'enviar / acompañar',n:4,e:'送る（おくる）:enviar',alt:['放送（ほうそう）:emisión','配送（はいそう）:entrega','送料（そうりょう）:gastos de envío']},
+{k:'多',on:'タ',kun:'おお(い)',r:'おお(い)・タ',m:'mucho / muchos',n:4,e:'多い（おおい）:mucho',alt:['多分（たぶん）:probablemente','多数（たすう）:multitud','多様（たよう）:diverso']},
+{k:'待',on:'タイ',kun:'ま(つ)',r:'ま(つ)・タイ',m:'esperar',n:4,e:'期待（きたい）:expectativa',alt:['待合室（まちあいしつ）:sala de espera','招待（しょうたい）:invitación','待機（たいき）:espera en alerta']},
+{k:'体',on:'タイ',kun:'からだ',r:'からだ・タイ',m:'cuerpo',n:4,e:'体育（たいいく）:educación física',alt:['体重（たいじゅう）:peso corporal','身体（しんたい）:cuerpo','体験（たいけん）:experiencia']},
+{k:'台',on:'ダイ',kun:'—',r:'ダイ',m:'plataforma / contador de máquinas',n:4,e:'台所（だいどころ）:cocina',alt:['台風（たいふう）:tifón','舞台（ぶたい）:escenario','台本（だいほん）:guión']},
+{k:'代',on:'ダイ',kun:'か(わる)',r:'か(わる)・ダイ',m:'generación / sustituir',n:4,e:'時代（じだい）:era',alt:['代表（だいひょう）:representante','現代（げんだい）:época moderna','交代（こうたい）:turno/relevo']},
+{k:'大',on:'ダイ',kun:'おお(きい)',r:'おお(きい)・ダイ',m:'grande',n:4,e:'大学（だいがく）:universidad',alt:['大切（たいせつ）:importante','大人（おとな）:adulto','偉大（いだい）:grandioso']},
+{k:'男',on:'ダン',kun:'おとこ',r:'おとこ・ダン',m:'hombre / masculino',n:4,e:'男性（だんせい）:hombre',alt:['男子（だんし）:chico','長男（ちょうなん）:hijo mayor','男女（だんじょ）:hombres y mujeres']},
+{k:'地',on:'チ',kun:'—',r:'チ',m:'tierra / lugar',n:4,e:'地下（ちか）:subterráneo',alt:['地図（ちず）:mapa','土地（とち）:terreno','地震（じしん）:terremoto']},
+{k:'知',on:'チ',kun:'し(る)',r:'し(る)・チ',m:'saber / conocer',n:4,e:'知識（ちしき）:conocimiento',alt:['知人（ちじん）:conocido','知覚（ちかく）:percepción','無知（むち）:ignorancia']},
+{k:'池',on:'チ',kun:'いけ',r:'いけ・チ',m:'estanque / pila',n:4,e:'電池（でんち）:batería',alt:['池（いけ）:estanque','貯水池（ちょすいち）:embalse']},
+{k:'茶',on:'チャ',kun:'—',r:'チャ',m:'té',n:4,e:'お茶（おちゃ）:té',alt:['茶道（さどう）:ceremonia del té','緑茶（りょくちゃ）:té verde','喫茶店（きっさてん）:cafetería']},
+{k:'着',on:'チャク',kun:'き(る)',r:'き(る)・チャク',m:'ponerse / llegar',n:4,e:'着る（きる）:ponerse ropa',alt:['到着（とうちゃく）:llegada','着地（ちゃくち）:aterrizaje','着物（きもの）:kimono']},
+{k:'昼',on:'チュウ',kun:'ひる',r:'ひる・チュウ',m:'mediodía / tarde',n:4,e:'昼食（ちゅうしょく）:almuerzo',alt:['昼休み（ひるやすみ）:descanso del mediodía','昼寝（ひるね）:siesta','昼間（ひるま）:durante el día']},
+{k:'注',on:'チュウ',kun:'そそ(ぐ)',r:'そそ(ぐ)・チュウ',m:'verter / prestar atención',n:4,e:'注意（ちゅうい）:precaución',alt:['注文（ちゅうもん）:pedido','注射（ちゅうしゃ）:inyección','注目（ちゅうもく）:atención']},
+{k:'長',on:'チョウ',kun:'なが(い)',r:'なが(い)・チョウ',m:'largo / jefe',n:4,e:'校長（こうちょう）:director de escuela',alt:['長い（ながい）:largo','成長（せいちょう）:crecimiento','部長（ぶちょう）:jefe de departamento']},
+{k:'鳥',on:'チョウ',kun:'とり',r:'とり・チョウ',m:'pájaro',n:4,e:'小鳥（ことり）:pajarillo',alt:['鳥肌（とりはだ）:piel de gallina','野鳥（やちょう）:ave silvestre','渡り鳥（わたりどり）:ave migratoria']},
+{k:'朝',on:'チョウ',kun:'あさ',r:'あさ・チョウ',m:'mañana',n:4,e:'朝食（ちょうしょく）:desayuno',alt:['今朝（けさ）:esta mañana','毎朝（まいあさ）:cada mañana','朝日（あさひ）:sol de la mañana']},
+{k:'通',on:'ツウ',kun:'とお(る)',r:'とお(る)・ツウ',m:'pasar / comunicar',n:4,e:'交通（こうつう）:tráfico',alt:['通勤（つうきん）:ir al trabajo','通学（つうがく）:ir a la escuela','普通（ふつう）:normal']},
+{k:'転',on:'テン',kun:'ころ(がる)',r:'ころ(がる)・テン',m:'girar / caer',n:4,e:'運転（うんてん）:conducir',alt:['転校（てんこう）:cambio de escuela','回転（かいてん）:rotación','逆転（ぎゃくてん）:reversión']},
+{k:'電',on:'デン',kun:'—',r:'デン',m:'electricidad',n:4,e:'電車（でんしゃ）:tren',alt:['電話（でんわ）:teléfono','電気（でんき）:electricidad','発電（はつでん）:generación eléctrica']},
+{k:'度',on:'ド',kun:'たび',r:'たび・ド',m:'grado / vez',n:4,e:'今度（こんど）:esta vez',alt:['温度（おんど）:temperatura','程度（ていど）:grado','速度（そくど）:velocidad']},
+{k:'同',on:'ドウ',kun:'おな(じ)',r:'おな(じ)・ドウ',m:'mismo / igual',n:4,e:'同じ（おなじ）:mismo',alt:['同時（どうじ）:simultáneo','同意（どうい）:acuerdo','共同（きょうどう）:cooperación']},
+{k:'動',on:'ドウ',kun:'うご(く)',r:'うご(く)・ドウ',m:'moverse / mover',n:4,e:'運動（うんどう）:ejercicio',alt:['自動（じどう）:automático','活動（かつどう）:actividad','感動（かんどう）:emoción']},
+{k:'道',on:'ドウ',kun:'みち',r:'みち・ドウ',m:'camino / moralidad',n:4,e:'道路（どうろ）:carretera',alt:['柔道（じゅうどう）:judo','書道（しょどう）:caligrafía','北海道（ほっかいどう）:Hokkaido']},
+{k:'答',on:'トウ',kun:'こた(える)',r:'こた(える)・トウ',m:'responder',n:4,e:'答える（こたえる）:responder',alt:['回答（かいとう）:respuesta','解答（かいとう）:solución','答案（とうあん）:hoja de respuestas']},
+{k:'当',on:'トウ',kun:'あ(たる)',r:'あ(たる)・トウ',m:'acertar / corresponder',n:4,e:'当然（とうぜん）:naturalmente',alt:['担当（たんとう）:encargado','本当（ほんとう）:verdad','当日（とうじつ）:ese día']},
+{k:'冬',on:'トウ',kun:'ふゆ',r:'ふゆ・トウ',m:'invierno',n:4,e:'冬休み（ふゆやすみ）:vacaciones de invierno',alt:['冬至（とうじ）:solsticio de invierno','真冬（まふゆ）:pleno invierno','初冬（しょとう）:principios de invierno']},
+{k:'特',on:'トク',kun:'—',r:'トク',m:'especial',n:4,e:'特別（とくべつ）:especial',alt:['特急（とっきゅう）:súper expreso','独特（どくとく）:peculiar','特徴（とくちょう）:característica']},
+{k:'読',on:'ドク',kun:'よ(む)',r:'よ(む)・ドク',m:'leer',n:4,e:'読書（どくしょ）:lectura',alt:['読者（どくしゃ）:lector','音読（おんどく）:leer en voz alta','読解（どっかい）:comprensión lectora']},
+{k:'内',on:'ナイ',kun:'うち',r:'うち・ナイ',m:'interior / dentro',n:4,e:'国内（こくない）:dentro del país',alt:['以内（いない）:dentro de','室内（しつない）:interior','案内（あんない）:guía/información']},
+{k:'南',on:'ナン',kun:'みなみ',r:'みなみ・ナン',m:'sur',n:4,e:'南口（みなみぐち）:salida sur',alt:['南部（なんぶ）:zona sur','東南（とうなん）:sureste','南米（なんべい）:Sudamérica']},
+{k:'肉',on:'ニク',kun:'—',r:'ニク',m:'carne',n:4,e:'牛肉（ぎゅうにく）:carne de vaca',alt:['豚肉（ぶたにく）:carne de cerdo','皮肉（ひにく）:ironía','肉体（にくたい）:cuerpo físico']},
+{k:'荷',on:'カ',kun:'に',r:'に・カ',m:'carga / equipaje',n:4,e:'荷物（にもつ）:equipaje',alt:['荷台（にだい）:plataforma de carga','入荷（にゅうか）:llegada de mercancía','出荷（しゅっか）:envío']},
+{k:'買',on:'バイ',kun:'か(う)',r:'か(う)・バイ',m:'comprar',n:4,e:'買い物（かいもの）:compras',alt:['売買（ばいばい）:compraventa','買収（ばいしゅう）:adquisición','買い手（かいて）:comprador']},
+{k:'売',on:'バイ',kun:'う(る)',r:'う(る)・バイ',m:'vender',n:4,e:'販売（はんばい）:venta',alt:['売上（うりあげ）:ingresos','売店（ばいてん）:quiosco','売り切れ（うりきれ）:agotado']},
+{k:'発',on:'ハツ',kun:'—',r:'ハツ',m:'salir / emitir',n:4,e:'出発（しゅっぱつ）:partida',alt:['発展（はってん）:desarrollo','発表（はっぴょう）:presentación','発見（はっけん）:descubrimiento']},
+{k:'飯',on:'ハン',kun:'めし',r:'めし・ハン',m:'arroz / comida',n:4,e:'ご飯（ごはん）:arroz/comida',alt:['夕飯（ゆうはん）:cena','朝ご飯（あさごはん）:desayuno','炊飯器（すいはんき）:arrocera']},
+{k:'反',on:'ハン',kun:'そ(る)',r:'そ(る)・ハン',m:'opuesto / rebelarse',n:4,e:'反対（はんたい）:oposición',alt:['反省（はんせい）:reflexión','違反（いはん）:violación','反応（はんのう）:reacción']},
+{k:'番',on:'バン',kun:'—',r:'バン',m:'turno / número',n:4,e:'番号（ばんごう）:número',alt:['一番（いちばん）:el primero/mejor','番組（ばんぐみ）:programa de TV','交番（こうばん）:comisaría de barrio']},
+{k:'悲',on:'ヒ',kun:'かな(しい)',r:'かな(しい)・ヒ',m:'triste',n:4,e:'悲しい（かなしい）:triste',alt:['悲劇（ひげき）:tragedia','悲鳴（ひめい）:grito','悲観（ひかん）:pesimismo']},
+{k:'美',on:'ビ',kun:'うつく(しい)',r:'うつく(しい)・ビ',m:'bello / hermoso',n:4,e:'美しい（うつくしい）:hermoso',alt:['美術（びじゅつ）:bellas artes','美容（びよう）:belleza','美化（びか）:embellecimiento']},
+{k:'鼻',on:'ビ',kun:'はな',r:'はな・ビ',m:'nariz',n:4,e:'鼻水（はなみず）:moco',alt:['鼻血（はなぢ）:hemorragia nasal','小鼻（こばな）:aleta de la nariz','鼻歌（はなうた）:tararear']},
+{k:'病',on:'ビョウ',kun:'やまい',r:'やまい・ビョウ',m:'enfermedad',n:4,e:'病院（びょういん）:hospital',alt:['病気（びょうき）:enfermedad','病室（びょうしつ）:habitación de hospital','大病（たいびょう）:enfermedad grave']},
+{k:'品',on:'ヒン',kun:'しな',r:'しな・ヒン',m:'artículo / calidad',n:4,e:'品物（しなもの）:artículo',alt:['作品（さくひん）:obra','食品（しょくひん）:alimento','品質（ひんしつ）:calidad']},
+{k:'父',on:'フ',kun:'ちち',r:'ちち・フ',m:'padre',n:4,e:'父親（ちちおや）:padre',alt:['祖父（そふ）:abuelo','父母（ふぼ）:padres','義父（ぎふ）:suegro']},
+{k:'部',on:'ブ',kun:'—',r:'ブ',m:'parte / departamento',n:4,e:'全部（ぜんぶ）:todo',alt:['部屋（へや）:habitación','部長（ぶちょう）:jefe de departamento','西部（せいぶ）:oeste']},
+{k:'服',on:'フク',kun:'—',r:'フク',m:'ropa / obedecer',n:4,e:'洋服（ようふく）:ropa occidental',alt:['制服（せいふく）:uniforme','服装（ふくそう）:atuendo','和服（わふく）:kimono']},
+{k:'物',on:'ブツ',kun:'もの',r:'もの・ブツ',m:'cosa / objeto',n:4,e:'食べ物（たべもの）:comida',alt:['荷物（にもつ）:equipaje','建物（たてもの）:edificio','物語（ものがたり）:historia']},
+{k:'分',on:'ブン',kun:'わ(かる)',r:'わ(かる)・ブン',m:'entender / minuto / parte',n:4,e:'自分（じぶん）:uno mismo',alt:['気分（きぶん）:estado de ánimo','半分（はんぶん）:mitad','充分（じゅうぶん）:suficiente']},
+{k:'文',on:'ブン',kun:'ふみ',r:'ふみ・ブン',m:'escritura / texto',n:4,e:'文化（ぶんか）:cultura',alt:['文章（ぶんしょう）:texto','作文（さくぶん）:composición','文学（ぶんがく）:literatura']},
+{k:'放',on:'ホウ',kun:'はな(す)',r:'はな(す)・ホウ',m:'soltar / emitir',n:4,e:'放送（ほうそう）:emisión',alt:['放課後（ほうかご）:después de clase','開放（かいほう）:apertura','解放（かいほう）:liberación']},
+{k:'方',on:'ホウ',kun:'かた',r:'かた・ホウ',m:'dirección / persona / método',n:4,e:'仕方（しかた）:manera',alt:['方法（ほうほう）:método','地方（ちほう）:región','両方（りょうほう）:ambos']},
+{k:'北',on:'ホク',kun:'きた',r:'きた・ホク',m:'norte',n:4,e:'北海道（ほっかいどう）:Hokkaido',alt:['北部（ほくぶ）:zona norte','北東（ほくとう）:noreste','北極（ほっきょく）:Polo Norte']},
+{k:'歩',on:'ホ',kun:'ある(く)',r:'ある(く)・ホ',m:'caminar / paso',n:4,e:'散歩（さんぽ）:paseo',alt:['歩道（ほどう）:acera','進歩（しんぽ）:progreso','徒歩（とほ）:a pie']},
+{k:'勉',on:'ベン',kun:'—',r:'ベン',m:'esforzarse / estudiar',n:4,e:'勉強（べんきょう）:estudio',alt:['勤勉（きんべん）:diligencia']},
+{k:'末',on:'マツ',kun:'すえ',r:'すえ・マツ',m:'final / extremo',n:4,e:'週末（しゅうまつ）:fin de semana',alt:['月末（げつまつ）:fin de mes','年末（ねんまつ）:fin de año','末路（まつろ）:destino final']},
+{k:'毎',on:'マイ',kun:'—',r:'マイ',m:'cada / todo',n:4,e:'毎日（まいにち）:todos los días',alt:['毎週（まいしゅう）:cada semana','毎朝（まいあさ）:cada mañana','毎年（まいとし）:cada año']},
+{k:'妹',on:'マイ',kun:'いもうと',r:'いもうと・マイ',m:'hermana menor',n:4,e:'妹（いもうと）:hermana menor',alt:['姉妹（しまい）:hermanas','弟妹（ていまい）:hermanos menores']},
+{k:'明',on:'メイ',kun:'あか(るい)',r:'あか(るい)・メイ',m:'claro / brillante',n:4,e:'説明（せつめい）:explicación',alt:['明日（あした）:mañana','明るい（あかるい）:brillante','発明（はつめい）:invención']},
+{k:'目',on:'モク',kun:'め',r:'め・モク',m:'ojo / objetivo',n:4,e:'目的（もくてき）:objetivo',alt:['注目（ちゅうもく）:atención','目線（めせん）:línea de visión','科目（かもく）:asignatura']},
+{k:'門',on:'モン',kun:'かど',r:'かど・モン',m:'puerta / portal',n:4,e:'専門（せんもん）:especialidad',alt:['正門（せいもん）:entrada principal','校門（こうもん）:puerta de la escuela','部門（ぶもん）:sección']},
+{k:'問',on:'モン',kun:'と(う)',r:'と(う)・モン',m:'preguntar / problema',n:4,e:'問題（もんだい）:problema',alt:['質問（しつもん）:pregunta','問い合わせ（といあわせ）:consulta','疑問（ぎもん）:duda']},
+{k:'聞',on:'モン',kun:'き(く)',r:'き(く)・モン',m:'escuchar / preguntar',n:4,e:'新聞（しんぶん）:periódico',alt:['聞こえる（きこえる）:poder escuchar','伝聞（でんぶん）:rumor','見聞（けんもん）:experiencia']},
+{k:'夜',on:'ヤ',kun:'よる',r:'よる・ヤ',m:'noche',n:4,e:'夜中（よなか）:medianoche',alt:['今夜（こんや）:esta noche','夜景（やけい）:vista nocturna','深夜（しんや）:madrugada']},
+{k:'薬',on:'ヤク',kun:'くすり',r:'くすり・ヤク',m:'medicina / fármaco',n:4,e:'薬局（やっきょく）:farmacia',alt:['薬品（やくひん）:producto farmacéutico','農薬（のうやく）:pesticida','薬学（やくがく）:farmacología']},
+{k:'有',on:'ユウ',kun:'あ(る)',r:'あ(る)・ユウ',m:'tener / existir',n:4,e:'有名（ゆうめい）:famoso',alt:['有効（ゆうこう）:válido','有利（ゆうり）:ventajoso','所有（しょゆう）:posesión']},
+{k:'由',on:'ユ',kun:'よし',r:'よし・ユ',m:'causa / razón',n:4,e:'理由（りゆう）:razón',alt:['自由（じゆう）:libertad','経由（けいゆ）:pasando por','由来（ゆらい）:origen']},
+{k:'遊',on:'ユウ',kun:'あそ(ぶ)',r:'あそ(ぶ)・ユウ',m:'jugar / divertirse',n:4,e:'遊ぶ（あそぶ）:jugar',alt:['遊園地（ゆうえんち）:parque de atracciones','遊覧（ゆうらん）:excursión','外遊（がいゆう）:viaje al extranjero']},
+{k:'用',on:'ヨウ',kun:'もち(いる)',r:'もち(いる)・ヨウ',m:'usar / asunto',n:4,e:'用事（ようじ）:asunto',alt:['使用（しよう）:uso','利用（りよう）:utilización','用意（ようい）:preparación']},
+{k:'洋',on:'ヨウ',kun:'—',r:'ヨウ',m:'occidental / océano',n:4,e:'洋服（ようふく）:ropa occidental',alt:['西洋（せいよう）:Occidente','太平洋（たいへいよう）:Océano Pacífico','洋室（ようしつ）:habitación occidental']},
+{k:'曜',on:'ヨウ',kun:'—',r:'ヨウ',m:'día de la semana',n:4,e:'月曜日（げつようび）:lunes',alt:['火曜（かよう）:martes','水曜（すいよう）:miércoles','金曜（きんよう）:viernes']},
+{k:'横',on:'オウ',kun:'よこ',r:'よこ・オウ',m:'lado / horizontal',n:4,e:'横断歩道（おうだんほどう）:paso de cebra',alt:['横に（よこに）:al lado','横断（おうだん）:cruzar','真横（まよこ）:justo al lado']},
+{k:'葉',on:'ヨウ',kun:'は',r:'は・ヨウ',m:'hoja',n:4,e:'言葉（ことば）:palabra',alt:['紅葉（こうよう）:hojas otoñales','葉書（はがき）:postal','落葉（らくよう）:caída de hojas']},
+{k:'来',on:'ライ',kun:'く(る)',r:'く(る)・ライ',m:'venir',n:4,e:'来年（らいねん）:año que viene',alt:['来週（らいしゅう）:semana que viene','将来（しょうらい）:futuro','以来（いらい）:desde entonces']},
+{k:'理',on:'リ',kun:'—',r:'リ',m:'razón / principio',n:4,e:'料理（りょうり）:cocina',alt:['理由（りゆう）:razón','管理（かんり）:gestión','無理（むり）:imposible']},
+{k:'力',on:'リョク',kun:'ちから',r:'ちから・リョク',m:'fuerza / poder',n:4,e:'努力（どりょく）:esfuerzo',alt:['電力（でんりょく）:energía eléctrica','能力（のうりょく）:capacidad','体力（たいりょく）:resistencia']},
+{k:'旅',on:'リョ',kun:'たび',r:'たび・リョ',m:'viaje',n:4,e:'旅行（りょこう）:viaje',alt:['旅館（りょかん）:posada japonesa','旅先（たびさき）:destino','旅人（たびびと）:viajero']},
+{k:'料',on:'リョウ',kun:'—',r:'リョウ',m:'material / tarifa',n:4,e:'料理（りょうり）:cocina',alt:['材料（ざいりょう）:ingrediente','無料（むりょう）:gratuito','有料（ゆうりょう）:de pago']},
+{k:'両',on:'リョウ',kun:'—',r:'リョウ',m:'ambos',n:4,e:'両親（りょうしん）:padres',alt:['両方（りょうほう）:ambos lados','両手（りょうて）:ambas manos','両替（りょうがえ）:cambio de dinero']},
+{k:'林',on:'リン',kun:'はやし',r:'はやし・リン',m:'bosque',n:4,e:'林業（りんぎょう）:silvicultura',alt:['森林（しんりん）:bosque','林道（りんどう）:camino forestal','竹林（ちくりん）:bambusal']},
+{k:'話',on:'ワ',kun:'はな(す)',r:'はな(す)・ワ',m:'hablar / historia',n:4,e:'電話（でんわ）:teléfono',alt:['会話（かいわ）:conversación','話題（わだい）:tema','童話（どうわ）:cuento infantil']},
+{k:'業',on:'ギョウ',kun:'わざ',r:'わざ・ギョウ',m:'negocio / industria',n:4,e:'工業（こうぎょう）:industria',alt:['授業（じゅぎょう）:clase','卒業（そつぎょう）:graduación','職業（しょくぎょう）:profesión']},
+{k:'弟',on:'テイ',kun:'おとうと',r:'おとうと・テイ',m:'hermano menor',n:4,e:'兄弟（きょうだい）:hermanos',alt:['弟子（でし）:discípulo','師弟（してい）:maestro y alumno']},
+{k:'母',on:'ボ',kun:'はは',r:'はは・ボ',m:'madre',n:4,e:'母親（ははおや）:madre',alt:['祖母（そぼ）:abuela','母国（ぼこく）:país natal','叔母（おば）:tía']},
+// N3
+{k:'働',r:'はたら(く)・どう',on:'ドウ',kun:'はたら(く)',m:'trabajar',e:'労働（ろうどう）:trabajo/labor',etr:'trabajo/labor',n:3,alt:['働き方（はたらきかた）:forma de trabajar','共働き（ともばたらき）:ambos cónyuges trabajan']},
+{k:'急',r:'いそ(ぐ)・きゅう',on:'キュウ',kun:'いそ(ぐ)',m:'apresurarse / urgente',e:'急行（きゅうこう）:tren expreso',etr:'tren expreso',n:3,alt:['緊急（きんきゅう）:urgencia','急速（きゅうそく）:rápido','特急（とっきゅう）:súper expreso']},
+{k:'注',r:'そそ(ぐ)・ちゅう',on:'チュウ',kun:'そそ(ぐ)',m:'verter / prestar atención',e:'注意（ちゅうい）:precaución/atención',etr:'prestar atención',n:3,alt:['注射（ちゅうしゃ）:inyección','注目（ちゅうもく）:atención/enfoque','注文（ちゅうもん）:pedido']},
+{k:'医',r:'い',on:'イ',kun:'—',m:'medicina / médico',e:'医者（いしゃ）:médico',etr:'doctor',n:3,alt:['医学（いがく）:medicina como ciencia','医療（いりょう）:atención médica','医院（いいん）:clínica']},
+{k:'病',r:'やま(い)・びょう',on:'ビョウ',kun:'やま(い)',m:'enfermedad',e:'病院（びょういん）:hospital',etr:'hospital',n:3,alt:['病気（びょうき）:enfermedad','病室（びょうしつ）:habitación de hospital','疾病（しっぺい）:enfermedad/dolencia']},
+{k:'薬',r:'くすり・やく',on:'ヤク',kun:'くすり',m:'medicina / fármaco',e:'薬局（やっきょく）:farmacia',etr:'farmacia',n:3,alt:['薬品（やくひん）:producto farmacéutico','医薬（いやく）:medicina','薬学（やくがく）:farmacología']},
+{k:'研',r:'けん',on:'ケン',kun:'—',m:'investigar / pulir',e:'研究（けんきゅう）:investigación',etr:'investigación',n:3,alt:['研修（けんしゅう）:capacitación','研磨（けんま）:pulir/afinar']},
+{k:'産',r:'う(む)・さん',on:'サン',kun:'う(む)',m:'producir / dar a luz',e:'産業（さんぎょう）:industria',etr:'industria',n:3,alt:['生産（せいさん）:producción','不動産（ふどうさん）:bienes raíces','出産（しゅっさん）:parto']},
+{k:'経',r:'へ(る)・けい',on:'ケイ',kun:'へ(る)',m:'pasar / experiencia',e:'経済（けいざい）:economía',etr:'economía',n:3,alt:['経験（けいけん）:experiencia','経営（けいえい）:gestión empresarial','神経（しんけい）:nervio']},
+{k:'治',r:'おさ(める)・じ',on:'ジ・チ',kun:'おさ(める)',m:'gobernar / curar',e:'政治（せいじ）:política',etr:'política',n:3,alt:['治療（ちりょう）:tratamiento médico','統治（とうち）:gobernar','自治（じち）:autonomía']},
+{k:'集',r:'あつ(まる)・しゅう',on:'シュウ',kun:'あつ(まる)',m:'reunir / coleccionar',e:'集合（しゅうごう）:reunión/concentración',etr:'punto de reunión',n:3,alt:['収集（しゅうしゅう）:coleccionar','集中（しゅうちゅう）:concentración','募集（ぼしゅう）:reclutamiento']},
+{k:'連',r:'つ(れる)・れん',on:'レン',kun:'つ(れる)',m:'llevar / relacionar / serie',e:'連絡（れんらく）:contacto/comunicación',etr:'ponerse en contacto',n:3,alt:['関連（かんれん）:relación/conexión','連続（れんぞく）:continuidad','連休（れんきゅう）:días festivos seguidos']},
+// N2
+{k:'議',r:'ぎ',on:'ギ',kun:'—',m:'deliberar / discutir',e:'議会（ぎかい）:parlamento',etr:'parlamento',n:2,alt:['議論（ぎろん）:debate','会議（かいぎ）:reunión','議員（ぎいん）:miembro del parlamento']},
+{k:'論',r:'ろん',on:'ロン',kun:'—',m:'argumento / teoría',e:'議論（ぎろん）:debate/discusión',etr:'debate',n:2,alt:['理論（りろん）:teoría','結論（けつろん）:conclusión','論文（ろんぶん）:tesis/artículo académico']},
+{k:'務',r:'つと(める)・む',on:'ム',kun:'つと(める)',m:'deber / obligación',e:'業務（ぎょうむ）:operaciones/tareas',etr:'tareas laborales',n:2,alt:['義務（ぎむ）:obligación','任務（にんむ）:misión/tarea','公務員（こうむいん）:funcionario público']},
+{k:'職',r:'しょく',on:'ショク',kun:'—',m:'ocupación / empleo',e:'職業（しょくぎょう）:profesión/ocupación',etr:'profesión',n:2,alt:['職場（しょくば）:lugar de trabajo','求職（きゅうしょく）:búsqueda de empleo','職員（しょくいん）:empleado/personal']},
+{k:'術',r:'じゅつ',on:'ジュツ',kun:'—',m:'arte / técnica / habilidad',e:'技術（ぎじゅつ）:tecnología/técnica',etr:'tecnología',n:2,alt:['芸術（げいじゅつ）:arte','手術（しゅじゅつ）:cirugía','学術（がくじゅつ）:conocimiento académico']},
+{k:'機',r:'き',on:'キ',kun:'—',m:'máquina / oportunidad / momento',e:'機会（きかい）:oportunidad',etr:'oportunidad',n:2,alt:['機械（きかい）:máquina','飛行機（ひこうき）:avión','機能（きのう）:función']},
+{k:'境',r:'さかい・きょう',on:'キョウ',kun:'さかい',m:'frontera / límite / entorno',e:'環境（かんきょう）:medio ambiente',etr:'medio ambiente',n:2,alt:['国境（こっきょう）:frontera nacional','境界（きょうかい）:límite/frontera','境遇（きょうぐう）:circunstancias']},
+{k:'状',r:'じょう',on:'ジョウ',kun:'—',m:'estado / condición / forma',e:'状況（じょうきょう）:situación/estado',etr:'situación actual',n:2,alt:['現状（げんじょう）:situación actual','症状（しょうじょう）:síntoma','状態（じょうたい）:estado/condición']},
+{k:'制',r:'せい',on:'セイ',kun:'—',m:'sistema / controlar / limitar',e:'制度（せいど）:sistema/institución',etr:'sistema/institución',n:2,alt:['規制（きせい）:regulación','体制（たいせい）:sistema/estructura','制限（せいげん）:restricción/límite']},
+{k:'際',r:'きわ・さい',on:'サイ',kun:'きわ',m:'ocasión / borde / al momento de',e:'国際（こくさい）:internacional',etr:'internacional',n:2,alt:['実際（じっさい）:en realidad','際立つ（きわだつ）:destacar','この際（このさい）:en esta ocasión']},
+];
+
+// READINGS TEXTS
+const TEXTS = [
+{id:'t1',level:4,title:'コンビニへ行く',jp_plain:'私は毎朝コンビニに行きます。そこで、おにぎりとお茶を買います。コンビニはとても便利です。店員さんはいつも「いらっしゃいませ」と言います。私はコンビニが大好きです。',
+jp_ruby:'<ruby>私<rt>わたし</rt></ruby>は<ruby>毎朝<rt>まいあさ</rt></ruby>コンビニに<ruby>行<rt>い</rt></ruby>きます。そこで、おにぎりとお<ruby>茶<rt>ちゃ</rt></ruby>を<ruby>買<rt>か</rt></ruby>います。コンビニはとても<ruby>便利<rt>べんり</rt></ruby>です。<ruby>店員<rt>てんいん</rt></ruby>さんはいつも「いらっしゃいませ」と<ruby>言<rt>い</rt></ruby>います。<ruby>私<rt>わたし</rt></ruby>はコンビニが<ruby>大好<rt>だいす</rt></ruby>きです。',
+tr:'Cada mañana voy al konbini. Allí compro un onigiri y té. El konbini es muy conveniente. Los dependientes siempre dicen «irasshaimase». Me encantan los konbini.',
+vocab:[{w:'毎朝',r:'まいあさ',m:'cada mañana'},{w:'便利',r:'べんり',m:'conveniente'},{w:'店員',r:'てんいん',m:'dependiente/empleado'}],topic:'Vida cotidiana'},
+{id:'t2',level:4,title:'図書館の勉強',jp_plain:'今日は図書館で勉強しました。図書館はとても静かで、集中できました。日本語の本を三冊読みました。むずかしい漢字がたくさんありましたが、辞書を使って調べました。来週も来ようと思います。',
+jp_ruby:'<ruby>今日<rt>きょう</rt></ruby>は<ruby>図書館<rt>としょかん</rt></ruby>で<ruby>勉強<rt>べんきょう</rt></ruby>しました。<ruby>図書館<rt>としょかん</rt></ruby>はとても<ruby>静<rt>しず</rt></ruby>かで、<ruby>集中<rt>しゅうちゅう</rt></ruby>できました。<ruby>日本語<rt>にほんご</rt></ruby>の<ruby>本<rt>ほん</rt></ruby>を<ruby>三冊<rt>さんさつ</rt></ruby><ruby>読<rt>よ</rt></ruby>みました。むずかしい<ruby>漢字<rt>かんじ</rt></ruby>がたくさんありましたが、<ruby>辞書<rt>じしょ</rt></ruby>を<ruby>使<rt>つか</rt></ruby>って<ruby>調<rt>しら</rt></ruby>べました。<ruby>来週<rt>らいしゅう</rt></ruby>も<ruby>来<rt>こ</rt></ruby>ようと<ruby>思<rt>おも</rt></ruby>います。',
+tr:'Hoy estudié en la biblioteca. La biblioteca estaba muy tranquila y pude concentrarme. Leí tres libros en japonés. Había muchos kanji difíciles, pero los busqué con el diccionario. Pienso volver la semana que viene.',
+vocab:[{w:'図書館',r:'としょかん',m:'biblioteca'},{w:'集中',r:'しゅうちゅう',m:'concentrarse'},{w:'辞書',r:'じしょ',m:'diccionario'}],topic:'Estudio'},
+{id:'t3',level:4,title:'週末の予定',jp_plain:'今週末は友達と映画を見に行きます。映画の後でレストランで食事をする予定です。友達は料理が上手なので、いつも良いレストランを知っています。楽しみにしています。',
+jp_ruby:'<ruby>今週末<rt>こんしゅうまつ</rt></ruby>は<ruby>友達<rt>ともだち</rt></ruby>と<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>に<ruby>行<rt>い</rt></ruby>きます。<ruby>映画<rt>えいが</rt></ruby>の<ruby>後<rt>あと</rt></ruby>でレストランで<ruby>食事<rt>しょくじ</rt></ruby>をする<ruby>予定<rt>よてい</rt></ruby>です。<ruby>友達<rt>ともだち</rt></ruby>は<ruby>料理<rt>りょうり</rt></ruby>が<ruby>上手<rt>じょうず</rt></ruby>なので、いつも<ruby>良<rt>よ</rt></ruby>いレストランを<ruby>知<rt>し</rt></ruby>っています。<ruby>楽<rt>たの</rt></ruby>しみにしています。',
+tr:'Este fin de semana voy al cine con un amigo. Después de la película tenemos planeado cenar en un restaurante. Mi amigo es bueno cocinando, así que siempre sabe buenos restaurantes. Estoy emocionado.',
+vocab:[{w:'予定',r:'よてい',m:'plan/horario'},{w:'料理',r:'りょうり',m:'cocina/cocinar'},{w:'楽しみ',r:'たのしみ',m:'algo que esperar con ganas'}],topic:'Ocio'},
+{id:'t4',level:3,title:'電車の遅延',jp_plain:'今朝、電車が大幅に遅延しました。駅のアナウンスによると、線路内に人が立ち入ったため、運転を一時停止したとのことでした。しかたがないので、バスで会社に向かいましたが、それでも三十分遅刻してしまいました。上司に事情を説明したところ、理解してもらえました。来週からは早めに出発するつもりです。',
+jp_ruby:'<ruby>今朝<rt>けさ</rt></ruby>、<ruby>電車<rt>でんしゃ</rt></ruby>が<ruby>大幅<rt>おおはば</rt></ruby>に<ruby>遅延<rt>ちえん</rt></ruby>しました。<ruby>駅<rt>えき</rt></ruby>のアナウンスによると、<ruby>線路内<rt>せんろない</rt></ruby>に<ruby>人<rt>ひと</rt></ruby>が<ruby>立<rt>た</rt></ruby>ち<ruby>入<rt>い</rt></ruby>ったため、<ruby>運転<rt>うんてん</rt></ruby>を<ruby>一時停止<rt>いちじていし</rt></ruby>したとのことでした。しかたがないので、バスで<ruby>会社<rt>かいしゃ</rt></ruby>に<ruby>向<rt>むか</rt></ruby>かいましたが、それでも<ruby>三十分<rt>さんじゅっぷん</rt></ruby><ruby>遅刻<rt>ちこく</rt></ruby>してしまいました。<ruby>上司<rt>じょうし</rt></ruby>に<ruby>事情<rt>じじょう</rt></ruby>を<ruby>説明<rt>せつめい</rt></ruby>したところ、<ruby>理解<rt>りかい</rt></ruby>してもらえました。<ruby>来週<rt>らいしゅう</rt></ruby>からは<ruby>早<rt>はや</rt></ruby>めに<ruby>出発<rt>しゅっぱつ</rt></ruby>するつもりです。',
+tr:'Esta mañana el tren sufrió un gran retraso. Según el anuncio de la estación, alguien entró en la vía, por lo que la operación se suspendió temporalmente. No había remedio, así que fui a la empresa en autobús, pero aun así llegué treinta minutos tarde. Le expliqué la situación a mi jefe y me comprendió. Desde la semana que viene pienso salir más temprano.',
+vocab:[{w:'遅延',r:'ちえん',m:'retraso'},{w:'しかたがない',r:'—',m:'no hay remedio'},{w:'遅刻',r:'ちこく',m:'llegar tarde'},{w:'上司',r:'じょうし',m:'jefe/superior'}],topic:'Transporte'},
+{id:'t5',level:3,title:'健康のために',jp_plain:'健康のために毎日運動することが大切です。特に、ウォーキングは気軽に始められて効果も高いと言われています。食生活にも気をつけなければなりません。バランスの良い食事を心がけ、野菜や果物を積極的に取り入れることが重要です。また、十分な睡眠も健康維持に欠かせません。',
+jp_ruby:'<ruby>健康<rt>けんこう</rt></ruby>のために<ruby>毎日<rt>まいにち</rt></ruby><ruby>運動<rt>うんどう</rt></ruby>することが<ruby>大切<rt>たいせつ</rt></ruby>です。<ruby>特<rt>とく</rt></ruby>に、ウォーキングは<ruby>気軽<rt>きがる</rt></ruby>に<ruby>始<rt>はじ</rt></ruby>められて<ruby>効果<rt>こうか</rt></ruby>も<ruby>高<rt>たか</rt></ruby>いと<ruby>言<rt>い</rt></ruby>われています。<ruby>食生活<rt>しょくせいかつ</rt></ruby>にも<ruby>気<rt>き</rt></ruby>をつけなければなりません。バランスの<ruby>良<rt>よ</rt></ruby>い<ruby>食事<rt>しょくじ</rt></ruby>を<ruby>心<rt>こころ</rt></ruby>がけ、<ruby>野菜<rt>やさい</rt></ruby>や<ruby>果物<rt>くだもの</rt></ruby>を<ruby>積極的<rt>せっきょくてき</rt></ruby>に<ruby>取<rt>と</rt></ruby>り<ruby>入<rt>い</rt></ruby>れることが<ruby>重要<rt>じゅうよう</rt></ruby>です。また、<ruby>十分<rt>じゅうぶん</rt></ruby>な<ruby>睡眠<rt>すいみん</rt></ruby>も<ruby>健康維持<rt>けんこういじ</rt></ruby>に<ruby>欠<rt>か</rt></ruby>かせません。',
+tr:'Para la salud es importante hacer ejercicio todos los días. Se dice que caminar en particular es fácil de empezar y muy efectivo. También hay que cuidar la alimentación. Es importante procurar comer de forma equilibrada e incorporar activamente verduras y frutas. Además, dormir suficiente es imprescindible para mantener la salud.',
+vocab:[{w:'健康',r:'けんこう',m:'salud'},{w:'効果',r:'こうか',m:'efectividad'},{w:'食生活',r:'しょくせいかつ',m:'hábitos alimentarios'},{w:'睡眠',r:'すいみん',m:'sueño'}],topic:'Salud'},
+{id:'t6',level:3,title:'日本のお正月',jp_plain:'日本では、お正月は一年で最も大切な行事の一つです。大晦日の夜には除夜の鐘が寺で百八回鳴らされます。元日には初詣に行き、神社や寺に新年の祈りを捧げます。家族が集まっておせち料理を食べながら、テレビで特番を見るのが一般的な過ごし方です。子どもたちはお年玉をもらえるので、とても楽しみにしています。',
+jp_ruby:'<ruby>日本<rt>にほん</rt></ruby>では、お<ruby>正月<rt>しょうがつ</rt></ruby>は<ruby>一年<rt>いちねん</rt></ruby>で<ruby>最<rt>もっと</rt></ruby>も<ruby>大切<rt>たいせつ</rt></ruby>な<ruby>行事<rt>ぎょうじ</rt></ruby>の<ruby>一<rt>ひと</rt></ruby>つです。<ruby>大晦日<rt>おおみそか</rt></ruby>の<ruby>夜<rt>よる</rt></ruby>には<ruby>除夜<rt>じょや</rt></ruby>の<ruby>鐘<rt>かね</rt></ruby>が<ruby>寺<rt>てら</rt></ruby>で<ruby>百八回<rt>ひゃくはちかい</rt></ruby><ruby>鳴<rt>な</rt></ruby>らされます。<ruby>元日<rt>がんじつ</rt></ruby>には<ruby>初詣<rt>はつもうで</rt></ruby>に<ruby>行<rt>い</rt></ruby>き、<ruby>神社<rt>じんじゃ</rt></ruby>や<ruby>寺<rt>てら</rt></ruby>に<ruby>新年<rt>しんねん</rt></ruby>の<ruby>祈<rt>いの</rt></ruby>りを<ruby>捧<rt>ささ</rt></ruby>げます。',
+tr:'En Japón, el Año Nuevo es uno de los eventos más importantes del año. La noche de Nochevieja, una campana de templo suena 108 veces. El 1 de enero se va al primer santuario del año (hatsumōde), donde se ofrecen plegarias de Año Nuevo. Lo habitual es que la familia se reúna a comer osechi mientras ve especiales de televisión.',
+vocab:[{w:'行事',r:'ぎょうじ',m:'evento/festividad'},{w:'大晦日',r:'おおみそか',m:'Nochevieja'},{w:'初詣',r:'はつもうで',m:'primera visita al santuario del año'},{w:'お年玉',r:'おとしだま',m:'regalo de dinero en Año Nuevo'}],topic:'Cultura'},
+{id:'t7',level:2,title:'環境問題について',jp_plain:'近年、地球温暖化をはじめとする環境問題が深刻化しています。工業化の進展とともに増加した二酸化炭素などの温室効果ガスが、気候変動を引き起こしていると考えられています。これに対処するため、国際社会は再生可能エネルギーへの転換を推進しています。しかし、経済発展を優先する一部の国々との間には依然として温度差があります。個人レベルでも省エネや節水を心がけ、日常生活から環境負荷を減らす取り組みが求められています。',
+jp_ruby:'<ruby>近年<rt>きんねん</rt></ruby>、<ruby>地球温暖化<rt>ちきゅうおんだんか</rt></ruby>をはじめとする<ruby>環境問題<rt>かんきょうもんだい</rt></ruby>が<ruby>深刻化<rt>しんこくか</rt></ruby>しています。<ruby>工業化<rt>こうぎょうか</rt></ruby>の<ruby>進展<rt>しんてん</rt></ruby>とともに<ruby>増加<rt>ぞうか</rt></ruby>した<ruby>二酸化炭素<rt>にさんかたんそ</rt></ruby>などの<ruby>温室効果<rt>おんしつこうか</rt></ruby>ガスが、<ruby>気候変動<rt>きこうへんどう</rt></ruby>を<ruby>引<rt>ひ</rt></ruby>き<ruby>起<rt>お</rt></ruby>こしていると<ruby>考<rt>かんが</rt></ruby>えられています。これに<ruby>対処<rt>たいしょ</rt></ruby>するため、<ruby>国際社会<rt>こくさいしゃかい</rt></ruby>は<ruby>再生可能<rt>さいせいかのう</rt></ruby>エネルギーへの<ruby>転換<rt>てんかん</rt></ruby>を<ruby>推進<rt>すいしん</rt></ruby>しています。',
+tr:'En los últimos años, los problemas medioambientales encabezados por el calentamiento global se están agravando. Los gases de efecto invernadero, como el CO₂, que aumentaron con la industrialización, se cree que están causando el cambio climático. Para hacerles frente, la comunidad internacional impulsa la transición a energías renovables. Sin embargo, todavía existe una brecha con algunos países que priorizan el desarrollo económico.',
+vocab:[{w:'温暖化',r:'おんだんか',m:'calentamiento global'},{w:'温室効果ガス',r:'おんしつこうかガス',m:'gases de efecto invernadero'},{w:'再生可能',r:'さいせいかのう',m:'renovable'},{w:'推進',r:'すいしん',m:'promover/impulsar'}],topic:'Medio ambiente'},
+{id:'t8',level:2,title:'働き方改革',jp_plain:'日本では「働き方改革」が国を挙げて推進されています。その目的は、長時間労働を是正し、有給休暇の取得率を向上させることにあります。テレワークやフレックスタイム制の普及により、柔軟な勤務形態が実現しつつあります。しかし、業種や企業規模によっては依然として課題が残っており、実効性のある制度設計が求められています。労働者一人ひとりが自身の働き方を見直すことも重要な視点です。',
+jp_ruby:'<ruby>日本<rt>にほん</rt></ruby>では「<ruby>働<rt>はたら</rt></ruby>き<ruby>方<rt>かた</rt></ruby><ruby>改革<rt>かいかく</rt></ruby>」が<ruby>国<rt>くに</rt></ruby>を<ruby>挙<rt>あ</rt></ruby>げて<ruby>推進<rt>すいしん</rt></ruby>されています。その<ruby>目的<rt>もくてき</rt></ruby>は、<ruby>長時間労働<rt>ちょうじかんろうどう</rt></ruby>を<ruby>是正<rt>ぜせい</rt></ruby>し、<ruby>有給休暇<rt>ゆうきゅうきゅうか</rt></ruby>の<ruby>取得率<rt>しゅとくりつ</rt></ruby>を<ruby>向上<rt>こうじょう</rt></ruby>させることにあります。テレワークやフレックスタイム<ruby>制<rt>せい</rt></ruby>の<ruby>普及<rt>ふきゅう</rt></ruby>により、<ruby>柔軟<rt>じゅうなん</rt></ruby>な<ruby>勤務形態<rt>きんむけいたい</rt></ruby>が<ruby>実現<rt>じつげん</rt></ruby>しつつあります。',
+tr:'En Japón, la «reforma del estilo de trabajo» se impulsa a nivel nacional. Su objetivo es corregir el exceso de horas laborales y aumentar la tasa de uso de vacaciones pagadas. Gracias a la extensión del teletrabajo y el horario flexible, se van haciendo realidad formas de trabajo más flexibles. Sin embargo, dependiendo del sector y del tamaño de la empresa siguen quedando desafíos.',
+vocab:[{w:'是正',r:'ぜせい',m:'corrección/enmienda'},{w:'有給休暇',r:'ゆうきゅうきゅうか',m:'vacaciones pagadas'},{w:'柔軟',r:'じゅうなん',m:'flexible'},{w:'勤務',r:'きんむ',m:'servicio/trabajo'}],topic:'Trabajo'},
+{id:'t9',level:2,title:'AIと社会',jp_plain:'人工知能（AI）の急速な発展は、社会のあらゆる分野に変革をもたらしています。医療分野では、AIによる画像診断が早期発見に貢献し始めています。一方で、自動化の進展により、既存の職業が消滅するリスクも指摘されています。このような状況において、人間がAIと共存するためのスキルを身につけることが重要です。教育の場でも、批判的思考力や創造性を育む取り組みが求められています。',
+jp_ruby:'<ruby>人工知能<rt>じんこうちのう</rt></ruby>（AI）の<ruby>急速<rt>きゅうそく</rt></ruby>な<ruby>発展<rt>はってん</rt></ruby>は、<ruby>社会<rt>しゃかい</rt></ruby>のあらゆる<ruby>分野<rt>ぶんや</rt></ruby>に<ruby>変革<rt>へんかく</rt></ruby>をもたらしています。<ruby>医療<rt>いりょう</rt></ruby><ruby>分野<rt>ぶんや</rt></ruby>では、AIによる<ruby>画像診断<rt>がぞうしんだん</rt></ruby>が<ruby>早期発見<rt>そうきはっけん</rt></ruby>に<ruby>貢献<rt>こうけん</rt></ruby>し<ruby>始<rt>はじ</rt></ruby>めています。<ruby>一方<rt>いっぽう</rt></ruby>で、<ruby>自動化<rt>じどうか</rt></ruby>の<ruby>進展<rt>しんてん</rt></ruby>により、<ruby>既存<rt>きそん</rt></ruby>の<ruby>職業<rt>しょくぎょう</rt></ruby>が<ruby>消滅<rt>しょうめつ</rt></ruby>するリスクも<ruby>指摘<rt>してき</rt></ruby>されています。',
+tr:'El rápido desarrollo de la inteligencia artificial (IA) está transformando todos los ámbitos de la sociedad. En medicina, el diagnóstico por imagen con IA está empezando a contribuir a la detección temprana. Por otro lado, también se señala el riesgo de que el avance de la automatización haga desaparecer profesiones existentes.',
+vocab:[{w:'人工知能',r:'じんこうちのう',m:'inteligencia artificial'},{w:'変革',r:'へんかく',m:'transformación/cambio'},{w:'批判的思考',r:'はんぱんてきしこう',m:'pensamiento crítico'},{w:'創造性',r:'そうぞうせい',m:'creatividad'}],topic:'Tecnología'},
+
+// ===== N4 NUEVOS (20) =====
+{id:'n4_a',level:4,title:'休みの朝',
+jp_plain:'今日は休みなので、ゆっくり起きました。朝ご飯はトーストと卵料理を作りました。食べながら好きな音楽を聞きました。午後は公園に散歩に行くつもりです。天気がいいので楽しみです。',
+jp_ruby:'<ruby>今日<rt>きょう</rt></ruby>は<ruby>休<rt>やす</rt></ruby>みなので、ゆっくり<ruby>起<rt>お</rt></ruby>きました。<ruby>朝<rt>あさ</rt></ruby>ご<ruby>飯<rt>はん</rt></ruby>はトーストと<ruby>卵<rt>たまご</rt></ruby><ruby>料理<rt>りょうり</rt></ruby>を<ruby>作<rt>つく</rt></ruby>りました。<ruby>食<rt>た</rt></ruby>べながら<ruby>好<rt>す</rt></ruby>きな<ruby>音楽<rt>おんがく</rt></ruby>を<ruby>聞<rt>き</rt></ruby>きました。<ruby>午後<rt>ごご</rt></ruby>は<ruby>公園<rt>こうえん</rt></ruby>に<ruby>散歩<rt>さんぽ</rt></ruby>に<ruby>行<rt>い</rt></ruby>くつもりです。',
+tr:'Como hoy es día libre, me levanté sin prisa. Preparé tostadas y huevo para desayunar. Mientras comía, escuché mi música favorita. Por la tarde pienso ir a pasear al parque. Como hace buen tiempo, tengo ganas.',
+vocab:[{w:'ゆっくり',r:'—',m:'sin prisa/despacio'},{w:'音楽',r:'おんがく',m:'música'},{w:'つもり',r:'—',m:'intención de hacer algo'}],topic:'Vida cotidiana'},
+
+{id:'n4_b',level:4,title:'地下鉄の乗り方',
+jp_plain:'東京の地下鉄はとても便利です。まず、券売機で切符を買います。ICカードを使うともっと簡単です。乗り換えの時は案内板をよく見てください。終点まで乗り過ごさないように注意しましょう。',
+jp_ruby:'<ruby>東京<rt>とうきょう</rt></ruby>の<ruby>地下鉄<rt>ちかてつ</rt></ruby>はとても<ruby>便利<rt>べんり</rt></ruby>です。まず、<ruby>券売機<rt>けんばいき</rt></ruby>で<ruby>切符<rt>きっぷ</rt></ruby>を<ruby>買<rt>か</rt></ruby>います。ICカードを<ruby>使<rt>つか</rt></ruby>うともっと<ruby>簡単<rt>かんたん</rt></ruby>です。<ruby>乗<rt>の</rt></ruby>り<ruby>換<rt>か</rt></ruby>えの<ruby>時<rt>とき</rt></ruby>は<ruby>案内板<rt>あんないばん</rt></ruby>をよく<ruby>見<rt>み</rt></ruby>てください。',
+tr:'El metro de Tokio es muy conveniente. Primero se compra el billete en la máquina expendedora. Con la tarjeta IC es aún más fácil. Al hacer transbordos, fíjate bien en los carteles de información.',
+vocab:[{w:'地下鉄',r:'ちかてつ',m:'metro'},{w:'乗り換え',r:'のりかえ',m:'transbordo'},{w:'案内板',r:'あんないばん',m:'cartel informativo'}],topic:'Transporte'},
+
+{id:'n4_c',level:4,title:'近所のパン屋',
+jp_plain:'家の近くにとてもおいしいパン屋があります。毎朝焼きたてのパンを売っています。クロワッサンとメロンパンが特に人気です。店のにおいがいつも外まで漂っています。週末はいつも行列ができます。',
+jp_ruby:'<ruby>家<rt>いえ</rt></ruby>の<ruby>近<rt>ちか</rt></ruby>くにとてもおいしいパン<ruby>屋<rt>や</rt></ruby>があります。<ruby>毎朝<rt>まいあさ</rt></ruby><ruby>焼<rt>や</rt></ruby>きたてのパンを<ruby>売<rt>う</rt></ruby>っています。クロワッサンとメロンパンが<ruby>特<rt>とく</rt></ruby>に<ruby>人気<rt>にんき</rt></ruby>です。<ruby>店<rt>みせ</rt></ruby>のにおいがいつも<ruby>外<rt>そと</rt></ruby>まで<ruby>漂<rt>ただよ</rt></ruby>っています。<ruby>週末<rt>しゅうまつ</rt></ruby>はいつも<ruby>行列<rt>ぎょうれつ</rt></ruby>ができます。',
+tr:'Cerca de casa hay una panadería muy rica. Venden pan recién hecho cada mañana. Los cruasanes y el melon pan son especialmente populares. El olor de la tienda siempre llega a la calle. Los fines de semana siempre hay cola.',
+vocab:[{w:'焼きたて',r:'やきたて',m:'recién hecho/horneado'},{w:'人気',r:'にんき',m:'popularidad'},{w:'行列',r:'ぎょうれつ',m:'cola/fila'}],topic:'Comida'},
+
+{id:'n4_d',level:4,title:'雨の日の過ごし方',
+jp_plain:'雨の日は外に出たくないので、家で映画を見たり、本を読んだりします。料理を作ることも好きです。今日はカレーを作りました。雨音を聞きながら家でのんびりするのもいいものです。',
+jp_ruby:'<ruby>雨<rt>あめ</rt></ruby>の<ruby>日<rt>ひ</rt></ruby>は<ruby>外<rt>そと</rt></ruby>に<ruby>出<rt>で</rt></ruby>たくないので、<ruby>家<rt>いえ</rt></ruby>で<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>たり、<ruby>本<rt>ほん</rt></ruby>を<ruby>読<rt>よ</rt></ruby>んだりします。<ruby>料理<rt>りょうり</rt></ruby>を<ruby>作<rt>つく</rt></ruby>ることも<ruby>好<rt>す</rt></ruby>きです。<ruby>今日<rt>きょう</rt></ruby>はカレーを<ruby>作<rt>つく</rt></ruby>りました。<ruby>雨音<rt>あまおと</rt></ruby>を<ruby>聞<rt>き</rt></ruby>きながら<ruby>家<rt>いえ</rt></ruby>でのんびりするのもいいものです。',
+tr:'Los días de lluvia no me apetece salir, así que veo películas o leo en casa. También me gusta cocinar. Hoy hice curry. Quedarse en casa tranquilamente escuchando la lluvia también es agradable.',
+vocab:[{w:'雨音',r:'あまおと',m:'sonido de la lluvia'},{w:'のんびり',r:'—',m:'tranquilamente/sin prisa'},{w:'〜たり〜たり',r:'—',m:'hacer unas cosas y otras'}],topic:'Vida cotidiana'},
+
+{id:'n4_e',level:4,title:'初めてのアルバイト',
+jp_plain:'先月から初めてアルバイトを始めました。近くのカフェで働いています。最初は緊張しましたが、今はだいぶ慣れました。お客さんに「ありがとう」と言われるととても嬉しいです。お金を貯めて新しいパソコンを買いたいです。',
+jp_ruby:'<ruby>先月<rt>せんげつ</rt></ruby>から<ruby>初<rt>はじ</rt></ruby>めてアルバイトを<ruby>始<rt>はじ</rt></ruby>めました。<ruby>近<rt>ちか</rt></ruby>くのカフェで<ruby>働<rt>はたら</rt></ruby>いています。<ruby>最初<rt>さいしょ</rt></ruby>は<ruby>緊張<rt>きんちょう</rt></ruby>しましたが、<ruby>今<rt>いま</rt></ruby>はだいぶ<ruby>慣<rt>な</rt></ruby>れました。お<ruby>客<rt>きゃく</rt></ruby>さんに「ありがとう」と<ruby>言<rt>い</rt></ruby>われるととても<ruby>嬉<rt>うれ</rt></ruby>しいです。',
+tr:'El mes pasado empecé mi primer trabajo a tiempo parcial. Trabajo en un café cercano. Al principio estaba nervioso, pero ahora ya me he acostumbrado bastante. Me alegra mucho cuando los clientes me dicen "gracias".',
+vocab:[{w:'緊張',r:'きんちょう',m:'ponerse nervioso'},{w:'慣れる',r:'なれる',m:'acostumbrarse'},{w:'貯める',r:'ためる',m:'ahorrar'}],topic:'Trabajo'},
+
+{id:'n4_f',level:4,title:'図書館の使い方',
+jp_plain:'図書館では本を借りることができます。図書館カードを作れば、一度に五冊まで借りられます。返却期限は二週間です。延長もできますが、予約が入っている本はできません。インターネットで本の検索や予約もできます。',
+jp_ruby:'<ruby>図書館<rt>としょかん</rt></ruby>では<ruby>本<rt>ほん</rt></ruby>を<ruby>借<rt>か</rt></ruby>りることができます。<ruby>図書館<rt>としょかん</rt></ruby>カードを<ruby>作<rt>つく</rt></ruby>れば、<ruby>一度<rt>いちど</rt></ruby>に<ruby>五冊<rt>ごさつ</rt></ruby>まで<ruby>借<rt>か</rt></ruby>りられます。<ruby>返却期限<rt>へんきゃくきげん</rt></ruby>は<ruby>二週間<rt>にしゅうかん</rt></ruby>です。<ruby>延長<rt>えんちょう</rt></ruby>もできますが、<ruby>予約<rt>よやく</rt></ruby>が<ruby>入<rt>はい</rt></ruby>っている<ruby>本<rt>ほん</rt></ruby>はできません。',
+tr:'En la biblioteca puedes tomar libros prestados. Si sacas la tarjeta de biblioteca, puedes llevarte hasta cinco libros a la vez. El plazo de devolución es de dos semanas. Se puede ampliar, pero no para libros reservados.',
+vocab:[{w:'返却期限',r:'へんきゃくきげん',m:'plazo de devolución'},{w:'延長',r:'えんちょう',m:'ampliación'},{w:'予約',r:'よやく',m:'reserva'}],topic:'Estudio'},
+
+{id:'n4_g',level:4,title:'誕生日パーティー',
+jp_plain:'昨日、友達の誕生日パーティーに行きました。みんなでレストランで食事をして、ケーキを食べました。プレゼントは本とハンカチにしました。友達はとても喜んでくれました。楽しい夜でした。',
+jp_ruby:'<ruby>昨日<rt>きのう</rt></ruby>、<ruby>友達<rt>ともだち</rt></ruby>の<ruby>誕生日<rt>たんじょうび</rt></ruby>パーティーに<ruby>行<rt>い</rt></ruby>きました。みんなでレストランで<ruby>食事<rt>しょくじ</rt></ruby>をして、ケーキを<ruby>食<rt>た</rt></ruby>べました。プレゼントは<ruby>本<rt>ほん</rt></ruby>とハンカチにしました。<ruby>友達<rt>ともだち</rt></ruby>はとても<ruby>喜<rt>よろこ</rt></ruby>んでくれました。<ruby>楽<rt>たの</rt></ruby>しい<ruby>夜<rt>よる</rt></ruby>でした。',
+tr:'Ayer fui a la fiesta de cumpleaños de un amigo. Todos cenamos juntos en el restaurante y comimos tarta. Le regalé un libro y un pañuelo. Mi amigo se alegró mucho. Fue una noche agradable.',
+vocab:[{w:'誕生日',r:'たんじょうび',m:'cumpleaños'},{w:'喜ぶ',r:'よろこぶ',m:'alegrarse'},{w:'〜てくれる',r:'—',m:'hacer algo por mí'}],topic:'Vida cotidiana'},
+
+{id:'n4_h',level:4,title:'日本語の勉強法',
+jp_plain:'日本語を上手に話すためには、毎日少しずつ練習することが大切です。ドラマや映画を日本語で見るのもいい方法です。単語を覚えるときは、例文と一緒に覚えると忘れにくくなります。日本人の友達を作って話す機会を増やしましょう。',
+jp_ruby:'<ruby>日本語<rt>にほんご</rt></ruby>を<ruby>上手<rt>じょうず</rt></ruby>に<ruby>話<rt>はな</rt></ruby>すためには、<ruby>毎日<rt>まいにち</rt></ruby><ruby>少<rt>すこ</rt></ruby>しずつ<ruby>練習<rt>れんしゅう</rt></ruby>することが<ruby>大切<rt>たいせつ</rt></ruby>です。ドラマや<ruby>映画<rt>えいが</rt></ruby>を<ruby>日本語<rt>にほんご</rt></ruby>で<ruby>見<rt>み</rt></ruby>るのもいい<ruby>方法<rt>ほうほう</rt></ruby>です。<ruby>単語<rt>たんご</rt></ruby>を<ruby>覚<rt>おぼ</rt></ruby>えるときは、<ruby>例文<rt>れいぶん</rt></ruby>と<ruby>一緒<rt>いっしょ</rt></ruby>に<ruby>覚<rt>おぼ</rt></ruby>えると<ruby>忘<rt>わす</rt></ruby>れにくくなります。',
+tr:'Para hablar bien el japonés, es importante practicar un poco cada día. Ver dramas y películas en japonés también es un buen método. Al aprender vocabulario, aprenderlo junto con frases de ejemplo hace que sea más difícil olvidarlo.',
+vocab:[{w:'練習',r:'れんしゅう',m:'práctica'},{w:'単語',r:'たんご',m:'vocabulario/palabra'},{w:'例文',r:'れいぶん',m:'frase de ejemplo'}],topic:'Estudio'},
+
+{id:'n4_i',level:4,title:'日本のお風呂文化',
+jp_plain:'日本では毎日お風呂に入る習慣があります。シャワーだけでなく、湯船に浸かります。温泉も日本の大切な文化の一つです。体を洗ってからお湯に入るのがマナーです。銭湯という公衆浴場も日本にはたくさんあります。',
+jp_ruby:'<ruby>日本<rt>にほん</rt></ruby>では<ruby>毎日<rt>まいにち</rt></ruby>お<ruby>風呂<rt>ふろ</rt></ruby>に<ruby>入<rt>はい</rt></ruby>る<ruby>習慣<rt>しゅうかん</rt></ruby>があります。シャワーだけでなく、<ruby>湯船<rt>ゆぶね</rt></ruby>に<ruby>浸<rt>つ</rt></ruby>かります。<ruby>温泉<rt>おんせん</rt></ruby>も<ruby>日本<rt>にほん</rt></ruby>の<ruby>大切<rt>たいせつ</rt></ruby>な<ruby>文化<rt>ぶんか</rt></ruby>の<ruby>一<rt>ひと</rt></ruby>つです。<ruby>体<rt>からだ</rt></ruby>を<ruby>洗<rt>あら</rt></ruby>ってからお<ruby>湯<rt>ゆ</rt></ruby>に<ruby>入<rt>はい</rt></ruby>るのがマナーです。',
+tr:'En Japón existe la costumbre de darse un baño todos los días. No solo la ducha, sino también sumergirse en la bañera. Las aguas termales también son una parte importante de la cultura japonesa. Es costumbre lavarse el cuerpo antes de meterse al agua caliente.',
+vocab:[{w:'習慣',r:'しゅうかん',m:'costumbre/hábito'},{w:'湯船',r:'ゆぶね',m:'bañera'},{w:'温泉',r:'おんせん',m:'aguas termales'},{w:'銭湯',r:'せんとう',m:'baño público'}],topic:'Cultura'},
+
+{id:'n4_j',level:4,title:'道に迷った時',
+jp_plain:'先週、旅行先で道に迷いました。地図を持っていましたが、よくわかりませんでした。近くにいたおじいさんに道を聞きました。とても親切に教えてくれました。目的地まで一緒に歩いてくれたので助かりました。',
+jp_ruby:'<ruby>先週<rt>せんしゅう</rt></ruby>、<ruby>旅行先<rt>りょこうさき</rt></ruby>で<ruby>道<rt>みち</rt></ruby>に<ruby>迷<rt>まよ</rt></ruby>いました。<ruby>地図<rt>ちず</rt></ruby>を<ruby>持<rt>も</rt></ruby>っていましたが、よくわかりませんでした。<ruby>近<rt>ちか</rt></ruby>くにいたおじいさんに<ruby>道<rt>みち</rt></ruby>を<ruby>聞<rt>き</rt></ruby>きました。とても<ruby>親切<rt>しんせつ</rt></ruby>に<ruby>教<rt>おし</rt></ruby>えてくれました。<ruby>目的地<rt>もくてきち</rt></ruby>まで<ruby>一緒<rt>いっしょ</rt></ruby>に<ruby>歩<rt>ある</rt></ruby>いてくれたので<ruby>助<rt>たす</rt></ruby>かりました。',
+tr:'La semana pasada me perdí en el lugar al que viajé. Tenía mapa pero no lo entendía bien. Le pregunté el camino a un señor mayor que estaba cerca. Me lo explicó con mucha amabilidad. Me salvó porque caminó conmigo hasta el destino.',
+vocab:[{w:'道に迷う',r:'みちにまよう',m:'perderse'},{w:'親切',r:'しんせつ',m:'amabilidad'},{w:'目的地',r:'もくてきち',m:'destino'}],topic:'Viaje'},
+
+{id:'n4_k',level:4,title:'スポーツジム',
+jp_plain:'三ヶ月前からスポーツジムに通い始めました。週に三回、仕事の後に行っています。最初は疲れましたが、今は体が軽くなった気がします。体重も少し減りました。健康のために続けようと思っています。',
+jp_ruby:'<ruby>三<rt>さん</rt></ruby>ヶ<ruby>月<rt>げつ</rt></ruby><ruby>前<rt>まえ</rt></ruby>からスポーツジムに<ruby>通<rt>かよ</rt></ruby>い<ruby>始<rt>はじ</rt></ruby>めました。<ruby>週<rt>しゅう</rt></ruby>に<ruby>三回<rt>さんかい</rt></ruby>、<ruby>仕事<rt>しごと</rt></ruby>の<ruby>後<rt>あと</rt></ruby>に<ruby>行<rt>い</rt></ruby>っています。<ruby>最初<rt>さいしょ</rt></ruby>は<ruby>疲<rt>つか</rt></ruby>れましたが、<ruby>今<rt>いま</rt></ruby>は<ruby>体<rt>からだ</rt></ruby>が<ruby>軽<rt>かる</rt></ruby>くなった<ruby>気<rt>き</rt></ruby>がします。<ruby>体重<rt>たいじゅう</rt></ruby>も<ruby>少<rt>すこ</rt></ruby>し<ruby>減<rt>へ</rt></ruby>りました。',
+tr:'Hace tres meses empecé a ir al gimnasio. Voy tres veces a la semana, después del trabajo. Al principio me cansaba, pero ahora siento que el cuerpo está más ligero. También he bajado un poco de peso.',
+vocab:[{w:'通う',r:'かよう',m:'ir regularmente'},{w:'体重',r:'たいじゅう',m:'peso corporal'},{w:'減る',r:'へる',m:'disminuir/bajar'}],topic:'Salud'},
+
+{id:'n4_l',level:4,title:'おみやげを買う',
+jp_plain:'旅行に行くと、家族や友達へのおみやげを買います。日本では旅行先のお菓子や特産品を買うのが一般的です。職場でも旅行から帰ったらおみやげを配る習慣があります。どんなものをもらっても嬉しいです。',
+jp_ruby:'<ruby>旅行<rt>りょこう</rt></ruby>に<ruby>行<rt>い</rt></ruby>くと、<ruby>家族<rt>かぞく</rt></ruby>や<ruby>友達<rt>ともだち</rt></ruby>へのおみやげを<ruby>買<rt>か</rt></ruby>います。<ruby>日本<rt>にほん</rt></ruby>では<ruby>旅行先<rt>りょこうさき</rt></ruby>のお<ruby>菓子<rt>かし</rt></ruby>や<ruby>特産品<rt>とくさんひん</rt></ruby>を<ruby>買<rt>か</rt></ruby>うのが<ruby>一般的<rt>いっぱんてき</rt></ruby>です。<ruby>職場<rt>しょくば</rt></ruby>でも<ruby>旅行<rt>りょこう</rt></ruby>から<ruby>帰<rt>かえ</rt></ruby>ったらおみやげを<ruby>配<rt>くば</rt></ruby>る<ruby>習慣<rt>しゅうかん</rt></ruby>があります。',
+tr:'Cuando voy de viaje, compro souvenirs para la familia y los amigos. En Japón es habitual comprar dulces y productos típicos del lugar visitado. En el trabajo también existe la costumbre de repartir souvenirs al volver de viaje.',
+vocab:[{w:'おみやげ',r:'—',m:'souvenir/regalo de viaje'},{w:'特産品',r:'とくさんひん',m:'producto típico'},{w:'配る',r:'くばる',m:'repartir'}],topic:'Cultura'},
+
+{id:'n4_m',level:4,title:'電気代の節約',
+jp_plain:'最近、電気代がとても高くなりました。エアコンの温度を一度上げるだけで電気代が少し安くなります。使っていない電気はこまめに消すことも大切です。省エネ家電に変えることも効果があります。小さなことから始めましょう。',
+jp_ruby:'<ruby>最近<rt>さいきん</rt></ruby>、<ruby>電気代<rt>でんきだい</rt></ruby>がとても<ruby>高<rt>たか</rt></ruby>くなりました。エアコンの<ruby>温度<rt>おんど</rt></ruby>を<ruby>一度<rt>いちど</rt></ruby><ruby>上<rt>あ</rt></ruby>げるだけで<ruby>電気代<rt>でんきだい</rt></ruby>が<ruby>少<rt>すこ</rt></ruby>し<ruby>安<rt>やす</rt></ruby>くなります。<ruby>使<rt>つか</rt></ruby>っていない<ruby>電気<rt>でんき</rt></ruby>はこまめに<ruby>消<rt>け</rt></ruby>すことも<ruby>大切<rt>たいせつ</rt></ruby>です。',
+tr:'Últimamente la factura de la luz ha subido mucho. Con solo subir un grado el aire acondicionado la factura baja un poco. También es importante apagar las luces que no se usan. Cambiar a electrodomésticos de bajo consumo también tiene efecto.',
+vocab:[{w:'電気代',r:'でんきだい',m:'factura de la luz'},{w:'温度',r:'おんど',m:'temperatura'},{w:'こまめに',r:'—',m:'con frecuencia/diligentemente'}],topic:'Vida cotidiana'},
+
+{id:'n4_n',level:4,title:'桜の花見',
+jp_plain:'春になると、日本各地で花見が行われます。花見とは桜の木の下でお弁当を食べたりお酒を飲んだりすることです。友達や同僚と一緒に楽しむことが多いです。桜は一週間ほどで散ってしまうので、その短さも美しいと言われています。',
+jp_ruby:'<ruby>春<rt>はる</rt></ruby>になると、<ruby>日本各地<rt>にほんかくち</rt></ruby>で<ruby>花見<rt>はなみ</rt></ruby>が<ruby>行<rt>おこな</rt></ruby>われます。<ruby>花見<rt>はなみ</rt></ruby>とは<ruby>桜<rt>さくら</rt></ruby>の<ruby>木<rt>き</rt></ruby>の<ruby>下<rt>した</rt></ruby>でお<ruby>弁当<rt>べんとう</rt></ruby>を<ruby>食<rt>た</rt></ruby>べたりお<ruby>酒<rt>さけ</rt></ruby>を<ruby>飲<rt>の</rt></ruby>んだりすることです。<ruby>桜<rt>さくら</rt></ruby>は<ruby>一週間<rt>いっしゅうかん</rt></ruby>ほどで<ruby>散<rt>ち</rt></ruby>ってしまうので、その<ruby>短<rt>みじか</rt></ruby>さも<ruby>美<rt>うつく</rt></ruby>しいと<ruby>言<rt>い</rt></ruby>われています。',
+tr:'Al llegar la primavera, se celebran hanami en todo Japón. El hanami consiste en comer bento y beber bajo los cerezos. Suele disfrutarse con amigos o compañeros de trabajo. Los cerezos se caen en una semana, y se dice que esa fugacidad también es parte de su belleza.',
+vocab:[{w:'花見',r:'はなみ',m:'contemplación de flores de cerezo'},{w:'お弁当',r:'おべんとう',m:'fiambrera'},{w:'散る',r:'ちる',m:'caerse (flores)/dispersarse'}],topic:'Cultura'},
+
+{id:'n4_o',level:4,title:'スマートフォンの使い方',
+jp_plain:'今はスマートフォンがあれば、地図、翻訳、天気など何でも調べられます。電車の中でスマホを見ている人がとても多いです。しかし、歩きながらスマホを見るのは危ないのでやめましょう。大切な人との会話の時間も忘れないでください。',
+jp_ruby:'<ruby>今<rt>いま</rt></ruby>はスマートフォンがあれば、<ruby>地図<rt>ちず</rt></ruby>、<ruby>翻訳<rt>ほんやく</rt></ruby>、<ruby>天気<rt>てんき</rt></ruby>など<ruby>何<rt>なん</rt></ruby>でも<ruby>調<rt>しら</rt></ruby>べられます。<ruby>電車<rt>でんしゃ</rt></ruby>の<ruby>中<rt>なか</rt></ruby>でスマホを<ruby>見<rt>み</rt></ruby>ている<ruby>人<rt>ひと</rt></ruby>がとても<ruby>多<rt>おお</rt></ruby>いです。しかし、<ruby>歩<rt>ある</rt></ruby>きながらスマホを<ruby>見<rt>み</rt></ruby>るのは<ruby>危<rt>あぶ</rt></ruby>ないのでやめましょう。',
+tr:'Hoy en día, con un smartphone puedes buscar mapas, traducciones, el tiempo y cualquier cosa. Hay mucha gente mirando el móvil en el tren. Sin embargo, mirar el móvil mientras caminas es peligroso, así que hay que evitarlo.',
+vocab:[{w:'翻訳',r:'ほんやく',m:'traducción'},{w:'危ない',r:'あぶない',m:'peligroso'},{w:'〜ながら',r:'—',m:'mientras hace ~'}],topic:'Tecnología'},
+
+{id:'n4_p',level:4,title:'引っ越しの準備',
+jp_plain:'来月、新しいアパートに引っ越します。今、荷物の整理をしています。いらないものはすてて、必要なものだけ持っていきます。引っ越し会社に連絡して、日程も決めました。新しい生活が楽しみです。',
+jp_ruby:'<ruby>来月<rt>らいげつ</rt></ruby>、<ruby>新<rt>あたら</rt></ruby>しいアパートに<ruby>引<rt>ひ</rt></ruby>っ<ruby>越<rt>こ</rt></ruby>します。<ruby>今<rt>いま</rt></ruby>、<ruby>荷物<rt>にもつ</rt></ruby>の<ruby>整理<rt>せいり</rt></ruby>をしています。いらないものは<ruby>捨<rt>す</rt></ruby>てて、<ruby>必要<rt>ひつよう</rt></ruby>なものだけ<ruby>持<rt>も</rt></ruby>っていきます。<ruby>引<rt>ひ</rt></ruby>っ<ruby>越<rt>こ</rt></ruby>し<ruby>会社<rt>がいしゃ</rt></ruby>に<ruby>連絡<rt>れんらく</rt></ruby>して、<ruby>日程<rt>にってい</rt></ruby>も<ruby>決<rt>き</rt></ruby>めました。',
+tr:'El mes que viene me mudo a un apartamento nuevo. Ahora estoy organizando las cosas. Tiraré lo que no necesito y solo me llevaré lo necesario. Me puse en contacto con la empresa de mudanzas y ya fijé la fecha.',
+vocab:[{w:'引っ越し',r:'ひっこし',m:'mudanza'},{w:'整理',r:'せいり',m:'organizar/ordenar'},{w:'日程',r:'にってい',m:'fecha/calendario'}],topic:'Vida cotidiana'},
+
+{id:'n4_q',level:4,title:'日本のコンビニ文化',
+jp_plain:'日本のコンビニは二十四時間営業しています。食べ物だけでなく、公共料金の支払いや荷物の送付もできます。ATMもあるので、銀行代わりに使う人もいます。最近はコンビニコーヒーがとても人気です。',
+jp_ruby:'<ruby>日本<rt>にほん</rt></ruby>のコンビニは<ruby>二十四時間<rt>にじゅうよじかん</rt></ruby><ruby>営業<rt>えいぎょう</rt></ruby>しています。<ruby>食<rt>た</rt></ruby>べ<ruby>物<rt>もの</rt></ruby>だけでなく、<ruby>公共料金<rt>こうきょうりょうきん</rt></ruby>の<ruby>支払<rt>しはら</rt></ruby>いや<ruby>荷物<rt>にもつ</rt></ruby>の<ruby>送付<rt>そうふ</rt></ruby>もできます。ATMもあるので、<ruby>銀行<rt>ぎんこう</rt></ruby><ruby>代<rt>か</rt></ruby>わりに<ruby>使<rt>つか</rt></ruby>う<ruby>人<rt>ひと</rt></ruby>もいます。',
+tr:'Los konbini de Japón abren las 24 horas. Además de comida, también se pueden pagar recibos y enviar paquetes. Como también hay cajeros automáticos, hay gente que los usa en lugar del banco.',
+vocab:[{w:'営業',r:'えいぎょう',m:'operación/horario de apertura'},{w:'公共料金',r:'こうきょうりょうきん',m:'recibos/servicios públicos'},{w:'代わりに',r:'かわりに',m:'en lugar de'}],topic:'Vida cotidiana'},
+
+{id:'n4_r',level:4,title:'日本語の敬語',
+jp_plain:'日本語には敬語という丁寧な話し方があります。仕事や初めて会う人との会話では敬語を使います。「食べます」は「召し上がります」、「言います」は「おっしゃいます」になります。敬語は難しいですが、使えると印象がよくなります。',
+jp_ruby:'<ruby>日本語<rt>にほんご</rt></ruby>には<ruby>敬語<rt>けいご</rt></ruby>という<ruby>丁寧<rt>ていねい</rt></ruby>な<ruby>話<rt>はな</rt></ruby>し<ruby>方<rt>かた</rt></ruby>があります。<ruby>仕事<rt>しごと</rt></ruby>や<ruby>初<rt>はじ</rt></ruby>めて<ruby>会<rt>あ</rt></ruby>う<ruby>人<rt>ひと</rt></ruby>との<ruby>会話<rt>かいわ</rt></ruby>では<ruby>敬語<rt>けいご</rt></ruby>を<ruby>使<rt>つか</rt></ruby>います。「<ruby>食<rt>た</rt></ruby>べます」は「<ruby>召<rt>め</rt></ruby>し<ruby>上<rt>あ</rt></ruby>がります」になります。<ruby>敬語<rt>けいご</rt></ruby>は<ruby>難<rt>むずか</rt></ruby>しいですが、<ruby>使<rt>つか</rt></ruby>えると<ruby>印象<rt>いんしょう</rt></ruby>がよくなります。',
+tr:'En japonés existe una forma de hablar educada llamada keigo. Se usa en el trabajo o con personas que acabas de conocer. "Tabemasu" se convierte en "meshiagarimasu". El keigo es difícil pero si lo dominas causa buena impresión.',
+vocab:[{w:'敬語',r:'けいご',m:'lenguaje formal/honorífico'},{w:'丁寧',r:'ていねい',m:'educado/cuidadoso'},{w:'印象',r:'いんしょう',m:'impresión'}],topic:'Estudio'},
+
+{id:'n4_s',level:4,title:'ゴミの分別',
+jp_plain:'日本ではゴミの分別がとても細かいです。燃えるゴミ、燃えないゴミ、プラスチック、缶、ビンなど、種類によって分けます。地域によってルールが違います。ゴミは決められた日に出さなければなりません。引っ越した時はルールをよく確認しましょう。',
+jp_ruby:'<ruby>日本<rt>にほん</rt></ruby>ではゴミの<ruby>分別<rt>ぶんべつ</rt></ruby>がとても<ruby>細<rt>こま</rt></ruby>かいです。<ruby>燃<rt>も</rt></ruby>えるゴミ、<ruby>燃<rt>も</rt></ruby>えないゴミ、プラスチック、<ruby>缶<rt>かん</rt></ruby>、ビンなど、<ruby>種類<rt>しゅるい</rt></ruby>によって<ruby>分<rt>わ</rt></ruby>けます。<ruby>地域<rt>ちいき</rt></ruby>によってルールが<ruby>違<rt>ちが</rt></ruby>います。ゴミは<ruby>決<rt>き</rt></ruby>められた<ruby>日<rt>ひ</rt></ruby>に<ruby>出<rt>だ</rt></ruby>さなければなりません。',
+tr:'En Japón la separación de basura es muy estricta. Se separa por tipos: basura combustible, no combustible, plástico, latas, botellas, etc. Las reglas varían según la zona. La basura hay que sacarla los días designados.',
+vocab:[{w:'分別',r:'ぶんべつ',m:'separación de residuos'},{w:'燃えるゴミ',r:'もえるゴミ',m:'basura combustible'},{w:'種類',r:'しゅるい',m:'tipo/clase'}],topic:'Vida cotidiana'},
+
+{id:'n4_t',level:4,title:'日本の交通マナー',
+jp_plain:'日本の電車やバスには、守るべきマナーがあります。優先席はお年寄りや体の不自由な方に譲りましょう。携帯電話は電話をせず、マナーモードにしておきます。大きな声で話したり、音楽を流したりするのもよくありません。混んでいる時はリュックサックを前に持ちましょう。',
+jp_ruby:'<ruby>日本<rt>にほん</rt></ruby>の<ruby>電車<rt>でんしゃ</rt></ruby>やバスには、<ruby>守<rt>まも</rt></ruby>るべきマナーがあります。<ruby>優先席<rt>ゆうせんせき</rt></ruby>はお<ruby>年寄<rt>としよ</rt></ruby>りや<ruby>体<rt>からだ</rt></ruby>の<ruby>不自由<rt>ふじゆう</rt></ruby>な<ruby>方<rt>かた</rt></ruby>に<ruby>譲<rt>ゆず</rt></ruby>りましょう。<ruby>携帯電話<rt>けいたいでんわ</rt></ruby>は<ruby>電話<rt>でんわ</rt></ruby>をせず、マナーモードにしておきます。',
+tr:'En trenes y autobuses de Japón hay normas de comportamiento que hay que respetar. Los asientos prioritarios deben cederse a personas mayores o con dificultades físicas. El móvil hay que ponerlo en modo silencioso y no hablar por teléfono.',
+vocab:[{w:'優先席',r:'ゆうせんせき',m:'asiento prioritario'},{w:'譲る',r:'ゆずる',m:'ceder'},{w:'マナーモード',r:'—',m:'modo silencio (del móvil)'}],topic:'Transporte'},
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let S = {xp:0,xpMax:100,level:4,streak:0,hunger:50,studiedToday:0,correct:0,totalAns:0,knownKanji:[],weakKanji:{},dayStreak:0,readDone:[]};
+let flashLevel=4, flashMode='random', flashOrder='random', flashQueue=[], flashIdx=0, revealed=false, sCorrect=0, sWrong=0;
+let showRuby=true, showHira=false;
+let currentTextIdx=0;
+
+function save(){try{localStorage.setItem('kanjidojo2',JSON.stringify(S))}catch(e){}}
+function load(){try{const d=localStorage.getItem('kanjidojo2');if(d)S=Object.assign(S,JSON.parse(d))}catch(e){}}
+load();
+
+// ============================================================
+// STARS
+// ============================================================
+(function(){const c=document.getElementById('stars');for(let i=0;i<50;i++){const s=document.createElement('div');s.className='star';s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${1+Math.random()*2}px;height:${1+Math.random()*2}px;animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*3}s`;c.appendChild(s);}})();
+
+// ============================================================
+// PET
+// ============================================================
+function drawPet(){
+  const svg=document.getElementById('petSvg');
+  const h=S.hunger;
+  const happy=h<55;
+  const veryHungry=h>75;
+
+  const bodyWhite='#f5f1ee';
+  const patchBlack='#252525';
+  const noseBeige='#c4906a';
+  const eyeCol='#1c1c1c';
+  const cheekPink=happy?'rgba(215,150,130,0.4)':'rgba(190,90,90,0.3)';
+  const glow=happy?'rgba(192,132,252,0.25)':'rgba(239,68,68,0.15)';
+
+  const mouth=happy
+    ?'M57,83 Q63,89 69,83'
+    :veryHungry
+      ?'M57,87 Q63,82 69,87'
+      :'M58,85 Q63,83 68,85';
+
+  const eyeL=happy?'M44,66 Q50,60 56,66':'M44,65 Q50,71 56,65';
+  const eyeR=happy?'M67,66 Q73,60 79,66':'M67,65 Q73,71 79,65';
+
+  svg.innerHTML=`
+    <!-- Sombra -->
+    <ellipse cx="62" cy="117" rx="25" ry="5" fill="rgba(30,15,5,0.15)"/>
+
+    <!-- OREJAS CAÍDAS — cuelgan completamente hacia abajo a cada lado de la cabeza -->
+    <!-- Oreja izquierda: arranca del lateral izquierdo de la cabeza y cae recto hacia abajo -->
+    <path d="M32,58 C18,58 14,68 14,82 C14,96 18,108 26,112 C32,115 38,110 40,100 C42,88 42,72 40,62 C38,58 35,56 32,58 Z"
+          fill="${bodyWhite}" filter="drop-shadow(-2px 2px 4px rgba(0,0,0,0.18))"/>
+    <!-- Mancha negra oreja izquierda (interior/exterior mezclado) -->
+    <path d="M30,60 C20,62 16,72 17,84 C18,96 22,107 27,110 C30,106 32,95 33,83 C34,70 33,62 30,60 Z"
+          fill="${patchBlack}" opacity="0.80"/>
+    <!-- Interior suave oreja izquierda -->
+    <path d="M31,64 C24,66 21,76 22,86 C23,95 26,104 29,107 C31,100 33,90 33,80 C33,70 32,65 31,64 Z"
+          fill="#d8ccc8" opacity="0.5"/>
+
+    <!-- Oreja derecha: espejo -->
+    <path d="M92,58 C106,58 110,68 110,82 C110,96 106,108 98,112 C92,115 86,110 84,100 C82,88 82,72 84,62 C86,58 89,56 92,58 Z"
+          fill="${bodyWhite}" filter="drop-shadow(2px 2px 4px rgba(0,0,0,0.18))"/>
+    <!-- Mancha negra oreja derecha -->
+    <path d="M94,60 C104,62 108,72 107,84 C106,96 102,107 97,110 C94,106 92,95 91,83 C90,70 91,62 94,60 Z"
+          fill="${patchBlack}" opacity="0.80"/>
+    <!-- Interior suave oreja derecha -->
+    <path d="M93,64 C100,66 103,76 102,86 C101,95 98,104 95,107 C93,100 91,90 91,80 C91,70 92,65 93,64 Z"
+          fill="#d8ccc8" opacity="0.5"/>
+
+    <!-- CABEZA / CUERPO -->
+    <ellipse cx="62" cy="80" rx="34" ry="32" fill="${bodyWhite}"
+      filter="drop-shadow(0 0 10px ${glow})"/>
+
+    <!-- Mancha negra: cubre ojo izquierdo y parte superior izquierda -->
+    <ellipse cx="46" cy="64" rx="16" ry="12" fill="${patchBlack}" opacity="0.85" transform="rotate(-10,46,64)"/>
+    <!-- Mancha negra: cubre ojo derecho y parte superior derecha -->
+    <ellipse cx="78" cy="63" rx="13" ry="10" fill="${patchBlack}" opacity="0.80" transform="rotate(8,78,63)"/>
+    <!-- Pequeña mancha en la frente superior -->
+    <ellipse cx="62" cy="53" rx="9" ry="6" fill="${patchBlack}" opacity="0.55"/>
+
+    <!-- Zona blanca central de la cara -->
+    <ellipse cx="62" cy="76" rx="17" ry="18" fill="${bodyWhite}" opacity="0.95"/>
+
+    <!-- Mejillas rosadas -->
+    <ellipse cx="47" cy="80" rx="8" ry="5" fill="${cheekPink}"/>
+    <ellipse cx="77" cy="80" rx="8" ry="5" fill="${cheekPink}"/>
+
+    <!-- Nariz beige -->
+    <ellipse cx="62" cy="80" rx="4.5" ry="3" fill="${noseBeige}"/>
+    <line x1="62" y1="83" x2="62" y2="85" stroke="${noseBeige}" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+
+    <!-- Bigotes -->
+    <line x1="36" y1="79" x2="55" y2="81" stroke="rgba(60,40,30,0.3)" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="36" y1="83" x2="55" y2="83" stroke="rgba(60,40,30,0.3)" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="69" y1="81" x2="88" y2="79" stroke="rgba(60,40,30,0.3)" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="69" y1="83" x2="88" y2="83" stroke="rgba(60,40,30,0.3)" stroke-width="1.2" stroke-linecap="round"/>
+
+    <!-- Ojos (encima de las manchas) -->
+    <path d="${eyeL}" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="${eyeR}" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    ${happy?`<circle cx="52" cy="65" r="1.8" fill="rgba(255,255,255,0.7)"/><circle cx="75" cy="65" r="1.8" fill="rgba(255,255,255,0.7)"/>`:''}
+
+    <!-- Boca -->
+    <path d="${mouth}" stroke="${eyeCol}" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.75"/>
+
+    <!-- Patitas -->
+    <ellipse cx="48" cy="111" rx="11" ry="6" fill="${bodyWhite}" opacity="0.9"/>
+    <ellipse cx="76" cy="111" rx="11" ry="6" fill="${bodyWhite}" opacity="0.9"/>
+    <ellipse cx="48" cy="111" rx="7" ry="4" fill="${patchBlack}" opacity="0.25"/>
+
+    <!-- ZZZ si muy lleno -->
+    ${veryHungry?`
+    <text x="90" y="48" font-size="11" fill="#7c3aed" opacity="0.6" font-family="sans-serif" font-weight="bold">z</text>
+    <text x="98" y="38" font-size="13" fill="#7c3aed" opacity="0.4" font-family="sans-serif" font-weight="bold">z</text>
+    `:''}
+
+    <!-- Brillos cuando está feliz y bien alimentado -->
+    ${happy&&h<30?`
+    <circle cx="16" cy="75" r="2.5" fill="#fbbf24" opacity="0.7"/>
+    <circle cx="110" cy="65" r="2" fill="#f472b6" opacity="0.6"/>
+    <circle cx="14" cy="55" r="1.8" fill="#c084fc" opacity="0.55"/>
+    `:''}
+  `;
+}
+
+function petTap(){
+  if(S.hunger<=5){showToast('¡Haru está bien alimentado 🐰');return;}
+  S.hunger=Math.max(0,S.hunger-15);
+  doFeedAnim();
+  showToast('¡Haru come la zanahoria! 🥕');
+  updateUI();save();
+}
+
+function doFeedAnim(){
+  const fa=document.getElementById('feedAnim');
+  fa.className='feed-anim pop';
+  setTimeout(()=>{fa.className='feed-anim fade';},400);
+  setTimeout(()=>{fa.className='feed-anim';},900);
+}
+
+const bubbles=['¡Vamos!','もっと！','がんばれ！','🥕','にゃん！','おいしい！','🐰','ぴょん！'];
+let bubbleI=0;
+function cycleBubble(){
+  const b=document.getElementById('petBubble');
+  b.textContent=bubbles[bubbleI++ % bubbles.length];
+}
+setInterval(cycleBubble,3000);
+
+// ============================================================
+// UI UPDATE
+// ============================================================
+function updateUI(){
+  updateXPBars();
+
+  const lvl='N'+S.level;
+  document.getElementById('lvl-badge-home').textContent=lvl;
+  document.getElementById('lvl-badge-home').className='badge badge-n'+S.level;
+  document.getElementById('flash-lvl-lbl').textContent=lvl;
+  document.getElementById('streak-home').textContent=S.streak+'🔥';
+  const hf=document.getElementById('hunger-fill');
+  hf.style.width=S.hunger+'%';
+  hf.style.background=S.hunger<30?'var(--red)':S.hunger<60?'var(--orange)':'var(--green)';
+  hf.style.boxShadow='0 0 6px '+(S.hunger<30?'var(--red)':S.hunger<60?'var(--orange)':'var(--green)');
+  document.getElementById('hunger-pct').textContent=Math.round(S.hunger)+'%';
+  const acc=S.totalAns?Math.round(S.correct/S.totalAns*100):0;
+  document.getElementById('st-today').textContent=S.studiedToday;
+  document.getElementById('st-acc').textContent=acc+'%';
+  document.getElementById('st-known').textContent=S.knownKanji.length;
+  document.getElementById('st-streak').textContent=S.dayStreak;
+  document.getElementById('petMood').textContent=
+    S.hunger<20?'¡Tengo mucha hambre! Dame una zanahoria 🥕':
+    S.hunger<50?'¡Listo para estudiar! 🐰':
+    S.hunger<75?'Estoy satisfecho ☺️':'Estoy muy lleno... no más 😴';
+  drawPet();
+}
+
+function updateXPBars(){
+  const pct=S.xp/S.xpMax*100;
+  ['xp-fill','xp-fill2','xp-fill-q'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.style.width=pct+'%';
+  });
+  ['xp-text','xp-text2','xp-text-q'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.textContent=S.xp+' / '+S.xpMax+' XP';
+  });
+}
+
+function gainXP(n){
+  S.xp+=n;
+  if(S.xp>=S.xpMax){
+    S.xp-=S.xpMax;S.xpMax=Math.round(S.xpMax*1.4);
+    if(S.level>2)S.level--;
+    showToast('🎊 ¡Subiste de nivel! Ahora N'+S.level);
+  }
+  updateUI();
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+let toastT=null;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  if(toastT)clearTimeout(toastT);
+  toastT=setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function goScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const sc=document.getElementById('screen-'+id);
+  if(sc)sc.classList.add('active');
+  if(id==='reading-list')buildReadingList();
+  if(id==='review')buildReview();
+  if(id==='kanji-list')showKanjiList(4);
+  if(id==='quiz')startQuiz(quizLevel);
+  if(id==='home')updateHomeCounts();
+  if(id==='failed')buildFailedList();
+  if(id==='seen')buildSeenList();
+  updateUI();
+}
+
+// ============================================================
+// KANJI LIST
+// ============================================================
+let klLevel=4;
+function showKanjiList(n){
+  klLevel=n;
+  ['n4','n3','n2'].forEach(x=>{
+    const t=document.getElementById('kl-'+x);
+    if(t)t.className='level-tab';
+  });
+  const active=document.getElementById('kl-n'+n);
+  if(active)active.className='level-tab active-n'+n;
+  const scroll=document.getElementById('kanjiListScroll');
+  if(!scroll)return;
+  const pool=KANJI.filter(k=>k.n===n);
+  const colors={4:'var(--cyan)',3:'var(--gold)',2:'var(--red)'};
+  scroll.innerHTML=`<div style="font-size:11px;color:var(--tx3);font-weight:800;margin-bottom:10px;letter-spacing:.05em">${pool.length} kanji en nivel N${n} · Toca para ver palabras</div>`;
+  pool.forEach((kd,i)=>{
+    const div=document.createElement('div');
+    div.className='kl-item';
+    div.id='kli-'+i;
+    const alts=kd.alt||[];
+    div.innerHTML=`
+      <div class="kl-top" onclick="toggleKLItem(${i})">
+        <div class="kl-kanji">${kd.k}</div>
+        <div class="kl-meta">
+          <div class="kl-reading">${kd.r}</div>
+          <div class="kl-meaning">${kd.m}</div>
+          <div class="kl-onkun">音：${kd.on||'—'} &nbsp;訓：${kd.kun||'—'}</div>
+        </div>
+        <span class="kl-count">${alts.length} palabras</span>
+        <span class="kl-arrow">▼</span>
+      </div>
+      <div class="kl-detail">
+        <div class="kl-cpd-label">⚡ Palabras con este kanji</div>
+        <div class="kl-cpd-grid">
+          ${alts.map(a=>{
+            const pts=a.split(':');
+            const word=pts[0]||a;
+            const meaning=pts[1]||'';
+            const match=word.match(/（(.+?)）/);
+            const reading=match?match[1]:'';
+            const clean=word.replace(/（.+?）/g,'');
+            return`<div class="kl-cpd-row">
+              <div class="kl-cpd-word">${clean}</div>
+              <div class="kl-cpd-info">
+                <div class="kl-cpd-r">${reading}</div>
+                <div class="kl-cpd-m">${meaning}</div>
+              </div>
+            </div>`;
+          }).join('')}
+          ${alts.length===0?'<div style="font-size:12px;color:var(--tx3);padding:6px 0">Sin palabras compuestas registradas</div>':''}
+        </div>
+      </div>`;
+    scroll.appendChild(div);
+  });
+}
+
+function toggleKLItem(i){
+  const el=document.getElementById('kli-'+i);
+  if(!el)return;
+  el.classList.toggle('open');
+}
+
+function setFlashOrder(order){
+  flashOrder=order;
+  const btnR=document.getElementById('btn-order-random');
+  const btnO=document.getElementById('btn-order-order');
+  if(order==='random'){
+    btnR.style.background='rgba(192,132,252,.18)';
+    btnR.style.borderColor='rgba(192,132,252,.35)';
+    btnR.style.color='var(--p)';
+    btnO.style.background='transparent';
+    btnO.style.borderColor='rgba(192,132,252,.15)';
+    btnO.style.color='var(--tx3)';
+  } else {
+    btnO.style.background='rgba(34,211,238,.15)';
+    btnO.style.borderColor='rgba(34,211,238,.35)';
+    btnO.style.color='var(--cyan)';
+    btnR.style.background='transparent';
+    btnR.style.borderColor='rgba(192,132,252,.15)';
+    btnR.style.color='var(--tx3)';
+  }
+  startSession();
+}
+
+function goFlash(mode){
+  flashMode=mode;
+  const titles={
+    'random':'Flashcards 🎲',
+    'failed':'Mis Fallos ❌',
+    'seen':'Ya Vistos ✅'
+  };
+  document.getElementById('flash-title').textContent=titles[mode]||'Flashcards';
+  document.getElementById('sessionDone').style.display='none';
+  document.getElementById('flashCard').style.display='flex';
+
+  // Nivel tabs: solo en modo random
+  const levelTabsEl=document.getElementById('flash-level-tabs');
+  if(levelTabsEl) levelTabsEl.style.display=(mode==='random')?'flex':'none';
+
+  // Botón de orden: solo en modo random
+  const orderWrap=document.getElementById('flash-order-wrap');
+  if(orderWrap) orderWrap.style.display=(mode==='random')?'flex':'none';
+
+  startSession();
+  goScreen('flash');
+}
+
+// ============================================================
+// FLASH LEVEL SELECT
+// ============================================================
+function selectLevel(n){
+  flashLevel=n;
+  ['n4','n3','n2'].forEach(x=>document.getElementById('tab-'+x).className='level-tab');
+  const tab=document.getElementById('tab-n'+n);
+  tab.className='level-tab active-n'+n;
+  startSession();
+}
+
+// Construye el pool de tarjetas: kanji base + cada palabra compuesta
+function buildFlashPool(level){
+  const pool=[];
+  const kanjiOfLevel=KANJI.filter(k=>k.n===level);
+  kanjiOfLevel.forEach(kd=>{
+    pool.push({
+      type:'kanji',
+      display: kd.k,
+      hint_reading: kd.r,
+      hint_meaning: kd.m,
+      on: kd.on, kun: kd.kun,
+      example: kd.e||'', exampleTr: kd.etr||'',
+      parentKanji: kd.k,
+      allAlts: kd.alt||[],
+      weakKey: kd.k
+    });
+    (kd.alt||[]).forEach(a=>{
+      const pts=a.split(':');
+      const word=pts[0]||a;
+      const meaning=pts[1]||'';
+      const match=word.match(/（(.+?)）/);
+      const reading=match?match[1]:'';
+      const clean=word.replace(/（.+?）/g,'');
+      pool.push({
+        type:'compound',
+        display: clean,
+        hint_reading: reading,
+        hint_meaning: meaning,
+        parentKanji: kd.k,
+        parentReading: kd.r,
+        parentMeaning: kd.m,
+        allAlts: [],
+        weakKey: clean
+      });
+    });
+  });
+  return pool;
+}
+
+// Pool de todos los niveles
+function buildFullPool(){
+  return [...buildFlashPool(4),...buildFlashPool(3),...buildFlashPool(2)];
+}
+
+function startSession(){
+  let pool=[];
+
+  if(flashMode==='failed'){
+    // Solo los que han fallado alguna vez (weakKanji > 0), todos los niveles
+    const all=buildFullPool();
+    pool=all.filter(c=>(S.weakKanji[c.weakKey]||0)>0)
+      .sort((a,b)=>(S.weakKanji[b.weakKey]||0)-(S.weakKanji[a.weakKey]||0));
+    if(!pool.length){
+      showToast('¡Sin fallos todavía! Practica primero 🎉');
+      goScreen('home'); return;
+    }
+    pool=shuffle(pool).slice(0,20);
+
+  } else if(flashMode==='seen'){
+    // Solo los que ya se han visto (están en knownKanji o han sido respondidos)
+    const all=buildFullPool();
+    pool=all.filter(c=>S.knownKanji.includes(c.weakKey));
+    if(!pool.length){
+      showToast('¡Aún no has visto ningún kanji! Empieza por Flashcards 🃏');
+      goScreen('home'); return;
+    }
+    pool=shuffle(pool).slice(0,20);
+
+  } else {
+    // random mode: respeta flashOrder (aleatorio u ordenado por lista)
+    const allPool=buildFlashPool(flashLevel);
+    if(flashOrder==='order'){
+      // En orden: kanji base primero en el orden del array, sin mezclar
+      const baseCards=allPool.filter(c=>c.type==='kanji');
+      const compoundCards=allPool.filter(c=>c.type==='compound');
+      // Intercalamos: kanji base + sus compuestos en orden
+      pool=allPool; // ya está en orden natural (base seguido de sus compuestos)
+    } else {
+      // Aleatorio con ligero peso a débiles
+      const weak=allPool.filter(c=>(S.weakKanji[c.weakKey]||0)>0)
+        .sort((a,b)=>(S.weakKanji[b.weakKey]||0)-(S.weakKanji[a.weakKey]||0))
+        .slice(0,5);
+      const rest=shuffle(allPool.filter(c=>!weak.includes(c)));
+      pool=shuffle([...weak,...rest]).slice(0,15);
+    }
+  }
+
+  flashQueue=pool;
+  flashIdx=0;sCorrect=0;sWrong=0;
+  document.getElementById('sessionDone').style.display='none';
+  document.getElementById('flashCard').style.display='flex';
+  loadCard();
+  updateHomeCounts();
+}
+
+function updateHomeCounts(){
+  const all=buildFullPool();
+  const failedN=all.filter(c=>(S.weakKanji[c.weakKey]||0)>0).length;
+  const seenN=all.filter(c=>S.knownKanji.includes(c.weakKey)).length;
+  const fe=document.getElementById('home-failed-count');
+  const se=document.getElementById('home-seen-count');
+  if(fe)fe.textContent=failedN?`${failedN} para repasar`:'Sin fallos aún 🎉';
+  if(se)se.textContent=seenN?`${seenN} kanji estudiados`:'Empieza a practicar';
+}
+
+function loadCard(){
+  if(flashIdx>=flashQueue.length){endSession();return;}
+  const c=flashQueue[flashIdx];
+  revealed=false;
+  document.getElementById('flashCard').className='flash-card';
+  // Muestra el kanji/palabra a estudiar
+  document.getElementById('flashKanji').textContent=c.display;
+  // Etiqueta de tipo
+  const isCompound=c.type==='compound';
+  const subEl=document.getElementById('flashSub');
+  if(subEl){
+    if(isCompound){
+      subEl.innerHTML=`<span style="background:rgba(251,191,36,.15);color:var(--gold);border:1px solid rgba(251,191,36,.25);border-radius:99px;padding:2px 9px;font-size:10px;font-weight:800">⚡ Palabra compuesta · ${c.parentKanji}</span>`;
+    } else {
+      subEl.innerHTML=`<span style="background:rgba(192,132,252,.12);color:var(--p);border:1px solid rgba(192,132,252,.22);border-radius:99px;padding:2px 9px;font-size:10px;font-weight:800">漢字 base · N${flashLevel}</span>`;
+    }
+  }
+  document.getElementById('flashHint').textContent=flashMode==='reading'?'Toca para ver la lectura':'Toca para ver el significado';
+  document.getElementById('flashHint').style.display='block';
+  document.getElementById('flashReveal').style.display='none';
+  document.getElementById('answerBtns').style.display='none';
+  document.getElementById('nextBtnWrap').style.display='none';
+  document.getElementById('tapHint').style.display='block';
+  document.getElementById('flash-counter').textContent=(flashIdx+1)+'/'+flashQueue.length;
+  document.getElementById('session-fill').style.width=(flashIdx/flashQueue.length*100)+'%';
+  document.getElementById('score-right').textContent='✓ '+sCorrect;
+  document.getElementById('score-wrong').textContent='✗ '+sWrong;
+}
+
+function revealCard(){
+  if(revealed)return;
+  revealed=true;
+  const c=flashQueue[flashIdx];
+  document.getElementById('flashHint').style.display='none';
+  document.getElementById('tapHint').style.display='none';
+  document.getElementById('flashReveal').style.display='block';
+  document.getElementById('flashReading').textContent=c.hint_reading;
+  document.getElementById('flashMeaning').textContent=c.hint_meaning;
+
+  if(c.type==='kanji'){
+    // Kanji base: muestra on/kun y ejemplo
+    document.getElementById('flashExample').textContent=c.example.split(':')[0]||'';
+    document.getElementById('flashExampleTr').textContent=c.exampleTr?'→ '+c.exampleTr:'';
+    // Muestra palabras compuestas relacionadas
+    if(c.allAlts.length){
+      document.getElementById('flashAltWrap').style.display='block';
+      document.getElementById('flashAlt').innerHTML=
+        `<div style="font-size:10px;color:var(--tx3);font-weight:800;width:100%;text-align:center;margin-bottom:4px;letter-spacing:.04em">PALABRAS CON ESTE KANJI</div>`+
+        c.allAlts.map(a=>{
+          const pts=a.split(':');
+          const word=pts[0]||a;
+          const meaning=pts[1]||'';
+          const match=word.match(/（(.+?)）/);
+          const reading=match?match[1]:'';
+          const clean=word.replace(/（.+?）/g,'');
+          return`<span class="flash-alt-reading" style="text-align:left;display:flex;flex-direction:column;gap:1px">
+            <span style="font-size:15px">${clean}<span style="font-size:10px;color:var(--goldd);margin-left:3px">${reading}</span></span>
+            ${meaning?`<span style="font-size:10px;color:var(--tx3)">${meaning}</span>`:''}
+          </span>`;
+        }).join('');
+    } else {
+      document.getElementById('flashAltWrap').style.display='none';
+    }
+  } else {
+    // Palabra compuesta: muestra el kanji padre y su significado
+    document.getElementById('flashExample').textContent='';
+    document.getElementById('flashExampleTr').textContent='';
+    document.getElementById('flashAltWrap').style.display='block';
+    document.getElementById('flashAlt').innerHTML=
+      `<div style="width:100%;text-align:center">
+        <div style="font-size:10px;color:var(--tx3);font-weight:800;letter-spacing:.04em;margin-bottom:6px">KANJI BASE</div>
+        <span style="font-size:38px;font-family:'Zen Kaku Gothic New',sans-serif;background:linear-gradient(135deg,var(--p),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent">${c.parentKanji}</span>
+        <div style="font-size:12px;color:var(--cyan);font-weight:700;margin-top:2px">${c.parentReading}</div>
+        <div style="font-size:12px;color:var(--tx2);font-weight:600">${c.parentMeaning}</div>
+      </div>`;
+  }
+  document.getElementById('answerBtns').style.display='grid';
+}
+
+function answer(ok){
+  const c=flashQueue[flashIdx];
+  const key=c.weakKey||c.k||c.display;
+  if(ok){
+    sCorrect++;S.correct++;S.streak++;
+    gainXP(10);
+    S.hunger=Math.max(0,S.hunger-10);
+    if(!S.knownKanji.includes(key))S.knownKanji.push(key);
+    S.weakKanji[key]=Math.max(0,(S.weakKanji[key]||0)-1);
+    doFeedAnim();
+    showToast('+10 XP 🥕 ¡Haru come!');
+    // ✅ CORRECTO → ir directo al siguiente
+    S.studiedToday++;S.totalAns++;
+    flashIdx++;
+    document.getElementById('answerBtns').style.display='none';
+    save();updateUI();
+    document.getElementById('flashCard').style.display='none';
+    setTimeout(()=>{
+      document.getElementById('flashCard').style.display='flex';
+      loadCard();
+    },320);
+  } else {
+    sWrong++;S.streak=0;
+    S.weakKanji[key]=(S.weakKanji[key]||0)+2;
+    showToast('¡Sigue adelante! 💪');
+    S.studiedToday++;S.totalAns++;
+    flashIdx++;
+    document.getElementById('answerBtns').style.display='none';
+    document.getElementById('flashCard').style.display='none';
+    document.getElementById('nextBtnWrap').style.display='block';
+    save();updateUI();
+  }
+}
+
+function nextCard(){
+  document.getElementById('nextBtnWrap').style.display='none';
+  document.getElementById('flashCard').style.display='flex';
+  loadCard();
+}
+
+function endSession(){
+  document.getElementById('flashCard').style.display='none';
+  document.getElementById('nextBtnWrap').style.display='none';
+  document.getElementById('sessionDone').style.display='block';
+  const tot=flashQueue.length;
+  const pct=tot?Math.round(sCorrect/tot*100):0;
+  const stars=pct>=90?'⭐⭐⭐':pct>=60?'⭐⭐':'⭐';
+  document.getElementById('doneStars').textContent=stars;
+  document.getElementById('doneEmoji').textContent=pct>=80?'🎉':pct>=50?'😊':'💪';
+  document.getElementById('doneResult').textContent='Correctas: '+sCorrect+'/'+tot+' ('+pct+'%)';
+  if(pct>=80){S.dayStreak++;gainXP(30);showToast('🌟 ¡Sesión perfecta! +30 XP');}
+  document.getElementById('session-fill').style.width='100%';
+  save();updateUI();
+}
+
+// ============================================================
+// READING LIST
+// ============================================================
+const levelColors={4:'var(--cyan)',3:'var(--gold)',2:'var(--red)'};
+const topicEmoji={'Vida cotidiana':'🏪','Estudio':'📚','Ocio':'🎬','Transporte':'🚃','Salud':'💊','Cultura':'⛩️','Medio ambiente':'🌿','Trabajo':'💼','Tecnología':'🤖'};
+
+function buildReadingList(){
+  const c=document.getElementById('readingListScroll');
+  c.innerHTML='';
+  // filter buttons
+  const filterDiv=document.createElement('div');
+  filterDiv.style.cssText='display:flex;gap:8px;margin-bottom:16px';
+  ['Todo','N4','N3','N2'].forEach((lbl,i)=>{
+    const b=document.createElement('button');
+    b.textContent=lbl;
+    b.style.cssText='flex:1;padding:8px 4px;border-radius:var(--rs);font-size:12px;font-weight:800;font-family:Nunito,sans-serif;cursor:pointer;border:1px solid rgba(192,132,252,0.2);background:var(--card);color:var(--tx3);transition:all 0.2s';
+    b.onclick=()=>{
+      filterDiv.querySelectorAll('button').forEach(x=>{x.style.background='var(--card)';x.style.color='var(--tx3)'});
+      b.style.background='rgba(192,132,252,0.2)';b.style.color='var(--p)';
+      renderReadingCards(i===0?0:[4,3,2][i-1]);
+    };
+    filterDiv.appendChild(b);
+  });
+  c.appendChild(filterDiv);
+  const cardsDiv=document.createElement('div');
+  cardsDiv.id='readingCards';
+  c.appendChild(cardsDiv);
+  filterDiv.children[0].click();
+}
+
+function renderReadingCards(lvlFilter){
+  const c=document.getElementById('readingCards');
+  c.innerHTML='';
+  const list=lvlFilter?TEXTS.filter(t=>t.level===lvlFilter):TEXTS;
+  list.forEach((t,i)=>{
+    const done=S.readDone.includes(t.id);
+    const d=document.createElement('div');
+    d.className='reading-card';
+    d.style.cursor='pointer';
+    d.innerHTML=`<div class="reading-header" onclick="openReading('${t.id}')">
+      <div>
+        <div class="reading-title-text">${topicEmoji[t.topic]||'📄'} ${t.title}</div>
+        <div class="reading-meta">${t.topic} · ${t.jp_plain.length} caracteres ${done?'<span style="color:var(--green)">✓ Leído</span>':''}</div>
+      </div>
+      <span class="badge badge-n${t.level}">N${t.level}</span>
+    </div>`;
+    d.onclick=()=>openReading(t.id);
+    c.appendChild(d);
+  });
+}
+
+function openReading(id){
+  const t=TEXTS.find(x=>x.id===id);
+  if(!t)return;
+  currentTextIdx=id;
+  document.getElementById('rd-title').textContent=t.title;
+  const badge=document.getElementById('rd-badge');
+  badge.textContent='N'+t.level;
+  badge.className='badge badge-n'+t.level;
+  buildReadingDetail(t);
+  goScreen('reading-detail');
+}
+
+function buildReadingDetail(t){
+  showRuby=true;showHira=false;
+  const sc=document.getElementById('rdScroll');
+  sc.innerHTML='';
+  const card=document.createElement('div');
+  card.className='reading-card';
+  card.innerHTML=`
+    <div class="reading-header"><div><div class="reading-title-text">${t.title}</div><div class="reading-meta">${t.topic}</div></div></div>
+    <div class="reading-body">
+      <div class="reading-controls">
+        <div class="rc-btn on" id="rc-kanji" onclick="toggleKanji()">漢字 ON</div>
+        <div class="rc-btn off" id="rc-hira" onclick="toggleHira()">ひらがな</div>
+        <div class="rc-btn off" id="rc-tr" onclick="toggleTr()">ES</div>
+      </div>
+      <div class="reading-jp jp" id="rd-text">${t.jp_ruby}</div>
+      <div class="tr-section" id="rd-tr" style="display:none">${t.tr}</div>
+    </div>
+    <div class="vocab-section">
+      <div class="sec-title">Vocabulario</div>
+      ${t.vocab.map(v=>`<div class="vocab-item"><div class="vocab-kanji">${v.w}</div><div><div class="vocab-reading">${v.r}</div><div class="vocab-meaning">${v.m}</div></div></div>`).join('')}
+    </div>
+    <div style="padding:0 16px 16px"><button class="btn-read-done" onclick="markRead('${t.id}')">✓ Marcar como leído +20 XP</button></div>
+  `;
+  sc.appendChild(card);
+  renderReadingText(t);
+}
+
+function renderReadingText(t){
+  if(!t)return;
+  const el=document.getElementById('rd-text');
+  if(!el)return;
+  if(showHira){
+    // Show only hiragana (strip kanji, keep ruby text)
+    const tmp=document.createElement('div');
+    tmp.innerHTML=t.jp_ruby;
+    tmp.querySelectorAll('ruby').forEach(r=>{
+      const rt=r.querySelector('rt');
+      if(rt){const span=document.createElement('span');span.textContent=rt.textContent;r.replaceWith(span);}
+    });
+    el.innerHTML=tmp.innerHTML;
+  } else if(showRuby){
+    el.innerHTML=t.jp_ruby;
+  } else {
+    el.innerHTML=t.jp_plain;
+  }
+}
+
+function toggleKanji(){
+  showRuby=!showRuby;if(showRuby)showHira=false;
+  document.getElementById('rc-kanji').className='rc-btn '+(showRuby?'on':'off');
+  document.getElementById('rc-kanji').textContent='漢字 '+(showRuby?'ON':'OFF');
+  if(showHira&&!showRuby){showHira=false;document.getElementById('rc-hira').className='rc-btn off';}
+  const t=TEXTS.find(x=>x.id===currentTextIdx);renderReadingText(t);
+}
+function toggleHira(){
+  showHira=!showHira;if(showHira)showRuby=false;
+  document.getElementById('rc-hira').className='rc-btn '+(showHira?'on':'off');
+  document.getElementById('rc-kanji').className='rc-btn '+(showRuby?'on':'off');
+  document.getElementById('rc-kanji').textContent='漢字 '+(showRuby?'ON':'OFF');
+  const t=TEXTS.find(x=>x.id===currentTextIdx);renderReadingText(t);
+}
+function toggleTr(){
+  const el=document.getElementById('rd-tr');
+  const btn=document.getElementById('rc-tr');
+  const vis=el.style.display==='none';
+  el.style.display=vis?'block':'none';
+  btn.className='rc-btn '+(vis?'on':'off');
+}
+
+function markRead(id){
+  if(!S.readDone.includes(id)){
+    S.readDone.push(id);gainXP(20);
+    showToast('📖 +20 XP ¡Lectura completada!');
+    S.hunger=Math.max(0,S.hunger-8);
+    save();updateUI();
+  } else {
+    showToast('Ya leíste este texto ✓');
+  }
+  goScreen('reading-list');
+}
+
+// ============================================================
+// REVIEW
+// ============================================================
+function buildReview(){
+  const sc=document.getElementById('reviewScroll');
+  sc.innerHTML='';
+  const acc=S.totalAns?Math.round(S.correct/S.totalAns*100):0;
+  const statsDiv=document.createElement('div');
+  statsDiv.className='stats-grid';
+  statsDiv.style.marginBottom='16px';
+  statsDiv.innerHTML=`
+    <div class="stat-card"><div class="stat-num" style="color:var(--p)">${S.studiedToday}</div><div class="stat-lbl">Estudiados hoy</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--cyan)">${acc}%</div><div class="stat-lbl">Precisión</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--green)">${S.knownKanji.length}</div><div class="stat-lbl">Kanji vistos</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--gold)">${S.readDone.length}</div><div class="stat-lbl">Textos leídos</div></div>
+  `;
+  sc.appendChild(statsDiv);
+
+  const title=document.createElement('div');
+  title.className='sec-title';title.textContent='Puntos débiles';
+  sc.appendChild(title);
+  const weak=Object.entries(S.weakKanji).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).slice(0,12);
+  if(!weak.length){
+    const msg=document.createElement('div');msg.className='empty-msg';msg.textContent='¡Sin puntos débiles aún! Empieza a practicar 🎉';sc.appendChild(msg);
+  } else {
+    weak.forEach(([k,score])=>{
+      const kd=KANJI.find(x=>x.k===k)||{};
+      const tag=score>=4?'rv-hard':score>=2?'rv-med':'rv-good';
+      const lbl=score>=4?'Difícil':score>=2?'Regular':'Bien';
+      const d=document.createElement('div');d.className='review-item';
+      d.innerHTML=`<div class="rv-kanji">${k}</div><div class="rv-info"><div class="rv-reading">${kd.r||''}</div><div class="rv-meaning">${kd.m||''}</div></div><span class="rv-tag ${tag}">${lbl}</span>`;
+      sc.appendChild(d);
+    });
+  }
+
+  const t2=document.createElement('div');t2.className='sec-title';t2.style.marginTop='16px';t2.textContent='Textos completados';
+  sc.appendChild(t2);
+  if(!S.readDone.length){
+    const m=document.createElement('div');m.className='empty-msg';m.textContent='Lee tus primeros textos 📖';sc.appendChild(m);
+  } else {
+    S.readDone.forEach(id=>{
+      const t=TEXTS.find(x=>x.id===id);if(!t)return;
+      const d=document.createElement('div');d.className='review-item';d.style.cursor='pointer';
+      d.innerHTML=`<div style="font-size:22px">${topicEmoji[t.topic]||'📄'}</div><div class="rv-info"><div class="rv-reading" style="color:var(--p)">${t.title}</div><div class="rv-meaning">${t.topic}</div></div><span class="rv-tag rv-good">✓</span>`;
+      d.onclick=()=>openReading(id);
+      sc.appendChild(d);
+    });
+  }
+
+  const resetBtn=document.createElement('button');
+  resetBtn.textContent='Reiniciar progreso';
+  resetBtn.style.cssText='width:100%;margin-top:24px;padding:12px;border-radius:var(--rs);border:1px solid rgba(248,113,113,0.3);background:rgba(248,113,113,0.1);color:var(--red);font-size:13px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif';
+  resetBtn.onclick=()=>{if(confirm('¿Reiniciar todo el progreso?')){S={xp:0,xpMax:100,level:4,streak:0,hunger:50,studiedToday:0,correct:0,totalAns:0,knownKanji:[],weakKanji:{},dayStreak:0,readDone:[]};save();buildReview();updateUI();}};
+  sc.appendChild(resetBtn);
+}
+
+// ============================================================
+// QUIZ JLPT ENGINE
+// ============================================================
+let quizLevel=4, quizQueue=[], quizIdx=0, quizCorrect=0, quizWrong=0, quizAnswered=false;
+
+// Tipos de pregunta JLPT:
+// 1. lectura - ¿Cómo se lee este kanji?
+// 2. significado - ¿Qué significa este kanji/palabra?
+// 3. completar - Completa la oración con el kanji correcto
+// 4. compuesta - ¿Qué palabra se forma con estos kanji?
+// 5. uso - ¿Cuál es el uso correcto en esta oración?
+
+function buildQuizPool(level){
+  const pool=[];
+  const kanjis=KANJI.filter(k=>k.n===level);
+  if(kanjis.length<4)return pool;
+
+  kanjis.forEach(kd=>{
+    // TIPO 1: Lectura del kanji base
+    pool.push({type:'lectura', qtype:'Lectura del kanji',
+      question:`¿Cómo se lee este kanji?`,
+      kanji: kd.k,
+      correct: kd.kun.replace(/[（）]/g,'').split('・')[0],
+      correctFull: kd.r,
+      meaning: kd.m,
+      explanation: `${kd.k} se lee <strong>${kd.r}</strong> y significa "${kd.m}". Lectura on: ${kd.on}, kun: ${kd.kun}.`,
+      distractors: kanjis.filter(x=>x.k!==kd.k).sort(()=>Math.random()-.5).slice(0,3).map(x=>x.kun.replace(/[（）]/g,'').split('・')[0]||x.on),
+      answerDisplay: kd.r,
+      parentKanji: kd
+    });
+
+    // TIPO 2: Significado del kanji
+    pool.push({type:'significado', qtype:'Significado',
+      question:`¿Qué significa este kanji?`,
+      kanji: kd.k,
+      correct: kd.m,
+      explanation: `${kd.k} significa <strong>"${kd.m}"</strong>. Se lee ${kd.r}.`,
+      distractors: kanjis.filter(x=>x.k!==kd.k).sort(()=>Math.random()-.5).slice(0,3).map(x=>x.m),
+      answerDisplay: kd.m,
+      parentKanji: kd
+    });
+
+    // TIPO 3: Lectura de palabra compuesta (si hay alts)
+    const alts=kd.alt||[];
+    if(alts.length>=1){
+      const alt=alts[Math.floor(Math.random()*alts.length)];
+      const pts=alt.split(':');
+      const word=pts[0]||alt;
+      const meaning=pts[1]||'';
+      const matchR=word.match(/（(.+?)）/);
+      const reading=matchR?matchR[1]:'';
+      const clean=word.replace(/（.+?）/g,'');
+      if(reading&&clean){
+        // Distractores: lecturas de otras palabras compuestas del mismo nivel
+        const otherReadings=kanjis.flatMap(x=>(x.alt||[]).map(a=>{
+          const m=a.match(/（(.+?)）/);return m?m[1]:'';
+        })).filter(r=>r&&r!==reading);
+        const distR=shuffle(otherReadings).slice(0,3);
+        if(distR.length>=3){
+          pool.push({type:'compuesta-lectura', qtype:'Lectura de palabra',
+            question:`¿Cómo se lee esta palabra?`,
+            kanji: clean,
+            correct: reading,
+            explanation: `<strong>${clean}</strong> se lee <strong>${reading}</strong> y significa "${meaning}". Contiene el kanji ${kd.k} (${kd.m}).`,
+            distractors: distR,
+            answerDisplay: reading,
+            parentKanji: kd
+          });
+        }
+      }
+    }
+
+    // TIPO 4: Significado de palabra compuesta
+    if(alts.length>=1){
+      const alt=alts[Math.floor(Math.random()*alts.length)];
+      const pts=alt.split(':');
+      const word=pts[0]||alt;
+      const meaning=pts[1]||'';
+      const matchR=word.match(/（(.+?)）/);
+      const clean=word.replace(/（.+?）/g,'');
+      if(meaning&&clean){
+        const otherMeanings=kanjis.flatMap(x=>(x.alt||[]).map(a=>{
+          const p=a.split(':');return p[1]||'';
+        })).filter(m=>m&&m!==meaning);
+        const distM=shuffle(otherMeanings).slice(0,3);
+        if(distM.length>=3){
+          pool.push({type:'compuesta-sig', qtype:'Significado de palabra',
+            question:`¿Qué significa esta palabra?`,
+            kanji: clean,
+            correct: meaning,
+            explanation: `<strong>${clean}</strong> significa <strong>"${meaning}"</strong>. Contiene el kanji ${kd.k} (${kd.m}).`,
+            distractors: distM,
+            answerDisplay: meaning,
+            parentKanji: kd
+          });
+        }
+      }
+    }
+
+    // TIPO 5: Kanji correcto para completar la oración
+    const sentences={
+      '食':['私は毎朝___べます','___堂で昼ごはんを食べます'],
+      '見':['映画を___に行きます','あなたの___解を聞かせてください'],
+      '行':['旅___が好きです','銀___でお金をおろします'],
+      '読':['___書が趣味です','毎日新聞を___みます'],
+      '書':['___道を習っています','___類にサインします'],
+      '来':['___年また会いましょう','将___の夢は医者です'],
+      '話':['電___で連絡します','会___の練習をします'],
+      '飲':['___み物は何がいいですか','___食店で食事します'],
+      '働':['毎日一生懸命___きます','労___時間が長いです'],
+      '急':['___行列車に乗ります','緊___の場合はこちら'],
+      '集':['___中して勉強します','みんなに___まってもらいます'],
+      '連':['後で___絡します','___休を楽しみにしています'],
+    };
+    const sents=sentences[kd.k];
+    if(sents){
+      const sent=sents[Math.floor(Math.random()*sents.length)];
+      const otherKanji=kanjis.filter(x=>x.k!==kd.k).sort(()=>Math.random()-.5).slice(0,3).map(x=>x.k);
+      pool.push({type:'completar', qtype:'Completa la oración',
+        question:`Elige el kanji correcto para completar la oración:`,
+        sentence: sent,
+        kanji: kd.k,
+        correct: kd.k,
+        explanation: `La respuesta es <strong>${kd.k}</strong> (${kd.r}), que significa "${kd.m}".`,
+        distractors: otherKanji,
+        answerDisplay: kd.k,
+        parentKanji: kd,
+        isSentence: true
+      });
+    }
+  });
+  return shuffle(pool);
+}
+
+function shuffle(arr){return [...arr].sort(()=>Math.random()-.5);}
+
+function startQuiz(level){
+  quizLevel=level||quizLevel;
+  // Update tabs
+  ['n4','n3','n2'].forEach(x=>{
+    const t=document.getElementById('qt-'+x);
+    if(t)t.className='level-tab';
+  });
+  const active=document.getElementById('qt-n'+quizLevel);
+  if(active)active.className='level-tab active-n'+quizLevel;
+
+  const pool=buildQuizPool(quizLevel);
+  quizQueue=pool.slice(0,10);
+  quizIdx=0;quizCorrect=0;quizWrong=0;quizAnswered=false;
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion(){
+  const sc=document.getElementById('quizScroll');
+  const content=document.getElementById('quizContent');
+  if(!content)return;
+
+  if(quizIdx>=quizQueue.length){
+    renderQuizResult();
+    return;
+  }
+
+  const q=quizQueue[quizIdx];
+  quizAnswered=false;
+
+  // Update counter & progress
+  document.getElementById('quiz-counter').textContent=(quizIdx+1)+'/'+quizQueue.length;
+  document.getElementById('quiz-type-lbl').textContent=q.qtype;
+  updateXPBars();
+
+  // Build shuffled options
+  const opts=shuffle([q.correct,...q.distractors.slice(0,3)]);
+  const letters=['A','B','C','D'];
+
+  // Sentence display
+  let mainDisplay='';
+  if(q.isSentence){
+    const highlighted=q.sentence.replace('___',`<span class="quiz-blank">　　</span>`);
+    mainDisplay=`<div class="quiz-sentence">${highlighted}</div>`;
+  } else {
+    mainDisplay=`<span class="quiz-kanji-big jp">${q.kanji}</span>`;
+  }
+
+  // Options HTML
+  const optsHTML=opts.map((opt,i)=>{
+    const isJP=(q.type==='lectura'||q.type==='compuesta-lectura'||q.type==='completar');
+    const optContent=isJP?`<span class="quiz-opt-jp">${opt}</span>`:opt;
+    return`<button class="quiz-opt" id="qopt-${i}" onclick="selectQuizOpt(${i},'${escQ(opt)}','${escQ(q.correct)}')">
+      <span class="quiz-opt-letter">${letters[i]}</span>
+      <span>${optContent}</span>
+    </button>`;
+  }).join('');
+
+  content.innerHTML=`
+    <div class="quiz-meta">
+      <span style="color:var(--tx3);font-size:11px;font-weight:800">Pregunta ${quizIdx+1} de ${quizQueue.length}</span>
+      <span><span style="color:var(--green)">✓ ${quizCorrect}</span> &nbsp;<span style="color:var(--red)">✗ ${quizWrong}</span></span>
+    </div>
+    <div class="quiz-progress"><div class="quiz-progress-fill" style="width:${quizIdx/quizQueue.length*100}%"></div></div>
+    <div class="quiz-card">
+      <div class="quiz-type-tag">${q.qtype.toUpperCase()}</div>
+      <div class="quiz-question">${q.question}</div>
+      ${mainDisplay}
+      <div class="quiz-opts">${optsHTML}</div>
+      <div class="quiz-explanation" id="quiz-exp" style="display:none">${q.explanation}</div>
+    </div>
+    <button class="quiz-next-btn" id="quiz-next-btn" style="display:none" onclick="nextQuizQuestion()">
+      ${quizIdx+1>=quizQueue.length?'Ver resultado 🎓':'Siguiente →'}
+    </button>
+  `;
+  sc.scrollTop=0;
+}
+
+function escQ(s){return(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
+
+function selectQuizOpt(idx,chosen,correct){
+  if(quizAnswered)return;
+  quizAnswered=true;
+  const q=quizQueue[quizIdx];
+  const isCorrect=chosen===correct;
+
+  // Disable all & highlight
+  document.querySelectorAll('.quiz-opt').forEach((btn,i)=>{
+    btn.classList.add('disabled');
+    const optText=btn.querySelector('span:last-child').textContent.trim();
+    if(optText===correct){btn.classList.remove('disabled');btn.classList.add('correct');}
+    else if(i===idx&&!isCorrect){btn.classList.add('wrong');}
+  });
+
+  // Show explanation
+  const exp=document.getElementById('quiz-exp');
+  if(exp)exp.style.display='block';
+
+  // Show next button
+  const nb=document.getElementById('quiz-next-btn');
+  if(nb)nb.style.display='block';
+
+  if(isCorrect){
+    quizCorrect++;
+    S.correct++;S.streak++;
+    gainXP(15);
+    S.hunger=Math.max(0,S.hunger-8);
+    doFeedAnim();
+    showToast('+15 XP 🎓 ¡Correcto!');
+    S.weakKanji[q.parentKanji.k]=Math.max(0,(S.weakKanji[q.parentKanji.k]||0)-1);
+  } else {
+    quizWrong++;
+    S.streak=0;
+    showToast('❌ La respuesta era: '+correct);
+    S.weakKanji[q.parentKanji.k]=(S.weakKanji[q.parentKanji.k]||0)+2;
+  }
+  S.studiedToday++;S.totalAns++;
+  save();updateUI();
+}
+
+function nextQuizQuestion(){
+  quizIdx++;
+  renderQuizQuestion();
+}
+
+function renderQuizResult(){
+  const pct=quizQueue.length?Math.round(quizCorrect/quizQueue.length*100):0;
+  const stars=pct>=90?'⭐⭐⭐':pct>=70?'⭐⭐':pct>=50?'⭐':'';
+  const emoji=pct>=90?'🎓':pct>=70?'😊':pct>=50?'💪':'😤';
+  const title=pct>=90?'¡Excelente!':pct>=70?'¡Muy bien!':pct>=50?'¡Buen intento!':'¡Sigue practicando!';
+
+  if(pct>=80){S.dayStreak++;gainXP(30);showToast('🌟 ¡Examen perfecto! +30 XP');}
+
+  document.getElementById('quiz-counter').textContent='✓';
+  document.getElementById('quizContent').innerHTML=`
+    <div class="quiz-result-card">
+      <div class="quiz-result-stars">${stars}</div>
+      <div class="quiz-score-circle">
+        <div class="quiz-score-num">${pct}%</div>
+        <div class="quiz-score-lbl">ACIERTOS</div>
+      </div>
+      <div class="quiz-result-title">${emoji} ${title}</div>
+      <div class="quiz-result-sub">${quizCorrect} de ${quizQueue.length} respuestas correctas · N${quizLevel}</div>
+      <div class="quiz-breakdown">
+        <div class="quiz-bd-card"><div class="quiz-bd-num" style="color:var(--green)">${quizCorrect}</div><div class="quiz-bd-lbl">Correctas</div></div>
+        <div class="quiz-bd-card"><div class="quiz-bd-num" style="color:var(--red)">${quizWrong}</div><div class="quiz-bd-lbl">Incorrectas</div></div>
+        <div class="quiz-bd-card"><div class="quiz-bd-num" style="color:var(--gold)">${S.streak}🔥</div><div class="quiz-bd-lbl">Racha</div></div>
+        <div class="quiz-bd-card"><div class="quiz-bd-num" style="color:var(--p)">${S.xp}</div><div class="quiz-bd-lbl">XP Total</div></div>
+      </div>
+      <button class="quiz-next-btn" onclick="startQuiz(quizLevel)" style="margin-bottom:10px">Otro examen 🔄</button>
+      <br><br>
+      <button class="quiz-next-btn" onclick="goScreen('home')" style="background:linear-gradient(135deg,var(--p3),var(--pink2))">Volver al inicio 🏠</button>
+    </div>
+  `;
+  document.getElementById('quizScroll').scrollTop=0;
+  save();updateUI();
+}
+
+// ============================================================
+// MIS FALLOS + YA VISTOS — listas con click a flashcard individual
+// ============================================================
+function buildCardFromKey(key){
+  const kd=KANJI.find(k=>k.k===key);
+  if(kd){return{type:'kanji',display:kd.k,hint_reading:kd.r,hint_meaning:kd.m,on:kd.on,kun:kd.kun,example:kd.e||'',exampleTr:kd.etr||'',parentKanji:kd.k,allAlts:kd.alt||[],weakKey:kd.k,n:kd.n};}
+  for(const k of KANJI){
+    for(const a of (k.alt||[])){
+      const pts=a.split(':');const word=pts[0]||a;const meaning=pts[1]||'';
+      const match=word.match(/（(.+?)）/);const reading=match?match[1]:'';const clean=word.replace(/（.+?）/g,'');
+      if(clean===key)return{type:'compound',display:clean,hint_reading:reading,hint_meaning:meaning,parentKanji:k.k,parentReading:k.r,parentMeaning:k.m,allAlts:[],weakKey:clean,n:k.n};
+    }
+  }
+  return null;
+}
+
+function buildCardList(cards,scrollId,emptyMsg,badgeId,accentColor){
+  const sc=document.getElementById(scrollId);
+  const badge=document.getElementById(badgeId);
+  if(!sc)return;
+  if(badge)badge.textContent=cards.length;
+  sc.innerHTML='';
+  if(!cards.length){
+    sc.innerHTML=`<div style="text-align:center;padding:50px 20px;font-size:14px;font-weight:700;color:var(--tx3)">${emptyMsg}</div>`;
+    return;
+  }
+  const levelColors={4:'var(--cyan)',3:'var(--gold)',2:'var(--red)'};
+  cards.forEach(c=>{
+    if(!c)return;
+    const score=S.weakKanji[c.weakKey]||0;
+    const lc=levelColors[c.n||4];
+    const div=document.createElement('div');
+    div.style.cssText='display:flex;align-items:center;gap:12px;background:linear-gradient(140deg,var(--card),var(--card2));border:1px solid rgba(192,132,252,.13);border-radius:var(--rs);padding:12px 14px;margin-bottom:9px;cursor:pointer;transition:transform .15s';
+    div.addEventListener('click',()=>openSingleCard(c,scrollId==='failedScroll'?'failed':'seen'));
+    div.addEventListener('touchstart',()=>div.style.transform='scale(.97)',{passive:true});
+    div.addEventListener('touchend',()=>div.style.transform='',{passive:true});
+    div.innerHTML=`
+      <div style="font-size:30px;font-family:'Zen Kaku Gothic New',sans-serif;min-width:44px;text-align:center;color:${accentColor};line-height:1.2">${c.display}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;color:var(--cyan);font-weight:700;font-family:'Zen Kaku Gothic New',sans-serif;margin-bottom:2px">${c.hint_reading||''}</div>
+        <div style="font-size:13px;color:var(--tx);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.hint_meaning||''}</div>
+        <div style="font-size:10px;color:var(--tx3);font-weight:600;margin-top:2px">${c.type==='kanji'?'Kanji base':'Palabra compuesta'} · <span style="color:${lc}">N${c.n||'?'}</span></div>
+      </div>
+      ${score>0?`<span style="font-size:10px;font-weight:800;background:rgba(248,113,113,.14);color:var(--red);border:1px solid rgba(248,113,113,.25);border-radius:99px;padding:2px 7px;flex-shrink:0">${score}✗</span>`:'<span style="color:var(--green);font-size:16px;flex-shrink:0">→</span>'}
+    `;
+    sc.appendChild(div);
+  });
+}
+
+function buildFailedList(){
+  const all=buildFullPool();
+  const failed=all.filter(c=>(S.weakKanji[c.weakKey]||0)>0).sort((a,b)=>(S.weakKanji[b.weakKey]||0)-(S.weakKanji[a.weakKey]||0));
+  buildCardList(failed,'failedScroll','¡Sin fallos todavía! 🎉','failed-count-badge','var(--red)');
+}
+
+function buildSeenList(){
+  const all=buildFullPool();
+  const seen=all.filter(c=>S.knownKanji.includes(c.weakKey));
+  buildCardList(seen,'seenScroll','Aún no has visto ningún kanji.\n¡Empieza con Flashcards! 🃏','seen-count-badge','var(--green)');
+}
+
+// ============================================================
+// FLASHCARD INDIVIDUAL
+// ============================================================
+let singleCardData=null, singleBackScreen='home', singleRevealed=false;
+
+function openSingleCard(card, backScreen){
+  singleCardData=card; singleBackScreen=backScreen; singleRevealed=false;
+  const isKanji=card.type==='kanji';
+  const levelColors={4:'var(--cyan)',3:'var(--gold)',2:'var(--red)'};
+  const lc=levelColors[card.n||4];
+
+  document.getElementById('single-back-btn').onclick=()=>goScreen(backScreen);
+  document.getElementById('singleBackBtn').onclick=()=>goScreen(backScreen);
+  document.getElementById('single-title').textContent=isKanji?'Kanji base':'Palabra compuesta';
+  document.getElementById('singleSub').innerHTML=isKanji
+    ?`<span style="background:rgba(192,132,252,.12);color:var(--p);border:1px solid rgba(192,132,252,.22);border-radius:99px;padding:2px 9px;font-size:10px;font-weight:800">漢字 · <span style="color:${lc}">N${card.n||'?'}</span></span>`
+    :`<span style="background:rgba(251,191,36,.12);color:var(--gold);border:1px solid rgba(251,191,36,.22);border-radius:99px;padding:2px 9px;font-size:10px;font-weight:800">⚡ Compuesta · ${card.parentKanji}</span>`;
+  document.getElementById('singleKanji').textContent=card.display;
+  document.getElementById('singleHint').style.display='block';
+  document.getElementById('singleReveal').style.display='none';
+  document.getElementById('singleAnsBtns').style.display='none';
+  document.getElementById('singleDone').style.display='none';
+  document.getElementById('singleCard').style.display='flex';
+  document.getElementById('singleTapPill').style.display='block';
+  goScreen('single-card');
+}
+
+function revealSingle(){
+  if(singleRevealed)return;
+  singleRevealed=true;
+  const c=singleCardData;
+  document.getElementById('singleHint').style.display='none';
+  document.getElementById('singleTapPill').style.display='none';
+  document.getElementById('singleReveal').style.display='block';
+  document.getElementById('singleReading').textContent=c.hint_reading||'';
+  document.getElementById('singleMeaning').textContent=c.hint_meaning||'';
+  if(c.type==='kanji'){
+    const exParts=(c.example||'').split(':');
+    document.getElementById('singleExample').textContent=exParts[0]||'';
+    document.getElementById('singleExampleTr').textContent=exParts[1]?'→ '+exParts[1]:'';
+    if((c.allAlts||[]).length){
+      document.getElementById('singleAltWrap').style.display='block';
+      document.getElementById('singleAlt').innerHTML=c.allAlts.map(a=>{
+        const pts=a.split(':');const word=pts[0]||a;const meaning=pts[1]||'';
+        const match=word.match(/（(.+?)）/);const reading=match?match[1]:'';const clean=word.replace(/（.+?）/g,'');
+        return`<span class="flash-compound"><span style="font-size:16px">${clean}<span style="font-size:10px;color:var(--goldd);margin-left:3px">${reading}</span></span><span class="flash-compound-m">${meaning}</span></span>`;
+      }).join('');
+    } else {document.getElementById('singleAltWrap').style.display='none';}
+  } else {
+    document.getElementById('singleExample').textContent='';
+    document.getElementById('singleExampleTr').textContent='';
+    document.getElementById('singleAltWrap').style.display='block';
+    document.getElementById('singleAlt').innerHTML=`<div style="width:100%;text-align:center"><div style="font-size:10px;color:var(--tx3);font-weight:800;letter-spacing:.04em;margin-bottom:6px">KANJI BASE</div><span style="font-size:42px;font-family:'Zen Kaku Gothic New',sans-serif;background:linear-gradient(135deg,var(--p),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent">${c.parentKanji}</span><div style="font-size:12px;color:var(--cyan);font-weight:700;margin-top:4px">${c.parentReading}</div><div style="font-size:12px;color:var(--tx2);font-weight:600">${c.parentMeaning}</div></div>`;
+  }
+  document.getElementById('singleAnsBtns').style.display='grid';
+}
+
+function answerSingle(ok){
+  const c=singleCardData;
+  const key=c.weakKey;
+  if(ok){
+    S.correct++;S.streak++;S.studiedToday++;S.totalAns++;
+    gainXP(10);S.hunger=Math.max(0,S.hunger-10);
+    S.weakKanji[key]=Math.max(0,(S.weakKanji[key]||0)-1);
+    if(!S.knownKanji.includes(key))S.knownKanji.push(key);
+    doFeedAnim();showToast('+10 XP 🥕 ¡Haru come!');
+  } else {
+    S.totalAns++;S.streak=0;
+    S.weakKanji[key]=(S.weakKanji[key]||0)+2;
+    showToast('¡Sigue practicando! 💪');
+  }
+  save();updateUI();
+  document.getElementById('singleCard').style.display='none';
+  document.getElementById('singleAnsBtns').style.display='none';
+  document.getElementById('singleDone').style.display='block';
+  document.getElementById('singleDoneEmoji').textContent=ok?'🎉':'💪';
+  document.getElementById('singleDoneMsg').textContent=ok?'¡Bien! Este kanji va mejorando 📈':'Marcado para repasar. ¡Ya lo tendrás! 💪';
+}
+
+updateUI();
+selectLevel(4);
+updateHomeCounts();
+
+// ============================================================
+// PWA — Service Worker + Install Banner
+// ============================================================
+// Register service worker
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js', {scope:'./'})
+    .then(r => console.log('SW registered'))
+    .catch(e => console.log('SW error:', e));
+}
+
+// Install prompt banner
+let deferredPrompt=null;
+const installBanner=document.createElement('div');
+installBanner.id='install-banner';
+installBanner.style.cssText=`
+  display:none;position:fixed;bottom:76px;left:50%;transform:translateX(-50%);
+  width:calc(100% - 32px);max-width:398px;
+  background:linear-gradient(135deg,#1e0840,#280f4e);
+  border:1px solid rgba(192,132,252,.35);border-radius:16px;
+  padding:14px 16px;z-index:500;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+  display:none;align-items:center;gap:12px;
+`;
+installBanner.innerHTML=`
+  <div style="font-size:28px;flex-shrink:0">🐰</div>
+  <div style="flex:1">
+    <div style="font-size:13px;font-weight:800;color:#f0e6ff;margin-bottom:2px">¡Instala Kanji Dojo!</div>
+    <div style="font-size:11px;color:#c4a8e8;font-weight:600">Añade la app a tu pantalla de inicio</div>
+  </div>
+  <button id="install-btn" style="background:linear-gradient(135deg,#7c3aed,#ec4899);border:none;border-radius:10px;padding:8px 14px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif;flex-shrink:0">Instalar</button>
+  <button id="install-close" style="background:none;border:none;color:#8b5db8;font-size:18px;cursor:pointer;padding:0 0 0 4px;line-height:1;flex-shrink:0">✕</button>
+`;
+document.body.appendChild(installBanner);
+
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  installBanner.style.display='flex';
+});
+document.getElementById('install-btn').addEventListener('click',async()=>{
+  if(!deferredPrompt)return;
+  deferredPrompt.prompt();
+  const{outcome}=await deferredPrompt.userChoice;
+  deferredPrompt=null;
+  installBanner.style.display='none';
+});
+document.getElementById('install-close').addEventListener('click',()=>{
+  installBanner.style.display='none';
+});
+window.addEventListener('appinstalled',()=>{
+  installBanner.style.display='none';
+  showToast('¡App instalada! 🎉 Búscala en tu pantalla de inicio');
+});
+
+// iOS: mostrar instrucciones manuales si Safari y no instalada
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+const isInStandalone=('standalone' in navigator&&navigator.standalone)||window.matchMedia('(display-mode: standalone)').matches;
+if(isIOS&&!isInStandalone){
+  setTimeout(()=>{
+    const iosBanner=document.createElement('div');
+    iosBanner.style.cssText=`
+      position:fixed;bottom:76px;left:50%;transform:translateX(-50%);
+      width:calc(100% - 32px);max-width:398px;
+      background:linear-gradient(135deg,#1e0840,#280f4e);
+      border:1px solid rgba(192,132,252,.35);border-radius:16px;
+      padding:14px 16px;z-index:500;
+      box-shadow:0 8px 32px rgba(0,0,0,.5);
+      font-family:Nunito,sans-serif;
+    `;
+    iosBanner.innerHTML=`
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <div style="font-size:26px;flex-shrink:0">🐰</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:800;color:#f0e6ff;margin-bottom:4px">Instalar en iPhone/iPad</div>
+          <div style="font-size:11px;color:#c4a8e8;font-weight:600;line-height:1.5">
+            1. Toca <strong style="color:#c084fc">Compartir</strong> <span style="font-size:13px">⬆️</span><br>
+            2. Selecciona <strong style="color:#c084fc">"Añadir a pantalla de inicio"</strong> 📲<br>
+            3. Pulsa <strong style="color:#c084fc">Añadir</strong>
+          </div>
+        </div>
+        <button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;color:#8b5db8;font-size:18px;cursor:pointer;padding:0;line-height:1;flex-shrink:0">✕</button>
+      </div>
+    `;
+    document.body.appendChild(iosBanner);
+    setTimeout(()=>iosBanner.remove(),15000);
+  },2000);
+}
+
+</script>
+</body>
+</html>
