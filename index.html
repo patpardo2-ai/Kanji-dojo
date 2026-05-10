@@ -9,9 +9,9 @@
 <meta name="application-name" content="漢字道場">
 <meta name="theme-color" content="#0f0225">
 <meta name="description" content="App de estudio de kanji japonés N4-N2 con mascota virtual">
-<link rel="manifest" href="./manifest.json">
+<link rel="manifest" href="/Kanji-dojo/manifest.json">
 <!-- Apple touch icons -->
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%230f0225'/%3E%3Ctext x='50%25' y='58%25' font-size='110' text-anchor='middle' dominant-baseline='middle' font-family='serif' fill='%23c084fc'%3E漢%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="/Kanji-dojo/icon-192.png">
 <title>漢字道場 · Kanji Dojo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
@@ -2196,220 +2196,235 @@ function answerSingle(ok){
   document.getElementById('singleDoneMsg').textContent=ok?'¡Bien! Este kanji va mejorando 📈':'Marcado para repasar. ¡Ya lo tendrás! 💪';
 }
 
-updateUI();
-selectLevel(4);
-updateHomeCounts();
-updateTodayKanjiLabel();
 
 // ============================================================
-// CALENDARIO HOBONICHI — extraído de tu libreta de estudio
-// Formato: 'YYYY-MM-DD': ['漢1','漢2']
+// CALENDARIO HOBONICHI
 // ============================================================
 const HOBONICHI = {
-  // ── MAYO 2026 ──
-  '2026-05-01':['便','借'], '2026-05-04':['写','冬'], '2026-05-05':['切','別'],
-  '2026-05-06':['力','勉'], '2026-05-07':['動','区'], '2026-05-08':['医','去'],
-  '2026-05-11':['品','員'], '2026-05-12':['問','回'], '2026-05-13':['図','地'],
-  '2026-05-14':['堂','場'], '2026-05-15':['声','売'],
-  '2026-05-18':['好','妹'], '2026-05-19':['姉','始'], '2026-05-20':['字','室'],
-  '2026-05-21':['家','寒'], '2026-05-22':['屋','工'],
-  '2026-05-25':['建','引'], '2026-05-26':['弟','弱'], '2026-05-27':['強','待'],
-  '2026-05-28':['心','思'], '2026-05-29':['急','悪'],
-  // ── JUNIO 2026 ──
-  '2026-06-01':['文','料'], '2026-06-02':['方','旅'], '2026-06-03':['族','早'],
-  '2026-06-04':['明','映'], '2026-06-05':['春','昼'],
-  '2026-06-08':['服','朝'], '2026-06-09':['村','林'], '2026-06-10':['森','業'],
-  '2026-06-11':['楽','歌'], '2026-06-12':['止','正'],
-  '2026-06-15':['注','洋'], '2026-06-16':['洗','海'], '2026-06-17':['漢','牛'],
-  '2026-06-18':['物','特'], '2026-06-19':['犬','理'],
-  '2026-06-22':['画','界'], '2026-06-23':['病','発'], '2026-06-24':['県','真'],
-  '2026-06-25':['着','知'], '2026-06-26':['短','研'],
-  '2026-06-29':['紙','終'], '2026-06-30':['習','考'],
-  // ── JULIO 2026 ──
-  '2026-07-01':['者','肉'], '2026-07-02':['自','色'], '2026-07-03':['英','茶'],
-  '2026-07-06':['試','説'], '2026-07-07':['貸','質'], '2026-07-08':['赤','走'],
-  '2026-07-09':['起','転'], '2026-07-10':['軽','近'],
-  '2026-07-13':['遠','都'], '2026-07-14':['重','野'], '2026-07-15':['銀','門'],
-  '2026-07-16':['開','院'], '2026-07-17':['集','青'],
-  '2026-07-20':['風','飯'], '2026-07-21':['館','首'], '2026-07-22':['験','鳥'],
-  '2026-07-23':['黒','世'], '2026-07-24':['主','乗'],
-  '2026-07-27':['以','低'], '2026-07-28':['住','体'], '2026-07-29':['作','便'],
-  '2026-07-30':['借','働'], '2026-07-31':['元','兄'],
-  // ── AGOSTO 2026 ──
-  '2026-08-03':['別','力'], '2026-08-04':['勉','動'], '2026-08-05':['区','医'],
-  '2026-08-06':['去','台'], '2026-08-07':['合','同'],
-  '2026-08-10':['回','図'], '2026-08-11':['地','堂'], '2026-08-12':['場','声'],
-  '2026-08-13':['売','夏'], '2026-08-14':['夕','夜'],
-  '2026-08-17':['始','字'], '2026-08-18':['室','家'], '2026-08-19':['寒','屋'],
-  '2026-08-20':['工','市'], '2026-08-21':['帰','広'],
-  '2026-08-24':['弱','強'], '2026-08-25':['待','心'], '2026-08-26':['思','急'],
-  '2026-08-27':['悪','意'], '2026-08-28':['所','持'],
+  '2026-05-01':['便','借'],'2026-05-04':['写','冬'],'2026-05-05':['切','別'],
+  '2026-05-06':['力','勉'],'2026-05-07':['動','区'],'2026-05-08':['医','去'],
+  '2026-05-11':['品','員'],'2026-05-12':['問','回'],'2026-05-13':['図','地'],
+  '2026-05-14':['堂','場'],'2026-05-15':['声','売'],
+  '2026-05-18':['好','妹'],'2026-05-19':['姉','始'],'2026-05-20':['字','室'],
+  '2026-05-21':['家','寒'],'2026-05-22':['屋','工'],
+  '2026-05-25':['建','引'],'2026-05-26':['弟','弱'],'2026-05-27':['強','待'],
+  '2026-05-28':['心','思'],'2026-05-29':['急','悪'],
+  '2026-06-01':['文','料'],'2026-06-02':['方','旅'],'2026-06-03':['族','早'],
+  '2026-06-04':['明','映'],'2026-06-05':['春','昼'],
+  '2026-06-08':['服','朝'],'2026-06-09':['村','林'],'2026-06-10':['森','業'],
+  '2026-06-11':['楽','歌'],'2026-06-12':['止','正'],
+  '2026-06-15':['注','洋'],'2026-06-16':['洗','海'],'2026-06-17':['漢','牛'],
+  '2026-06-18':['物','特'],'2026-06-19':['犬','理'],
+  '2026-06-22':['画','界'],'2026-06-23':['病','発'],'2026-06-24':['県','真'],
+  '2026-06-25':['着','知'],'2026-06-26':['短','研'],
+  '2026-06-29':['紙','終'],'2026-06-30':['習','考'],
+  '2026-07-01':['者','肉'],'2026-07-02':['自','色'],'2026-07-03':['英','茶'],
+  '2026-07-06':['試','説'],'2026-07-07':['貸','質'],'2026-07-08':['赤','走'],
+  '2026-07-09':['起','転'],'2026-07-10':['軽','近'],
+  '2026-07-13':['遠','都'],'2026-07-14':['重','野'],'2026-07-15':['銀','門'],
+  '2026-07-16':['開','院'],'2026-07-17':['集','青'],
+  '2026-07-20':['風','飯'],'2026-07-21':['館','首'],'2026-07-22':['験','鳥'],
+  '2026-07-23':['黒','世'],'2026-07-24':['主','乗'],
+  '2026-07-27':['以','低'],'2026-07-28':['住','体'],'2026-07-29':['作','便'],
+  '2026-07-30':['借','働'],'2026-07-31':['元','兄'],
+  '2026-08-03':['別','力'],'2026-08-04':['勉','動'],'2026-08-05':['区','医'],
+  '2026-08-06':['去','台'],'2026-08-07':['合','同'],
+  '2026-08-10':['回','図'],'2026-08-11':['地','堂'],'2026-08-12':['場','声'],
+  '2026-08-13':['売','夏'],'2026-08-14':['夕','夜'],
+  '2026-08-17':['始','字'],'2026-08-18':['室','家'],'2026-08-19':['寒','屋'],
+  '2026-08-20':['工','市'],'2026-08-21':['帰','広'],
+  '2026-08-24':['弱','強'],'2026-08-25':['待','心'],'2026-08-26':['思','急'],
+  '2026-08-27':['悪','意'],'2026-08-28':['所','持'],
   '2026-08-31':['旅','族'],
-  // ── SEPTIEMBRE 2026 ──
-  '2026-09-01':['早','明'], '2026-09-02':['映','春'], '2026-09-03':['昼','暑'],
+  '2026-09-01':['早','明'],'2026-09-02':['映','春'],'2026-09-03':['昼','暑'],
   '2026-09-04':['暗','曜'],
-  '2026-09-07':['林','森'], '2026-09-08':['業','楽'], '2026-09-09':['歌','止'],
-  '2026-09-10':['正','歩'], '2026-09-11':['死','民'],
-  '2026-09-14':['海','漢'], '2026-09-15':['牛','物'], '2026-09-16':['特','犬'],
-  '2026-09-17':['理','産'], '2026-09-18':['用','田'],
-  '2026-09-21':['発','県'], '2026-09-22':['真','着'], '2026-09-23':['知','短'],
-  '2026-09-24':['研','私'], '2026-09-25':['秋','究'],
-  '2026-09-28':['考','者'], '2026-09-29':['肉','自'], '2026-09-30':['色','英'],
-  // ── OCTUBRE 2026 ──
-  '2026-10-01':['茶','菜'], '2026-10-02':['薬','親'],
-  '2026-10-05':['質','赤'], '2026-10-06':['走','起'], '2026-10-07':['転','軽'],
-  '2026-10-08':['近','送'], '2026-10-09':['通','進'],
-  '2026-10-12':['野','銀'], '2026-10-13':['門','開'], '2026-10-14':['院','集'],
-  '2026-10-15':['青','音'], '2026-10-16':['頭','題'],
-  '2026-10-19':['首','験'], '2026-10-20':['鳥','黒'], '2026-10-21':['世','主'],
-  '2026-10-22':['乗','事'], '2026-10-23':['京','使'],
-  '2026-10-26':['体','作'], '2026-10-27':['便','借'], '2026-10-28':['働','元'],
-  '2026-10-29':['兄','光'], '2026-10-30':['写','冬'],
-  // ── NOVIEMBRE 2026 ──
-  '2026-11-02':['動','区'], '2026-11-03':['医','去'], '2026-11-04':['台','合'],
-  '2026-11-05':['同','味'], '2026-11-06':['品','員'],
-  '2026-11-09':['堂','場'], '2026-11-10':['声','売'], '2026-11-11':['夏','夕'],
-  '2026-11-12':['夜','太'], '2026-11-13':['好','妹'],
-  '2026-11-16':['家','寒'], '2026-11-17':['屋','工'], '2026-11-18':['市','帰'],
-  '2026-11-19':['広','度'], '2026-11-20':['建','引'],
-  '2026-11-23':['心','思'], '2026-11-24':['急','悪'], '2026-11-25':['意','所'],
-  '2026-11-26':['持','教'], '2026-11-27':['文','料'],
+  '2026-09-07':['林','森'],'2026-09-08':['業','楽'],'2026-09-09':['歌','止'],
+  '2026-09-10':['正','歩'],'2026-09-11':['死','民'],
+  '2026-09-14':['海','漢'],'2026-09-15':['牛','物'],'2026-09-16':['特','犬'],
+  '2026-09-17':['理','産'],'2026-09-18':['用','田'],
+  '2026-09-21':['発','県'],'2026-09-22':['真','着'],'2026-09-23':['知','短'],
+  '2026-09-24':['研','私'],'2026-09-25':['秋','究'],
+  '2026-09-28':['考','者'],'2026-09-29':['肉','自'],'2026-09-30':['色','英'],
+  '2026-10-01':['茶','菜'],'2026-10-02':['薬','親'],
+  '2026-10-05':['質','赤'],'2026-10-06':['走','起'],'2026-10-07':['転','軽'],
+  '2026-10-08':['近','送'],'2026-10-09':['通','進'],
+  '2026-10-12':['野','銀'],'2026-10-13':['門','開'],'2026-10-14':['院','集'],
+  '2026-10-15':['青','音'],'2026-10-16':['頭','題'],
+  '2026-10-19':['首','験'],'2026-10-20':['鳥','黒'],'2026-10-21':['世','主'],
+  '2026-10-22':['乗','事'],'2026-10-23':['京','使'],
+  '2026-10-26':['体','作'],'2026-10-27':['便','借'],'2026-10-28':['働','元'],
+  '2026-10-29':['兄','光'],'2026-10-30':['写','冬'],
+  '2026-11-02':['動','区'],'2026-11-03':['医','去'],'2026-11-04':['台','合'],
+  '2026-11-05':['同','味'],'2026-11-06':['品','員'],
+  '2026-11-09':['堂','場'],'2026-11-10':['声','売'],'2026-11-11':['夏','夕'],
+  '2026-11-12':['夜','太'],'2026-11-13':['好','妹'],
+  '2026-11-16':['家','寒'],'2026-11-17':['屋','工'],'2026-11-18':['市','帰'],
+  '2026-11-19':['広','度'],'2026-11-20':['建','引'],
+  '2026-11-23':['心','思'],'2026-11-24':['急','悪'],'2026-11-25':['意','所'],
+  '2026-11-26':['持','教'],'2026-11-27':['文','料'],
   '2026-11-30':['明','映'],
-  // ── DICIEMBRE 2026 ──
-  '2026-12-01':['春','昼'], '2026-12-02':['暑','暗'], '2026-12-03':['曜','有'],
+  '2026-12-01':['春','昼'],'2026-12-02':['暑','暗'],'2026-12-03':['曜','有'],
   '2026-12-04':['服','朝'],
-  '2026-12-07':['楽','歌'], '2026-12-08':['止','正'], '2026-12-09':['歩','死'],
-  '2026-12-10':['民','池'], '2026-12-11':['注','洋'],
-  '2026-12-14':['物','特'], '2026-12-15':['犬','理'], '2026-12-16':['産','用'],
-  '2026-12-17':['田','町'], '2026-12-18':['画','界'],
-  '2026-12-21':['着','知'], '2026-12-22':['短','研'], '2026-12-23':['私','秋'],
-  '2026-12-24':['究','答'], '2026-12-25':['紙','終'],
-  '2026-12-28':['自','色'], '2026-12-29':['英','茶'], '2026-12-30':['菜','薬'],
+  '2026-12-07':['楽','歌'],'2026-12-08':['止','正'],'2026-12-09':['歩','死'],
+  '2026-12-10':['民','池'],'2026-12-11':['注','洋'],
+  '2026-12-14':['物','特'],'2026-12-15':['犬','理'],'2026-12-16':['産','用'],
+  '2026-12-17':['田','町'],'2026-12-18':['画','界'],
+  '2026-12-21':['着','知'],'2026-12-22':['短','研'],'2026-12-23':['私','秋'],
+  '2026-12-24':['究','答'],'2026-12-25':['紙','終'],
+  '2026-12-28':['自','色'],'2026-12-29':['英','茶'],'2026-12-30':['菜','薬'],
   '2026-12-31':['親','計'],
 };
 
 function dateKey(d){ return d.toISOString().slice(0,10); }
+function getTodayKanji(){ return HOBONICHI[dateKey(new Date())]||null; }
 
-function getTodayKanji(){
-  const today = dateKey(new Date());
-  return HOBONICHI[today] || null;
+function updateTodayKanjiLabel(){
+  var k=getTodayKanji();
+  var el=document.getElementById('home-today-kanji');
+  if(!el)return;
+  if(k){
+    var kd0=KANJI.find(function(x){return x.k===k[0];})||{};
+    var kd1=KANJI.find(function(x){return x.k===k[1];})||{};
+    el.textContent='Hoy: '+k[0]+' '+(kd0.m||'').split('/')[0].trim()+'  ·  '+k[1]+' '+(kd1.m||'').split('/')[0].trim();
+  } else {
+    el.textContent='Hoy es día de repaso 🎌';
+  }
 }
 
 function buildCalendar(){
-  const sc = document.getElementById('calScroll');
-  sc.innerHTML = '';
-  const today = new Date();
-  const todayKey = dateKey(today);
+  try{
+    var sc=document.getElementById('calScroll');
+    if(!sc){console.error('calScroll not found');return;}
+    sc.innerHTML='';
+    var today=new Date();
+    var todayKey=dateKey(today);
+    console.log('Building calendar, today=',todayKey);
 
-  // ── TODAY CARD ──
-  const todayKanji = HOBONICHI[todayKey];
-  const todayCard = document.createElement('div');
-  todayCard.style.cssText = 'background:linear-gradient(135deg,rgba(124,58,237,.25),rgba(236,72,153,.15));border:1px solid rgba(192,132,252,.4);border-radius:var(--r);padding:18px 16px;margin-bottom:16px';
-  if(todayKanji){
-    const kInfo = todayKanji.map(k=>{
-      const kd = KANJI.find(x=>x.k===k);
-      return kd ? `<div style="text-align:center;flex:1">
-        <div style="font-size:48px;font-family:'Zen Kaku Gothic New',sans-serif;background:linear-gradient(135deg,var(--p),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer" onclick="openSingleCard(buildCardFromKey('${k}'),'calendar')">${k}</div>
-        <div style="font-size:11px;color:var(--cyan);font-weight:700;font-family:'Zen Kaku Gothic New',sans-serif;margin-top:2px">${kd.r}</div>
-        <div style="font-size:12px;color:var(--tx2);font-weight:600">${kd.m}</div>
-      </div>` : `<div style="text-align:center;flex:1"><div style="font-size:48px">${k}</div></div>`;
-    }).join('<div style="width:1px;background:rgba(192,132,252,.2);margin:8px 0"></div>');
-    todayCard.innerHTML = `
-      <div style="font-size:11px;font-weight:800;color:var(--p);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">📅 KANJI DE HOY · ${today.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}).toUpperCase()}</div>
-      <div style="display:flex;gap:12px;align-items:flex-start">${kInfo}</div>
-      <div style="display:flex;gap:8px;margin-top:14px">
-        <button onclick="openSingleCard(buildCardFromKey('${todayKanji[0]}'),'calendar')" style="flex:1;padding:10px;background:rgba(192,132,252,.15);border:1px solid rgba(192,132,252,.3);border-radius:var(--rs);color:var(--p);font-size:12px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif">Practicar ${todayKanji[0]}</button>
-        <button onclick="openSingleCard(buildCardFromKey('${todayKanji[1]}'),'calendar')" style="flex:1;padding:10px;background:rgba(192,132,252,.15);border:1px solid rgba(192,132,252,.3);border-radius:var(--rs);color:var(--p);font-size:12px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif">Practicar ${todayKanji[1]}</button>
-      </div>`;
-  } else {
-    todayCard.innerHTML = `
-      <div style="font-size:11px;font-weight:800;color:var(--p);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">📅 HOY · ${today.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}).toUpperCase()}</div>
-      <div style="font-size:14px;color:var(--tx2);font-weight:600">🎌 Hoy no hay kanji programados.<br><span style="font-size:12px;color:var(--tx3)">Los fines de semana son de repaso.</span></div>`;
-  }
-  sc.appendChild(todayCard);
+    function getKanjiInfo(k){
+      var kd=KANJI.find(function(x){return x.k===k;});
+      return kd||{k:k,r:'',m:''};
+    }
 
-  // ── MONTH NAVIGATION ──
-  // Group all entries by month
-  const months = {};
-  Object.entries(HOBONICHI).forEach(([date, kanjis])=>{
-    const m = date.slice(0,7);
-    if(!months[m]) months[m] = {};
-    months[m][date] = kanjis;
-  });
+    var monthNames={
+      '2026-05':'五月 · Mayo','2026-06':'六月 · Junio',
+      '2026-07':'七月 · Julio','2026-08':'八月 · Agosto',
+      '2026-09':'九月 · Sept','2026-10':'十月 · Octubre',
+      '2026-11':'十一月 · Nov','2026-12':'十二月 · Dic'
+    };
 
-  const monthNames = {
-    '2026-05':'五月 Mayo 2026','2026-06':'六月 Junio 2026','2026-07':'七月 Julio 2026',
-    '2026-08':'八月 Agosto 2026','2026-09':'九月 Septiembre 2026','2026-10':'十月 Octubre 2026',
-    '2026-11':'十一月 Noviembre 2026','2026-12':'十二月 Diciembre 2026'
-  };
+    // TODAY BANNER
+    var todayKanji=HOBONICHI[todayKey];
+    var banner=document.createElement('div');
+    banner.style.cssText='background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(236,72,153,.2));border:1px solid rgba(192,132,252,.45);border-radius:16px;padding:16px;margin-bottom:18px;';
 
-  Object.keys(months).sort().forEach(month=>{
-    const sec = document.createElement('div');
-    sec.style.marginBottom = '16px';
+    if(todayKanji){
+      var dayStr=today.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
+      var html='<div style="font-size:10px;font-weight:800;color:var(--p);letter-spacing:.08em;margin-bottom:12px">📅 HOY · '+dayStr.toUpperCase()+'</div>';
+      html+='<div style="display:flex;gap:12px;margin-bottom:14px;">';
+      todayKanji.forEach(function(k){
+        var kd=getKanjiInfo(k);
+        html+='<div style="flex:1;text-align:center;background:rgba(192,132,252,.1);border-radius:12px;padding:14px 8px;">';
+        html+='<div style="font-size:52px;font-family:Zen Kaku Gothic New,sans-serif;color:var(--p);">'+k+'</div>';
+        if(kd.r)html+='<div style="font-size:11px;color:var(--cyan);font-weight:700;margin-top:4px;">'+kd.r+'</div>';
+        if(kd.m)html+='<div style="font-size:11px;color:var(--tx2);font-weight:600;">'+kd.m.split('/')[0]+'</div>';
+        html+='</div>';
+      });
+      html+='</div>';
+      html+='<div style="display:flex;gap:8px;">';
+      todayKanji.forEach(function(k){
+        html+='<div data-kanji="'+k+'" style="flex:1;padding:10px;background:rgba(192,132,252,.15);border:1px solid rgba(192,132,252,.3);border-radius:10px;color:var(--p);font-size:13px;font-weight:800;cursor:pointer;text-align:center;">Practicar '+k+'</div>';
+      });
+      html+='</div>';
+      banner.innerHTML=html;
+      banner.querySelectorAll('[data-kanji]').forEach(function(el){
+        var k=el.getAttribute('data-kanji');
+        el.addEventListener('click',function(){
+          try{var c=buildCardFromKey(k);if(c)openSingleCard(c,'calendar');}catch(e){console.error(e);}
+        });
+      });
+    } else {
+      var dayStr2=today.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
+      banner.innerHTML='<div style="font-size:10px;font-weight:800;color:var(--p);letter-spacing:.08em;margin-bottom:8px">📅 HOY · '+dayStr2.toUpperCase()+'</div>'
+        +'<div style="font-size:14px;color:var(--tx2);font-weight:600;">🎌 Hoy no hay kanji nuevos<br><span style="font-size:12px;color:var(--tx3);">Los fines de semana son de repaso.</span></div>';
+    }
+    sc.appendChild(banner);
 
-    // Month header
-    const hdr = document.createElement('div');
-    hdr.className = 'sec-title';
-    hdr.style.marginBottom = '10px';
-    hdr.textContent = monthNames[month] || month;
-    sec.appendChild(hdr);
-
-    // Days grid
-    const grid = document.createElement('div');
-    grid.style.cssText = 'display:flex;flex-direction:column;gap:6px';
-
-    // Get all days in this month that have kanji
-    const days = Object.keys(months[month]).sort();
-    days.forEach(day=>{
-      const kanjis = months[month][day];
-      const d = new Date(day+'T12:00:00');
-      const isToday = day === todayKey;
-      const isPast = day < todayKey;
-      // Check if both kanji are in knownKanji
-      const done = kanjis.every(k => S.knownKanji.includes(k));
-
-      const row = document.createElement('div');
-      row.style.cssText = `display:flex;align-items:center;gap:10px;
-        background:${isToday?'rgba(124,58,237,.2)':isPast&&done?'rgba(74,222,128,.08)':'linear-gradient(140deg,var(--card),var(--card2))'};
-        border:1px solid ${isToday?'rgba(192,132,252,.5)':isPast&&done?'rgba(74,222,128,.25)':'rgba(192,132,252,.12)'};
-        border-radius:var(--rs);padding:10px 12px;cursor:pointer;transition:all .18s`;
-
-      const dayLabel = d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric'});
-      const statusIcon = done?'✅':isPast?'⬜':'📌';
-
-      row.innerHTML = `
-        <div style="font-size:11px;font-weight:800;color:${isToday?'var(--p)':isPast?'var(--tx3)':'var(--tx2)'};min-width:52px">${isToday?'HOY':dayLabel}</div>
-        <div style="display:flex;gap:8px;flex:1;align-items:center">
-          ${kanjis.map(k=>`<span style="font-size:24px;font-family:'Zen Kaku Gothic New',sans-serif;color:${isToday?'var(--p)':isPast&&done?'var(--green)':'var(--tx)'}">${k}</span>`).join('')}
-          <span style="font-size:11px;color:var(--tx3);font-weight:600;margin-left:4px">${kanjis.map(k=>{const kd=KANJI.find(x=>x.k===k);return kd?kd.m.split('/')[0].trim():''}).join(' · ')}</span>
-        </div>
-        <span style="font-size:14px">${statusIcon}</span>`;
-
-      row.onclick = ()=>{
-        // Open flashcard for first kanji, then second
-        openSingleCard(buildCardFromKey(kanjis[0]), 'calendar');
-      };
-      grid.appendChild(row);
+    // GROUP BY MONTH
+    var months={};
+    Object.keys(HOBONICHI).sort().forEach(function(day){
+      var m=day.slice(0,7);
+      if(!months[m])months[m]={};
+      months[m][day]=HOBONICHI[day];
     });
 
-    sec.appendChild(grid);
-    sc.appendChild(sec);
-  });
-}
+    Object.keys(months).sort().forEach(function(month){
+      var sec=document.createElement('div');
+      sec.style.marginBottom='16px';
 
-function updateTodayKanjiLabel(){
-  const k = getTodayKanji();
-  const el = document.getElementById('home-today-kanji');
-  if(!el) return;
-  if(k){
-    const kds = k.map(x=>KANJI.find(d=>d.k===x));
-    el.textContent = `Hoy: ${k[0]} ${kds[0]?kds[0].m.split('/')[0]:''}  ·  ${k[1]} ${kds[1]?kds[1].m.split('/')[0]:''}`;
-  } else {
-    el.textContent = 'Hoy es día de repaso 🎌';
+      var hdr=document.createElement('div');
+      hdr.style.cssText='font-size:11px;font-weight:800;color:var(--tx3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:9px;';
+      hdr.textContent=(monthNames[month]||month)+' 2026';
+      sec.appendChild(hdr);
+
+      Object.keys(months[month]).sort().forEach(function(day){
+        var kanjis=months[month][day];
+        var d=new Date(day.replace(/-/g,'/')); // avoid timezone issue
+        var isToday=day===todayKey;
+        var isPast=day<todayKey;
+        var done=kanjis.every(function(k){return S.knownKanji.indexOf(k)>=0;});
+
+        var row=document.createElement('div');
+        row.style.cssText='display:flex;align-items:center;gap:10px;'
+          +'background:'+(isToday?'rgba(124,58,237,.22)':done&&isPast?'rgba(74,222,128,.08)':'linear-gradient(140deg,var(--card),var(--card2))')+';'
+          +'border:1px solid '+(isToday?'rgba(192,132,252,.5)':done&&isPast?'rgba(74,222,128,.25)':'rgba(192,132,252,.12)')+';'
+          +'border-radius:10px;padding:10px 12px;margin-bottom:7px;cursor:pointer;';
+
+        var dayLabel=isToday?'HOY':d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric'});
+        var statusIcon=done?'✅':isPast?'⬜':'📌';
+
+        var dl=document.createElement('div');
+        dl.style.cssText='font-size:11px;font-weight:800;min-width:50px;color:'+(isToday?'var(--p)':isPast?'var(--tx3)':'var(--tx2)')+';';
+        dl.textContent=dayLabel;
+
+        var kc=document.createElement('div');
+        kc.style.cssText='display:flex;align-items:center;gap:6px;flex:1;flex-wrap:wrap;';
+        kanjis.forEach(function(k){
+          var kd=getKanjiInfo(k);
+          var kspan=document.createElement('span');
+          kspan.style.cssText='font-size:22px;font-family:Zen Kaku Gothic New,sans-serif;color:'+(isToday?'var(--p)':done&&isPast?'var(--green)':'var(--tx)')+';';
+          kspan.textContent=k;
+          kc.appendChild(kspan);
+          if(kd.m){
+            var ml=document.createElement('span');
+            ml.style.cssText='font-size:10px;color:var(--tx3);font-weight:600;margin-right:6px;';
+            ml.textContent=kd.m.split('/')[0].trim();
+            kc.appendChild(ml);
+          }
+        });
+
+        var si=document.createElement('span');
+        si.style.fontSize='14px';
+        si.textContent=statusIcon;
+
+        row.appendChild(dl);
+        row.appendChild(kc);
+        row.appendChild(si);
+
+        (function(ks){row.addEventListener('click',function(){
+          try{var c=buildCardFromKey(ks[0]);if(c)openSingleCard(c,'calendar');}catch(e){console.error(e);}
+        });})(kanjis);
+
+        sec.appendChild(row);
+      });
+      sc.appendChild(sec);
+    });
+    console.log('Calendar built OK');
+  } catch(err){
+    console.error('buildCalendar error:',err);
+    var sc=document.getElementById('calScroll');
+    if(sc)sc.innerHTML='<div style="padding:20px;color:var(--red);font-weight:700;">Error al cargar el calendario: '+err.message+'</div>';
   }
 }
-
-
 
 // ============================================================
 // PWA — Service Worker + Install Banner
@@ -2417,9 +2432,7 @@ function updateTodayKanjiLabel(){
 // Register service worker - works on GitHub Pages
 if('serviceWorker' in navigator){
   // Determine correct path (works for root and subdirectory hosting)
-  const swPath = (new URL('./sw.js', document.baseURI)).href;
-  const scopePath = (new URL('./', document.baseURI)).href;
-  navigator.serviceWorker.register(swPath, {scope: scopePath})
+  navigator.serviceWorker.register('/Kanji-dojo/sw.js', {scope: '/Kanji-dojo/'})
     .then(r => console.log('SW registered:', r.scope))
     .catch(e => console.warn('SW registration failed:', e));
 }
