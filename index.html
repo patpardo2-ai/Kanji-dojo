@@ -31,8 +31,8 @@
   --r:16px;--rs:10px;
 }
 html,body{height:100%;overflow:hidden;background:var(--bg)}
-body{font-family:'Nunito',sans-serif;color:var(--tx);max-width:430px;margin:0 auto;position:relative}
-.jp{font-family:'Zen Kaku Gothic New',sans-serif}
+body{font-family:'Nunito','Helvetica Neue',Arial,sans-serif;color:var(--tx);max-width:430px;margin:0 auto;position:relative}
+.jp{font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif}
 
 /* STARS BG */
 .stars{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
@@ -52,7 +52,7 @@ body{font-family:'Nunito',sans-serif;color:var(--tx);max-width:430px;margin:0 au
 
 /* NAV */
 .nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(15,2,37,0.92);backdrop-filter:blur(16px);border-top:1px solid rgba(192,132,252,0.2);display:flex;padding:8px 0;padding-bottom:max(8px, env(safe-area-inset-bottom));z-index:50}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--tx3);font-size:10px;font-family:'Nunito',sans-serif;font-weight:700;padding:4px 0;transition:color 0.2s}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--tx3);font-size:10px;font-family:'Nunito','Helvetica Neue',Arial,sans-serif;font-weight:700;padding:4px 0;transition:color 0.2s}
 .nav-btn.active{color:var(--p)}
 .nav-icon{width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:20px}
 
@@ -117,7 +117,7 @@ body{font-family:'Nunito',sans-serif;color:var(--tx);max-width:430px;margin:0 au
 
 /* LEVEL SELECTOR */
 .level-tabs{display:flex;gap:8px;margin-bottom:16px}
-.level-tab{flex:1;padding:9px;border-radius:var(--rs);border:1px solid rgba(192,132,252,0.2);background:var(--card);font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s;color:var(--tx3)}
+.level-tab{flex:1;padding:9px;border-radius:var(--rs);border:1px solid rgba(192,132,252,0.2);background:var(--card);font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito','Helvetica Neue',Arial,sans-serif;transition:all 0.2s;color:var(--tx3)}
 .level-tab.active-n4{background:rgba(34,211,238,0.15);border-color:var(--cyan);color:var(--cyan)}
 .level-tab.active-n3{background:rgba(251,191,36,0.15);border-color:var(--gold);color:var(--gold)}
 .level-tab.active-n2{background:rgba(248,113,113,0.15);border-color:var(--red);color:var(--red)}
@@ -127,25 +127,25 @@ body{font-family:'Nunito',sans-serif;color:var(--tx);max-width:430px;margin:0 au
 .flash-card{background:linear-gradient(145deg,var(--card),var(--bg4));border:1px solid rgba(192,132,252,0.25);border-radius:20px;padding:28px 20px 24px;text-align:center;min-height:240px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;box-shadow:0 8px 32px rgba(0,0,0,0.4),0 0 0 1px rgba(192,132,252,0.1) inset;position:relative;overflow:hidden}
 .flash-card::before{content:'';position:absolute;top:-30%;left:-10%;width:60%;height:60%;background:radial-gradient(ellipse,rgba(192,132,252,0.08),transparent);pointer-events:none}
 .flash-card:active{transform:scale(0.98);box-shadow:0 4px 16px rgba(0,0,0,0.5)}
-.kanji-big{font-size:88px;line-height:1;margin-bottom:6px;font-family:'Zen Kaku Gothic New',sans-serif;background:linear-gradient(135deg,#e879f9,#c084fc,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 12px rgba(192,132,252,0.4))}
+.kanji-big{font-size:88px;line-height:1;margin-bottom:6px;font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:linear-gradient(135deg,#e879f9,#c084fc,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 12px rgba(192,132,252,0.4))}
 .flash-hint{font-size:13px;color:var(--tx3);font-weight:600}
-.flash-reading{font-size:22px;font-weight:800;color:var(--cyan);margin:10px 0 4px;font-family:'Zen Kaku Gothic New',sans-serif}
+.flash-reading{font-size:22px;font-weight:800;color:var(--cyan);margin:10px 0 4px;font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif}
 .flash-meaning{font-size:17px;font-weight:700;color:var(--tx)}
-.flash-example{font-size:13px;color:var(--tx2);margin-top:10px;line-height:1.7;font-family:'Zen Kaku Gothic New',sans-serif}
+.flash-example{font-size:13px;color:var(--tx2);margin-top:10px;line-height:1.7;font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif}
 .flash-example-tr{font-size:12px;color:var(--tx3);margin-top:4px;line-height:1.5}
 .flash-alt-readings{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
-.flash-alt-reading{background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.25);border-radius:99px;padding:4px 12px;font-size:12px;color:var(--gold);font-weight:700;font-family:'Zen Kaku Gothic New',sans-serif}
+.flash-alt-reading{background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.25);border-radius:99px;padding:4px 12px;font-size:12px;color:var(--gold);font-weight:700;font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif}
 .flash-alt-label{font-size:10px;color:var(--tx3);font-weight:700;letter-spacing:0.05em;margin-top:8px;text-align:center;width:100%}
 .tap-hint-pill{position:absolute;bottom:12px;right:14px;background:rgba(255,255,255,0.06);border-radius:99px;padding:3px 10px;font-size:10px;color:var(--tx3);font-weight:700}
 
 /* ANSWER BTNS */
 .answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.ans-btn{border:none;border-radius:var(--rs);padding:14px 10px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.ans-btn{border:none;border-radius:var(--rs);padding:14px 10px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito','Helvetica Neue',Arial,sans-serif;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px}
 .ans-btn:active{transform:scale(0.96)}
 .ans-wrong{background:linear-gradient(135deg,rgba(239,68,68,0.2),rgba(239,68,68,0.1));border:1px solid rgba(239,68,68,0.4);color:var(--red)}
 .ans-right{background:linear-gradient(135deg,rgba(74,222,128,0.2),rgba(74,222,128,0.1));border:1px solid rgba(74,222,128,0.4);color:var(--green)}
 .ans-btn.full{grid-column:1/-1}
-.btn-next{width:100%;padding:14px;background:linear-gradient(135deg,var(--p3),var(--pink2));border:none;border-radius:var(--rs);color:#fff;font-size:15px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s;box-shadow:0 4px 16px rgba(124,58,237,0.4)}
+.btn-next{width:100%;padding:14px;background:linear-gradient(135deg,var(--p3),var(--pink2));border:none;border-radius:var(--rs);color:#fff;font-size:15px;font-weight:800;cursor:pointer;font-family:'Nunito','Helvetica Neue',Arial,sans-serif;transition:all 0.2s;box-shadow:0 4px 16px rgba(124,58,237,0.4)}
 .btn-next:active{transform:scale(0.97)}
 
 /* PROGRESS BAR MINI */
@@ -158,31 +158,31 @@ body{font-family:'Nunito',sans-serif;color:var(--tx);max-width:430px;margin:0 au
 /* READING */
 .reading-card{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid rgba(192,132,252,0.15);border-radius:var(--r);margin-bottom:14px;overflow:hidden}
 .reading-header{padding:14px 16px 10px;border-bottom:1px solid rgba(192,132,252,0.1);display:flex;align-items:center;justify-content:space-between}
-.reading-title-text{font-size:15px;font-weight:800;color:var(--tx);font-family:'Zen Kaku Gothic New',sans-serif}
+.reading-title-text{font-size:15px;font-weight:800;color:var(--tx);font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif}
 .reading-meta{font-size:10px;color:var(--tx3);font-weight:700;margin-top:2px}
 .reading-body{padding:16px}
-.reading-jp{font-size:17px;line-height:2.2;color:var(--tx);font-family:'Zen Kaku Gothic New',sans-serif}
+.reading-jp{font-size:17px;line-height:2.2;color:var(--tx);font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif}
 .reading-jp ruby{color:var(--tx);text-align:center}
 .reading-jp rt{font-size:10px;color:var(--cyan);font-style:normal}
 .reading-controls{display:flex;gap:8px;margin-bottom:14px}
-.rc-btn{flex:1;padding:9px 6px;border-radius:var(--rs);font-size:11px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;border:1px solid;transition:all 0.2s;text-align:center}
+.rc-btn{flex:1;padding:9px 6px;border-radius:var(--rs);font-size:11px;font-weight:800;cursor:pointer;font-family:'Nunito','Helvetica Neue',Arial,sans-serif;border:1px solid;transition:all 0.2s;text-align:center}
 .rc-btn.on{background:rgba(34,211,238,0.15);border-color:var(--cyan);color:var(--cyan)}
 .rc-btn.off{background:transparent;border-color:rgba(192,132,252,0.2);color:var(--tx3)}
 .tr-section{border-top:1px solid rgba(192,132,252,0.1);padding:12px 16px;font-size:13px;color:var(--tx2);line-height:1.7;font-weight:600}
 .vocab-section{border-top:1px solid rgba(192,132,252,0.1);padding:12px 16px}
 .vocab-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(192,132,252,0.07)}
 .vocab-item:last-child{border-bottom:none}
-.vocab-kanji{font-size:22px;font-family:'Zen Kaku Gothic New',sans-serif;color:var(--p);min-width:36px}
-.vocab-reading{font-size:12px;color:var(--cyan);font-weight:700;font-family:'Zen Kaku Gothic New',sans-serif}
+.vocab-kanji{font-size:22px;font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;color:var(--p);min-width:36px}
+.vocab-reading{font-size:12px;color:var(--cyan);font-weight:700;font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif}
 .vocab-meaning{font-size:11px;color:var(--tx2);font-weight:600}
-.btn-read-done{width:100%;margin:4px 0 0;padding:13px;background:linear-gradient(135deg,var(--p3),var(--pink2));border:none;border-radius:var(--rs);color:#fff;font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 14px rgba(124,58,237,0.35)}
+.btn-read-done{width:100%;margin:4px 0 0;padding:13px;background:linear-gradient(135deg,var(--p3),var(--pink2));border:none;border-radius:var(--rs);color:#fff;font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito','Helvetica Neue',Arial,sans-serif;box-shadow:0 4px 14px rgba(124,58,237,0.35)}
 .btn-read-done:active{transform:scale(0.98)}
 
 /* REVIEW LIST */
 .review-item{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid rgba(192,132,252,0.12);border-radius:var(--rs);padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
-.rv-kanji{font-size:30px;font-family:'Zen Kaku Gothic New',sans-serif;min-width:42px;text-align:center;color:var(--p)}
+.rv-kanji{font-size:30px;font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;min-width:42px;text-align:center;color:var(--p)}
 .rv-info{flex:1}
-.rv-reading{font-size:13px;color:var(--cyan);font-weight:700;font-family:'Zen Kaku Gothic New',sans-serif}
+.rv-reading{font-size:13px;color:var(--cyan);font-weight:700;font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif}
 .rv-meaning{font-size:11px;color:var(--tx2);font-weight:600}
 .rv-tag{font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px}
 .rv-hard{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.3)}
@@ -216,11 +216,11 @@ body{font-family:'Nunito',sans-serif;color:var(--tx);max-width:430px;margin:0 au
 .kl-item:active{transform:scale(.98)}
 .kl-item.open{border-color:rgba(192,132,252,.4)}
 .kl-top{display:flex;align-items:center;gap:12px}
-.kl-kanji{font-size:34px;font-family:'Zen Kaku Gothic New',sans-serif;min-width:48px;text-align:center;background:linear-gradient(135deg,var(--p),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.kl-kanji{font-size:34px;font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;min-width:48px;text-align:center;background:linear-gradient(135deg,var(--p),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
 .kl-meta{flex:1;min-width:0}
-.kl-reading{font-size:12px;color:var(--cyan);font-weight:700;font-family:'Zen Kaku Gothic New',sans-serif;margin-bottom:2px}
+.kl-reading{font-size:12px;color:var(--cyan);font-weight:700;font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;margin-bottom:2px}
 .kl-meaning{font-size:13px;color:var(--tx);font-weight:700}
-.kl-onkun{font-size:10px;color:var(--tx3);font-weight:700;margin-top:2px;font-family:'Zen Kaku Gothic New',sans-serif}
+.kl-onkun{font-size:10px;color:var(--tx3);font-weight:700;margin-top:2px;font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif}
 .kl-arrow{font-size:14px;color:var(--tx3);transition:transform .2s;flex-shrink:0}
 .kl-item.open .kl-arrow{transform:rotate(180deg)}
 .kl-detail{display:none;padding-top:10px;border-top:1px solid rgba(192,132,252,.12);margin-top:10px}
@@ -228,9 +228,9 @@ body{font-family:'Nunito',sans-serif;color:var(--tx);max-width:430px;margin:0 au
 .kl-cpd-label{font-size:10px;font-weight:800;color:var(--gold);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px}
 .kl-cpd-grid{display:flex;flex-direction:column;gap:6px}
 .kl-cpd-row{display:flex;align-items:center;gap:10px;background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.18);border-radius:var(--rs);padding:7px 10px}
-.kl-cpd-word{font-size:18px;font-family:'Zen Kaku Gothic New',sans-serif;color:var(--gold);min-width:60px}
+.kl-cpd-word{font-size:18px;font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;color:var(--gold);min-width:60px}
 .kl-cpd-info{flex:1}
-.kl-cpd-r{font-size:11px;color:var(--cyan);font-weight:700;font-family:'Zen Kaku Gothic New',sans-serif}
+.kl-cpd-r{font-size:11px;color:var(--cyan);font-weight:700;font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif}
 .kl-cpd-m{font-size:11px;color:var(--tx2);font-weight:600}
 .kl-count{font-size:10px;font-weight:800;background:rgba(192,132,252,.15);color:var(--p);border-radius:99px;padding:2px 7px;flex-shrink:0}
 
@@ -242,14 +242,14 @@ body{font-family:'Nunito',sans-serif;color:var(--tx);max-width:430px;margin:0 au
 .quiz-card::before{content:'';position:absolute;top:-20%;right:-5%;width:50%;height:50%;background:radial-gradient(ellipse,rgba(251,191,36,.05),transparent);pointer-events:none}
 .quiz-type-tag{display:inline-block;background:rgba(251,191,36,.12);color:var(--gold);border:1px solid rgba(251,191,36,.25);border-radius:99px;padding:3px 10px;font-size:10px;font-weight:800;letter-spacing:.04em;margin-bottom:10px}
 .quiz-question{font-size:14px;font-weight:700;color:var(--tx2);line-height:1.55;margin-bottom:14px}
-.quiz-kanji-big{font-size:72px;line-height:1;font-family:'Zen Kaku Gothic New',sans-serif;text-align:center;display:block;margin:4px 0 14px;background:linear-gradient(135deg,#fbbf24,#f472b6,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 10px rgba(251,191,36,.3))}
-.quiz-sentence{font-size:17px;font-family:'Zen Kaku Gothic New',sans-serif;color:var(--tx);line-height:1.8;margin-bottom:14px;text-align:center}
+.quiz-kanji-big{font-size:72px;line-height:1;font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;text-align:center;display:block;margin:4px 0 14px;background:linear-gradient(135deg,#fbbf24,#f472b6,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 10px rgba(251,191,36,.3))}
+.quiz-sentence{font-size:17px;font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;color:var(--tx);line-height:1.8;margin-bottom:14px;text-align:center}
 .quiz-blank{display:inline-block;background:rgba(251,191,36,.15);border-bottom:2px solid var(--gold);color:var(--gold);padding:0 6px;border-radius:4px;font-weight:800;min-width:40px;text-align:center}
 .quiz-opts{display:flex;flex-direction:column;gap:9px}
-.quiz-opt{background:var(--card);border:1px solid rgba(192,132,252,.18);border-radius:var(--rs);padding:13px 14px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--tx);transition:all .15s;display:flex;align-items:center;gap:10px;text-align:left}
+.quiz-opt{background:var(--card);border:1px solid rgba(192,132,252,.18);border-radius:var(--rs);padding:13px 14px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Nunito','Helvetica Neue',Arial,sans-serif;color:var(--tx);transition:all .15s;display:flex;align-items:center;gap:10px;text-align:left}
 .quiz-opt:active{transform:scale(.98)}
 .quiz-opt-letter{width:26px;height:26px;border-radius:50%;background:rgba(192,132,252,.12);border:1px solid rgba(192,132,252,.25);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:var(--p);flex-shrink:0;font-family:'Nunito',sans-serif}
-.quiz-opt-jp{font-family:'Zen Kaku Gothic New',sans-serif;font-size:15px;font-weight:700}
+.quiz-opt-jp{font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;font-size:15px;font-weight:700}
 .quiz-opt.correct{background:rgba(74,222,128,.13);border-color:var(--green);color:var(--green)}
 .quiz-opt.correct .quiz-opt-letter{background:rgba(74,222,128,.18);border-color:var(--green);color:var(--green)}
 .quiz-opt.wrong{background:rgba(239,68,68,.13);border-color:var(--red);color:var(--red)}
@@ -257,7 +257,7 @@ body{font-family:'Nunito',sans-serif;color:var(--tx);max-width:430px;margin:0 au
 .quiz-opt.disabled{pointer-events:none;opacity:.45}
 .quiz-explanation{margin-top:12px;padding:11px 13px;background:rgba(192,132,252,.07);border:1px solid rgba(192,132,252,.15);border-radius:var(--rs);font-size:12px;color:var(--tx2);font-weight:600;line-height:1.6}
 .quiz-explanation strong{color:var(--p)}
-.quiz-next-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--gold2),var(--orange));border:none;border-radius:var(--rs);color:#fff;font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 14px rgba(251,191,36,.3);margin-top:10px}
+.quiz-next-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--gold2),var(--orange));border:none;border-radius:var(--rs);color:#fff;font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito','Helvetica Neue',Arial,sans-serif;box-shadow:0 4px 14px rgba(251,191,36,.3);margin-top:10px}
 .quiz-next-btn:active{transform:scale(.97)}
 .quiz-result-card{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid rgba(251,191,36,.25);border-radius:20px;padding:28px 20px;text-align:center;box-shadow:0 8px 28px rgba(0,0,0,.4)}
 .quiz-score-circle{width:110px;height:110px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;flex-direction:column;border:3px solid var(--gold);background:rgba(251,191,36,.08)}
@@ -342,6 +342,15 @@ body{font-family:'Nunito',sans-serif;color:var(--tx);max-width:430px;margin:0 au
       <div class="mode-card mc-purple" onclick="goScreen('kanji-list')"><span class="mc-icon">📋</span><span class="mc-title">Lista Kanji</span><span class="mc-sub">Todos por nivel</span></div>
     </div>
     <div class="mode-grid">
+      <div class="mode-card mc-purple" style="grid-column:1/-1;display:flex;align-items:center;gap:14px;text-align:left;padding:14px 16px" onclick="goScreen('calendar')">
+        <span class="mc-icon" style="font-size:28px;margin-bottom:0;flex-shrink:0">📅</span>
+        <div>
+          <span class="mc-title" style="font-size:14px">Mi Calendario Hobonichi</span>
+          <span class="mc-sub" style="font-size:11px;display:block" id="home-today-kanji">Cargando kanji de hoy...</span>
+        </div>
+      </div>
+    </div>
+    <div class="mode-grid">
       <div class="mode-card mc-purple" style="grid-column:1/-1;display:flex;align-items:center;gap:14px;text-align:left;padding:14px 16px" onclick="goScreen('review')">
         <span class="mc-icon" style="font-size:28px;margin-bottom:0;flex-shrink:0">📊</span>
         <div><span class="mc-title" style="font-size:14px">Mi Progreso</span><span class="mc-sub" style="font-size:11px;display:block">Estadísticas y puntos débiles</span></div>
@@ -351,10 +360,20 @@ body{font-family:'Nunito',sans-serif;color:var(--tx);max-width:430px;margin:0 au
   <div class="nav">
     <button class="nav-btn active" onclick="goScreen('home')"><div class="nav-icon">🏠</div>Inicio</button>
     <button class="nav-btn" onclick="goFlash('random')"><div class="nav-icon">🃏</div>Flash</button>
+    <button class="nav-btn" onclick="goScreen('calendar')"><div class="nav-icon">📅</div>Hoy</button>
     <button class="nav-btn" onclick="goScreen('quiz')"><div class="nav-icon">📝</div>Examen</button>
-    <button class="nav-btn" onclick="goScreen('reading-list')"><div class="nav-icon">📖</div>Textos</button>
     <button class="nav-btn" onclick="goScreen('review')"><div class="nav-icon">📊</div>Yo</button>
   </div>
+</div>
+
+<!-- ======== CALENDARIO HOBONICHI ======== -->
+<div id="screen-calendar" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goScreen('home')">←</button>
+    <span style="font-size:15px;font-weight:800">📅 Calendario Hobonichi</span>
+    <div style="width:34px"></div>
+  </div>
+  <div class="scroll" id="calScroll"></div>
 </div>
 
 <!-- ======== MIS FALLOS ======== -->
@@ -474,11 +493,11 @@ body{font-family:'Nunito',sans-serif;color:var(--tx);max-width:430px;margin:0 au
     <!-- Botón orden -->
     <div id="flash-order-wrap" style="display:flex;gap:8px;margin-bottom:12px">
       <button id="btn-order-random" onclick="setFlashOrder('random')"
-        style="flex:1;padding:8px;border-radius:var(--rs);font-size:12px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;transition:all .18s;border:1px solid rgba(192,132,252,.35);background:rgba(192,132,252,.18);color:var(--p)">
+        style="flex:1;padding:8px;border-radius:var(--rs);font-size:12px;font-weight:800;font-family:'Nunito','Helvetica Neue',Arial,sans-serif;cursor:pointer;transition:all .18s;border:1px solid rgba(192,132,252,.35);background:rgba(192,132,252,.18);color:var(--p)">
         🎲 Aleatorio
       </button>
       <button id="btn-order-order" onclick="setFlashOrder('order')"
-        style="flex:1;padding:8px;border-radius:var(--rs);font-size:12px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;transition:all .18s;border:1px solid rgba(192,132,252,.15);background:transparent;color:var(--tx3)">
+        style="flex:1;padding:8px;border-radius:var(--rs);font-size:12px;font-weight:800;font-family:'Nunito','Helvetica Neue',Arial,sans-serif;cursor:pointer;transition:all .18s;border:1px solid rgba(192,132,252,.15);background:transparent;color:var(--tx3)">
         📋 En orden
       </button>
     </div>
@@ -1178,9 +1197,10 @@ function goScreen(id){
   if(id==='review')buildReview();
   if(id==='kanji-list')showKanjiList(4);
   if(id==='quiz')startQuiz(quizLevel);
-  if(id==='home')updateHomeCounts();
+  if(id==='home'){updateHomeCounts();updateTodayKanjiLabel();}
   if(id==='failed')buildFailedList();
   if(id==='seen')buildSeenList();
+  if(id==='calendar')buildCalendar();
   updateUI();
 }
 
@@ -1480,7 +1500,7 @@ function revealCard(){
     document.getElementById('flashAlt').innerHTML=
       `<div style="width:100%;text-align:center">
         <div style="font-size:10px;color:var(--tx3);font-weight:800;letter-spacing:.04em;margin-bottom:6px">KANJI BASE</div>
-        <span style="font-size:38px;font-family:'Zen Kaku Gothic New',sans-serif;background:linear-gradient(135deg,var(--p),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent">${c.parentKanji}</span>
+        <span style="font-size:38px;font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:linear-gradient(135deg,var(--p),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent">${c.parentKanji}</span>
         <div style="font-size:12px;color:var(--cyan);font-weight:700;margin-top:2px">${c.parentReading}</div>
         <div style="font-size:12px;color:var(--tx2);font-weight:600">${c.parentMeaning}</div>
       </div>`;
@@ -2073,9 +2093,9 @@ function buildCardList(cards,scrollId,emptyMsg,badgeId,accentColor){
     div.addEventListener('touchstart',()=>div.style.transform='scale(.97)',{passive:true});
     div.addEventListener('touchend',()=>div.style.transform='',{passive:true});
     div.innerHTML=`
-      <div style="font-size:30px;font-family:'Zen Kaku Gothic New',sans-serif;min-width:44px;text-align:center;color:${accentColor};line-height:1.2">${c.display}</div>
+      <div style="font-size:30px;font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;min-width:44px;text-align:center;color:${accentColor};line-height:1.2">${c.display}</div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:12px;color:var(--cyan);font-weight:700;font-family:'Zen Kaku Gothic New',sans-serif;margin-bottom:2px">${c.hint_reading||''}</div>
+        <div style="font-size:12px;color:var(--cyan);font-weight:700;font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;margin-bottom:2px">${c.hint_reading||''}</div>
         <div style="font-size:13px;color:var(--tx);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.hint_meaning||''}</div>
         <div style="font-size:10px;color:var(--tx3);font-weight:600;margin-top:2px">${c.type==='kanji'?'Kanji base':'Palabra compuesta'} · <span style="color:${lc}">N${c.n||'?'}</span></div>
       </div>
@@ -2149,7 +2169,7 @@ function revealSingle(){
     document.getElementById('singleExample').textContent='';
     document.getElementById('singleExampleTr').textContent='';
     document.getElementById('singleAltWrap').style.display='block';
-    document.getElementById('singleAlt').innerHTML=`<div style="width:100%;text-align:center"><div style="font-size:10px;color:var(--tx3);font-weight:800;letter-spacing:.04em;margin-bottom:6px">KANJI BASE</div><span style="font-size:42px;font-family:'Zen Kaku Gothic New',sans-serif;background:linear-gradient(135deg,var(--p),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent">${c.parentKanji}</span><div style="font-size:12px;color:var(--cyan);font-weight:700;margin-top:4px">${c.parentReading}</div><div style="font-size:12px;color:var(--tx2);font-weight:600">${c.parentMeaning}</div></div>`;
+    document.getElementById('singleAlt').innerHTML=`<div style="width:100%;text-align:center"><div style="font-size:10px;color:var(--tx3);font-weight:800;letter-spacing:.04em;margin-bottom:6px">KANJI BASE</div><span style="font-size:42px;font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:linear-gradient(135deg,var(--p),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent">${c.parentKanji}</span><div style="font-size:12px;color:var(--cyan);font-weight:700;margin-top:4px">${c.parentReading}</div><div style="font-size:12px;color:var(--tx2);font-weight:600">${c.parentMeaning}</div></div>`;
   }
   document.getElementById('singleAnsBtns').style.display='grid';
 }
@@ -2179,15 +2199,229 @@ function answerSingle(ok){
 updateUI();
 selectLevel(4);
 updateHomeCounts();
+updateTodayKanjiLabel();
+
+// ============================================================
+// CALENDARIO HOBONICHI — extraído de tu libreta de estudio
+// Formato: 'YYYY-MM-DD': ['漢1','漢2']
+// ============================================================
+const HOBONICHI = {
+  // ── MAYO 2026 ──
+  '2026-05-01':['便','借'], '2026-05-04':['写','冬'], '2026-05-05':['切','別'],
+  '2026-05-06':['力','勉'], '2026-05-07':['動','区'], '2026-05-08':['医','去'],
+  '2026-05-11':['品','員'], '2026-05-12':['問','回'], '2026-05-13':['図','地'],
+  '2026-05-14':['堂','場'], '2026-05-15':['声','売'],
+  '2026-05-18':['好','妹'], '2026-05-19':['姉','始'], '2026-05-20':['字','室'],
+  '2026-05-21':['家','寒'], '2026-05-22':['屋','工'],
+  '2026-05-25':['建','引'], '2026-05-26':['弟','弱'], '2026-05-27':['強','待'],
+  '2026-05-28':['心','思'], '2026-05-29':['急','悪'],
+  // ── JUNIO 2026 ──
+  '2026-06-01':['文','料'], '2026-06-02':['方','旅'], '2026-06-03':['族','早'],
+  '2026-06-04':['明','映'], '2026-06-05':['春','昼'],
+  '2026-06-08':['服','朝'], '2026-06-09':['村','林'], '2026-06-10':['森','業'],
+  '2026-06-11':['楽','歌'], '2026-06-12':['止','正'],
+  '2026-06-15':['注','洋'], '2026-06-16':['洗','海'], '2026-06-17':['漢','牛'],
+  '2026-06-18':['物','特'], '2026-06-19':['犬','理'],
+  '2026-06-22':['画','界'], '2026-06-23':['病','発'], '2026-06-24':['県','真'],
+  '2026-06-25':['着','知'], '2026-06-26':['短','研'],
+  '2026-06-29':['紙','終'], '2026-06-30':['習','考'],
+  // ── JULIO 2026 ──
+  '2026-07-01':['者','肉'], '2026-07-02':['自','色'], '2026-07-03':['英','茶'],
+  '2026-07-06':['試','説'], '2026-07-07':['貸','質'], '2026-07-08':['赤','走'],
+  '2026-07-09':['起','転'], '2026-07-10':['軽','近'],
+  '2026-07-13':['遠','都'], '2026-07-14':['重','野'], '2026-07-15':['銀','門'],
+  '2026-07-16':['開','院'], '2026-07-17':['集','青'],
+  '2026-07-20':['風','飯'], '2026-07-21':['館','首'], '2026-07-22':['験','鳥'],
+  '2026-07-23':['黒','世'], '2026-07-24':['主','乗'],
+  '2026-07-27':['以','低'], '2026-07-28':['住','体'], '2026-07-29':['作','便'],
+  '2026-07-30':['借','働'], '2026-07-31':['元','兄'],
+  // ── AGOSTO 2026 ──
+  '2026-08-03':['別','力'], '2026-08-04':['勉','動'], '2026-08-05':['区','医'],
+  '2026-08-06':['去','台'], '2026-08-07':['合','同'],
+  '2026-08-10':['回','図'], '2026-08-11':['地','堂'], '2026-08-12':['場','声'],
+  '2026-08-13':['売','夏'], '2026-08-14':['夕','夜'],
+  '2026-08-17':['始','字'], '2026-08-18':['室','家'], '2026-08-19':['寒','屋'],
+  '2026-08-20':['工','市'], '2026-08-21':['帰','広'],
+  '2026-08-24':['弱','強'], '2026-08-25':['待','心'], '2026-08-26':['思','急'],
+  '2026-08-27':['悪','意'], '2026-08-28':['所','持'],
+  '2026-08-31':['旅','族'],
+  // ── SEPTIEMBRE 2026 ──
+  '2026-09-01':['早','明'], '2026-09-02':['映','春'], '2026-09-03':['昼','暑'],
+  '2026-09-04':['暗','曜'],
+  '2026-09-07':['林','森'], '2026-09-08':['業','楽'], '2026-09-09':['歌','止'],
+  '2026-09-10':['正','歩'], '2026-09-11':['死','民'],
+  '2026-09-14':['海','漢'], '2026-09-15':['牛','物'], '2026-09-16':['特','犬'],
+  '2026-09-17':['理','産'], '2026-09-18':['用','田'],
+  '2026-09-21':['発','県'], '2026-09-22':['真','着'], '2026-09-23':['知','短'],
+  '2026-09-24':['研','私'], '2026-09-25':['秋','究'],
+  '2026-09-28':['考','者'], '2026-09-29':['肉','自'], '2026-09-30':['色','英'],
+  // ── OCTUBRE 2026 ──
+  '2026-10-01':['茶','菜'], '2026-10-02':['薬','親'],
+  '2026-10-05':['質','赤'], '2026-10-06':['走','起'], '2026-10-07':['転','軽'],
+  '2026-10-08':['近','送'], '2026-10-09':['通','進'],
+  '2026-10-12':['野','銀'], '2026-10-13':['門','開'], '2026-10-14':['院','集'],
+  '2026-10-15':['青','音'], '2026-10-16':['頭','題'],
+  '2026-10-19':['首','験'], '2026-10-20':['鳥','黒'], '2026-10-21':['世','主'],
+  '2026-10-22':['乗','事'], '2026-10-23':['京','使'],
+  '2026-10-26':['体','作'], '2026-10-27':['便','借'], '2026-10-28':['働','元'],
+  '2026-10-29':['兄','光'], '2026-10-30':['写','冬'],
+  // ── NOVIEMBRE 2026 ──
+  '2026-11-02':['動','区'], '2026-11-03':['医','去'], '2026-11-04':['台','合'],
+  '2026-11-05':['同','味'], '2026-11-06':['品','員'],
+  '2026-11-09':['堂','場'], '2026-11-10':['声','売'], '2026-11-11':['夏','夕'],
+  '2026-11-12':['夜','太'], '2026-11-13':['好','妹'],
+  '2026-11-16':['家','寒'], '2026-11-17':['屋','工'], '2026-11-18':['市','帰'],
+  '2026-11-19':['広','度'], '2026-11-20':['建','引'],
+  '2026-11-23':['心','思'], '2026-11-24':['急','悪'], '2026-11-25':['意','所'],
+  '2026-11-26':['持','教'], '2026-11-27':['文','料'],
+  '2026-11-30':['明','映'],
+  // ── DICIEMBRE 2026 ──
+  '2026-12-01':['春','昼'], '2026-12-02':['暑','暗'], '2026-12-03':['曜','有'],
+  '2026-12-04':['服','朝'],
+  '2026-12-07':['楽','歌'], '2026-12-08':['止','正'], '2026-12-09':['歩','死'],
+  '2026-12-10':['民','池'], '2026-12-11':['注','洋'],
+  '2026-12-14':['物','特'], '2026-12-15':['犬','理'], '2026-12-16':['産','用'],
+  '2026-12-17':['田','町'], '2026-12-18':['画','界'],
+  '2026-12-21':['着','知'], '2026-12-22':['短','研'], '2026-12-23':['私','秋'],
+  '2026-12-24':['究','答'], '2026-12-25':['紙','終'],
+  '2026-12-28':['自','色'], '2026-12-29':['英','茶'], '2026-12-30':['菜','薬'],
+  '2026-12-31':['親','計'],
+};
+
+function dateKey(d){ return d.toISOString().slice(0,10); }
+
+function getTodayKanji(){
+  const today = dateKey(new Date());
+  return HOBONICHI[today] || null;
+}
+
+function buildCalendar(){
+  const sc = document.getElementById('calScroll');
+  sc.innerHTML = '';
+  const today = new Date();
+  const todayKey = dateKey(today);
+
+  // ── TODAY CARD ──
+  const todayKanji = HOBONICHI[todayKey];
+  const todayCard = document.createElement('div');
+  todayCard.style.cssText = 'background:linear-gradient(135deg,rgba(124,58,237,.25),rgba(236,72,153,.15));border:1px solid rgba(192,132,252,.4);border-radius:var(--r);padding:18px 16px;margin-bottom:16px';
+  if(todayKanji){
+    const kInfo = todayKanji.map(k=>{
+      const kd = KANJI.find(x=>x.k===k);
+      return kd ? `<div style="text-align:center;flex:1">
+        <div style="font-size:48px;font-family:'Zen Kaku Gothic New',sans-serif;background:linear-gradient(135deg,var(--p),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer" onclick="openSingleCard(buildCardFromKey('${k}'),'calendar')">${k}</div>
+        <div style="font-size:11px;color:var(--cyan);font-weight:700;font-family:'Zen Kaku Gothic New',sans-serif;margin-top:2px">${kd.r}</div>
+        <div style="font-size:12px;color:var(--tx2);font-weight:600">${kd.m}</div>
+      </div>` : `<div style="text-align:center;flex:1"><div style="font-size:48px">${k}</div></div>`;
+    }).join('<div style="width:1px;background:rgba(192,132,252,.2);margin:8px 0"></div>');
+    todayCard.innerHTML = `
+      <div style="font-size:11px;font-weight:800;color:var(--p);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">📅 KANJI DE HOY · ${today.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}).toUpperCase()}</div>
+      <div style="display:flex;gap:12px;align-items:flex-start">${kInfo}</div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button onclick="openSingleCard(buildCardFromKey('${todayKanji[0]}'),'calendar')" style="flex:1;padding:10px;background:rgba(192,132,252,.15);border:1px solid rgba(192,132,252,.3);border-radius:var(--rs);color:var(--p);font-size:12px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif">Practicar ${todayKanji[0]}</button>
+        <button onclick="openSingleCard(buildCardFromKey('${todayKanji[1]}'),'calendar')" style="flex:1;padding:10px;background:rgba(192,132,252,.15);border:1px solid rgba(192,132,252,.3);border-radius:var(--rs);color:var(--p);font-size:12px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif">Practicar ${todayKanji[1]}</button>
+      </div>`;
+  } else {
+    todayCard.innerHTML = `
+      <div style="font-size:11px;font-weight:800;color:var(--p);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">📅 HOY · ${today.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}).toUpperCase()}</div>
+      <div style="font-size:14px;color:var(--tx2);font-weight:600">🎌 Hoy no hay kanji programados.<br><span style="font-size:12px;color:var(--tx3)">Los fines de semana son de repaso.</span></div>`;
+  }
+  sc.appendChild(todayCard);
+
+  // ── MONTH NAVIGATION ──
+  // Group all entries by month
+  const months = {};
+  Object.entries(HOBONICHI).forEach(([date, kanjis])=>{
+    const m = date.slice(0,7);
+    if(!months[m]) months[m] = {};
+    months[m][date] = kanjis;
+  });
+
+  const monthNames = {
+    '2026-05':'五月 Mayo 2026','2026-06':'六月 Junio 2026','2026-07':'七月 Julio 2026',
+    '2026-08':'八月 Agosto 2026','2026-09':'九月 Septiembre 2026','2026-10':'十月 Octubre 2026',
+    '2026-11':'十一月 Noviembre 2026','2026-12':'十二月 Diciembre 2026'
+  };
+
+  Object.keys(months).sort().forEach(month=>{
+    const sec = document.createElement('div');
+    sec.style.marginBottom = '16px';
+
+    // Month header
+    const hdr = document.createElement('div');
+    hdr.className = 'sec-title';
+    hdr.style.marginBottom = '10px';
+    hdr.textContent = monthNames[month] || month;
+    sec.appendChild(hdr);
+
+    // Days grid
+    const grid = document.createElement('div');
+    grid.style.cssText = 'display:flex;flex-direction:column;gap:6px';
+
+    // Get all days in this month that have kanji
+    const days = Object.keys(months[month]).sort();
+    days.forEach(day=>{
+      const kanjis = months[month][day];
+      const d = new Date(day+'T12:00:00');
+      const isToday = day === todayKey;
+      const isPast = day < todayKey;
+      // Check if both kanji are in knownKanji
+      const done = kanjis.every(k => S.knownKanji.includes(k));
+
+      const row = document.createElement('div');
+      row.style.cssText = `display:flex;align-items:center;gap:10px;
+        background:${isToday?'rgba(124,58,237,.2)':isPast&&done?'rgba(74,222,128,.08)':'linear-gradient(140deg,var(--card),var(--card2))'};
+        border:1px solid ${isToday?'rgba(192,132,252,.5)':isPast&&done?'rgba(74,222,128,.25)':'rgba(192,132,252,.12)'};
+        border-radius:var(--rs);padding:10px 12px;cursor:pointer;transition:all .18s`;
+
+      const dayLabel = d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric'});
+      const statusIcon = done?'✅':isPast?'⬜':'📌';
+
+      row.innerHTML = `
+        <div style="font-size:11px;font-weight:800;color:${isToday?'var(--p)':isPast?'var(--tx3)':'var(--tx2)'};min-width:52px">${isToday?'HOY':dayLabel}</div>
+        <div style="display:flex;gap:8px;flex:1;align-items:center">
+          ${kanjis.map(k=>`<span style="font-size:24px;font-family:'Zen Kaku Gothic New',sans-serif;color:${isToday?'var(--p)':isPast&&done?'var(--green)':'var(--tx)'}">${k}</span>`).join('')}
+          <span style="font-size:11px;color:var(--tx3);font-weight:600;margin-left:4px">${kanjis.map(k=>{const kd=KANJI.find(x=>x.k===k);return kd?kd.m.split('/')[0].trim():''}).join(' · ')}</span>
+        </div>
+        <span style="font-size:14px">${statusIcon}</span>`;
+
+      row.onclick = ()=>{
+        // Open flashcard for first kanji, then second
+        openSingleCard(buildCardFromKey(kanjis[0]), 'calendar');
+      };
+      grid.appendChild(row);
+    });
+
+    sec.appendChild(grid);
+    sc.appendChild(sec);
+  });
+}
+
+function updateTodayKanjiLabel(){
+  const k = getTodayKanji();
+  const el = document.getElementById('home-today-kanji');
+  if(!el) return;
+  if(k){
+    const kds = k.map(x=>KANJI.find(d=>d.k===x));
+    el.textContent = `Hoy: ${k[0]} ${kds[0]?kds[0].m.split('/')[0]:''}  ·  ${k[1]} ${kds[1]?kds[1].m.split('/')[0]:''}`;
+  } else {
+    el.textContent = 'Hoy es día de repaso 🎌';
+  }
+}
+
+
 
 // ============================================================
 // PWA — Service Worker + Install Banner
 // ============================================================
-// Register service worker
+// Register service worker - works on GitHub Pages
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js', {scope:'./'})
-    .then(r => console.log('SW registered'))
-    .catch(e => console.log('SW error:', e));
+  // Determine correct path (works for root and subdirectory hosting)
+  const swPath = (new URL('./sw.js', document.baseURI)).href;
+  const scopePath = (new URL('./', document.baseURI)).href;
+  navigator.serviceWorker.register(swPath, {scope: scopePath})
+    .then(r => console.log('SW registered:', r.scope))
+    .catch(e => console.warn('SW registration failed:', e));
 }
 
 // Install prompt banner
